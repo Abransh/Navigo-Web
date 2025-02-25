@@ -2,7 +2,7 @@
 "use client";
 "use strict";
 exports.__esModule = true;
-var react_1 = require("react");
+import * as react_1 from "react";
 var PlaneScrollSection = function () {
     var planeRef = react_1.useRef(null);
     var pathRef = react_1.useRef(null);
