@@ -1,6 +1,7 @@
+// frontend/web/components/sections/PlaneScrollSection.tsx
+"use client";
 "use strict";
 exports.__esModule = true;
-// frontend/web/components/sections/PlaneScrollSection.tsx
 import * as react_1 from "react";
 var PlaneScrollSection = function () {
     var planeRef = react_1.useRef(null);

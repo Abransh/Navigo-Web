@@ -8,7 +8,7 @@ var HeroSection = function () {
     return (react_1["default"].createElement("section", { className: "relative h-screen flex flex-col justify-center" },
         react_1["default"].createElement("div", { className: "absolute inset-0 z-0" },
             react_1["default"].createElement(image_1["default"], { src: "/images/hero-background.jpg", alt: "Navigo background", fill: true, className: "object-cover", priority: true })),
-        react_1["default"].createElement("div", { className: "z-10 text-white ml-16" },
+        react_1["default"].createElement("div", { className: "z-10 text-blie ml-16" },
             react_1["default"].createElement("h1", { className: "text-6xl font-bold mb-2" }, "NAVIGO"),
             react_1["default"].createElement("p", { className: "text-2xl mb-12" }, "Your Gateway to The Experience"),
             react_1["default"].createElement("div", { className: "flex flex-col space-y-4" },

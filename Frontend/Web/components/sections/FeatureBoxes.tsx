@@ -82,23 +82,23 @@ const FeatureBoxes: React.FC = () => {
       {featureBoxes.map((feature, index) => (
         <section 
           key={index}
-          ref={el => { sectionRefs.current[index] = el as HTMLDivElement; }}
+          ref={el => { sectionRefs.current[index] = el as HTMLDivElement }}
           className="py-8 opacity-0 translate-y-20 transition-all duration-700 sticky"
-          style={{ top: '24vh' }}
+          style={{ top: '14vh' }}
         >
           <div className="max-w-6xl mx-auto flex">
             {/* Text container */}
-            <div className="w-[529px] h-[243px] rounded-2xl bg-[#ECEBE9] p-6 flex flex-col justify-center">
-              <h3 className="text-[28px] font-bold mb-4">
+            <div className="w-[720px] h-[300px] rounded-2xl bg-[#ECEBE9] p-6 flex flex-col justify-center">
+              <h3 className="text-[36px] font-bold mb-4">
                 {feature.title}
               </h3>
-              <p className="text-base">
+              <p className="text-base text-[24px]">
                 {feature.description}
               </p>
             </div>
             
             {/* Middle image container */}
-            <div className="w-[81px] h-[243px] rounded-2xl mx-1 overflow-hidden">
+            <div className="w-[101px] h-[300px] rounded-2xl mx-1 overflow-hidden">
               <div className="w-full h-full relative">
                 <Image 
                   src={feature.leftImage}
@@ -110,7 +110,7 @@ const FeatureBoxes: React.FC = () => {
             </div>
             
             {/* Right image container */}
-            <div className="w-[448px] h-[243px] rounded-2xl overflow-hidden">
+            <div className="w-[522px] h-[300px] rounded-2xl overflow-hidden">
               <div className="w-full h-full relative">
                 <Image 
                   src={feature.rightImage}

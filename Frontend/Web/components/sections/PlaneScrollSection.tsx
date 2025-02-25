@@ -1,4 +1,6 @@
 // frontend/web/components/sections/PlaneScrollSection.tsx
+"use client";
+
 import React, { useEffect, useRef } from 'react';
 
 const PlaneScrollSection: React.FC = () => {
