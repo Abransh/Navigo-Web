@@ -12,6 +12,9 @@ export default {
         'primary': '#F3A522',
         'navy-blue': '#003366',
       },
+      fontFamily: {
+        'sofia-pro': ['Sofia Pro', 'sans-serif'],
+      },
     },
   },
   plugins: [],
