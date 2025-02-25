@@ -1,5 +1,3 @@
-// frontend/web/components/sections/PlaneScrollSection.tsx
-"use client";
 "use strict";
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -10,7 +8,7 @@ function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return 
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || _typeof(obj) !== "object" && typeof obj !== "function") { return { "default": obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj["default"] = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
 
-exports.__esModule = true;
+exports.__esModule = true; // frontend/web/components/sections/PlaneScrollSection.tsx
 
 var PlaneScrollSection = function PlaneScrollSection() {
   var planeRef = react_1.useRef(null);
@@ -34,12 +32,12 @@ var PlaneScrollSection = function PlaneScrollSection() {
     };
   }, []);
   return react_1["default"].createElement("section", {
-    className: "h-[50vh] flex items-center justify-center bg-gray-50 relative overflow-hidden"
+    className: "h-[42px] flex items-center justify-center relative overflow-hidden"
   }, react_1["default"].createElement("div", {
-    className: "max-w-4xl w-full mx-auto relative"
+    className: "max-w-full w-full mx-auto relative"
   }, react_1["default"].createElement("div", {
     ref: pathRef,
-    className: "h-[2px] bg-gray-300 w-full relative"
+    className: "h-[1px] bg-gray-300 w-full relative"
   }), react_1["default"].createElement("div", {
     ref: planeRef,
     className: "absolute top-0 transform -translate-y-1/2",

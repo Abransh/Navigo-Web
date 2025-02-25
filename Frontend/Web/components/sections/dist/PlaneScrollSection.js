@@ -1,7 +1,6 @@
-// frontend/web/components/sections/PlaneScrollSection.tsx
-"use client";
 "use strict";
 exports.__esModule = true;
+// frontend/web/components/sections/PlaneScrollSection.tsx
 import * as react_1 from "react";
 var PlaneScrollSection = function () {
     var planeRef = react_1.useRef(null);
@@ -20,9 +19,9 @@ var PlaneScrollSection = function () {
         window.addEventListener('scroll', handleScroll);
         return function () { return window.removeEventListener('scroll', handleScroll); };
     }, []);
-    return (react_1["default"].createElement("section", { className: "h-[50vh] flex items-center justify-center bg-gray-50 relative overflow-hidden" },
-        react_1["default"].createElement("div", { className: "max-w-4xl w-full mx-auto relative" },
-            react_1["default"].createElement("div", { ref: pathRef, className: "h-[2px] bg-gray-300 w-full relative" }),
+    return (react_1["default"].createElement("section", { className: "h-[42px] flex items-center justify-center relative overflow-hidden" },
+        react_1["default"].createElement("div", { className: "max-w-full w-full mx-auto relative" },
+            react_1["default"].createElement("div", { ref: pathRef, className: "h-[1px] bg-gray-300 w-full relative" }),
             react_1["default"].createElement("div", { ref: planeRef, className: "absolute top-0 transform -translate-y-1/2", style: { left: 0 } },
                 react_1["default"].createElement("svg", { width: "32", height: "32", viewBox: "0 0 24 24", fill: "#F3A522" },
                     react_1["default"].createElement("path", { d: "M22,16.21V14.67a2,2,0,0,0-1.36-1.9L12,10,3.36,12.77A2,2,0,0,0,2,14.67v1.55a.5.5,0,0,0,.65.47L12,14l9.35,2.69A.5.5,0,0,0,22,16.21Z" }),

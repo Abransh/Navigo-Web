@@ -1,6 +1,4 @@
 // frontend/web/components/sections/PlaneScrollSection.tsx
-"use client";
-
 import React, { useEffect, useRef } from 'react';
 
 const PlaneScrollSection: React.FC = () => {
@@ -26,11 +24,11 @@ const PlaneScrollSection: React.FC = () => {
   }, []);
   
   return (
-    <section className="h-[50vh] flex items-center justify-center bg-gray-50 relative overflow-hidden">
-      <div className="max-w-4xl w-full mx-auto relative">
+    <section className="h-[42px] flex items-center justify-center relative overflow-hidden">
+      <div className="max-w-full w-full mx-auto relative">
         <div 
           ref={pathRef} 
-          className="h-[2px] bg-gray-300 w-full relative"
+          className="h-[1px] bg-gray-300 w-full relative"
         ></div>
         
         <div 
