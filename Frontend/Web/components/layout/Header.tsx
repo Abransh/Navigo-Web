@@ -4,17 +4,17 @@ import React from 'react';
 
 const Header: React.FC = () => {
   return (
-    <div className="flex justify-center mt-8 px-4">
+    <div className="flex justify-center px-4">
       <header className="flex justify-between items-center">
         {/* Left section */}
-        <div className="w-[373px] h-[32px] bg-white rounded-full shadow-md flex items-center px-6">
-          <Link href="/" className="text-xl font-bold text-[#F3A522]">
+        <div className="w-[373px] h-[32px] bg-white/80 backdrop-blur-sm rounded-full shadow-md flex items-center px-6">
+          <Link href="/" className="text-xl font text-[#000000]">
             Navigo
           </Link>
         </div>
         
         {/* Middle section */}
-        <div className="w-[622px] h-[32px] bg-white rounded-full shadow-md mx-2 flex justify-center items-center">
+        <div className="w-[622px] h-[32px] bg-white/80 backdrop-blur-sm rounded-full shadow-md mx-2 flex justify-center items-center">
           <nav className="flex space-x-6">
             <Link href="/explore" className="hover:text-[#F3A522] text-sm">Explore Destinations</Link>
             <Link href="/plan" className="hover:text-[#F3A522] text-sm">Plan Your Trip</Link>
@@ -24,7 +24,7 @@ const Header: React.FC = () => {
         </div>
         
         {/* Right section */}
-        <div className="w-[249px] h-[32px] bg-white rounded-full shadow-md flex items-center px-6 justify-between">
+        <div className="w-[249px] h-[32px] bg-white/80 backdrop-blur-sm rounded-full shadow-md flex items-center px-6 justify-between">
           <Link href="/trip-planner" className="hover:text-[#F3A522] text-sm">
             Plan Your Trip
           </Link>

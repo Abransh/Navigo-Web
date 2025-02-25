@@ -17,25 +17,25 @@ const FeatureBoxes: React.FC = () => {
     {
       title: 'Enhanced Safety & Specialized safety for Women',
       description: 'Traveling to a new city often means juggling multiple apps—for transport, food, events, and more. It\'s overwhelming, time-consuming, and many aren\'t even in English. We simplify it by bringing you local apps in English.',
-      leftImage: '/images/feature-image-1-left.jpg', // Replace with your actual image paths
+      leftImage: '/images/frontend/web/public/images/QrBarBoxes.jpg', // Replace with your actual image paths
       rightImage: '/images/feature-image-1-right.jpg'
     },
     {
       title: 'Enhanced Safety & Specialized safety for Women',
       description: 'Traveling to a new city often means juggling multiple apps—for transport, food, events, and more. It\'s overwhelming, time-consuming, and many aren\'t even in English. We simplify it by bringing you local apps in English.',
-      leftImage: '/images/feature-image-2-left.jpg',
+      leftImage: '/images/frontend/web/public/images/QrBarBoxes.jpg',
       rightImage: '/images/feature-image-2-right.jpg'
     },
     {
       title: 'Enhanced Safety & Specialized safety for Women',
       description: 'Traveling to a new city often means juggling multiple apps—for transport, food, events, and more. It\'s overwhelming, time-consuming, and many aren\'t even in English. We simplify it by bringing you local apps in English.',
-      leftImage: '/images/feature-image-3-left.jpg',
+      leftImage: '/images/frontend/web/public/images/QrBarBoxes.jpg',
       rightImage: '/images/feature-image-3-right.jpg'
     },
     {
       title: 'Enhanced Safety & Specialized safety for Women',
       description: 'Traveling to a new city often means juggling multiple apps—for transport, food, events, and more. It\'s overwhelming, time-consuming, and many aren\'t even in English. We simplify it by bringing you local apps in English.',
-      leftImage: '/images/feature-image-4-left.jpg',
+      leftImage: '/images/frontend/web/public/images/QrBarBoxes.jpg',
       rightImage: '/images/feature-image-4-right.jpg'
     }
   ];
@@ -88,7 +88,7 @@ const FeatureBoxes: React.FC = () => {
         >
           <div className="max-w-6xl mx-auto flex">
             {/* Text container */}
-            <div className="w-[720px] h-[300px] rounded-2xl bg-[#ECEBE9] p-6 flex flex-col justify-center">
+            <div className="w-[760px] h-[300px] rounded-2xl bg-[#ECEBE9] p-6 flex flex-col justify-center">
               <h3 className="text-[36px] font-bold mb-4">
                 {feature.title}
               </h3>

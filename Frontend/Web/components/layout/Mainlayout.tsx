@@ -1,6 +1,6 @@
 // frontend/web/components/layout/MainLayout.tsx
 import React, { ReactNode } from 'react';
-import Header from '@/components/layout/Header';
+//import Header from './Header';
 
 interface MainLayoutProps {
   children: ReactNode;
@@ -9,8 +9,7 @@ interface MainLayoutProps {
 const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
   return (
     <div className="min-h-screen">
-      <Header />
-      <main>{children}</main>
+      {children}
     </div>
   );
 };

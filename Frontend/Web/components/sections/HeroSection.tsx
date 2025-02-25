@@ -2,15 +2,16 @@
 import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import Header from '../layout/Header';
 
 const HeroSection: React.FC = () => {
   return (
-    <section className="relative h-screen flex flex-col justify-center">
+    <section className="relative h-screen">
       {/* Background image container */}
       <div className="absolute inset-0 z-0">
         {/* Replace with your actual image path */}
         <Image 
-          src="/images/hero-background.jpg" 
+          src="/images/frontend/web/public/images/HeroSectionImage.jpg" 
           alt="Navigo background" 
           fill 
           className="object-cover"
@@ -18,10 +19,16 @@ const HeroSection: React.FC = () => {
         />
       </div>
       
+      {/* Header overlay */}
+      <div className="relative z-10 pt-8">
+        <Header />
+      </div>
+      
       {/* Content overlay */}
-      <div className="z-10 text-blie ml-16">
-        <h1 className="text-6xl font-bold mb-2">NAVIGO</h1>
-        <p className="text-2xl mb-12">Your Gateway to The Experience</p>
+      <div className="z-10 relative text-yellow-600 ml-16 mt-24">
+        <h1 className="text-8xl font mb-2">NAVIGO</h1>
+        <p className="text-6xl text-yellow-500 mb-12"> Your Gateway to The Experience</p>
+        
         
         {/* Buttons stacked vertically */}
         <div className="flex flex-col space-y-4">

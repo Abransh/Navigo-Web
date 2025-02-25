@@ -4,13 +4,16 @@ exports.__esModule = true;
 var react_1 = require("react");
 var image_1 = require("next/image");
 var link_1 = require("next/link");
+var Header_1 = require("../layout/Header");
 var HeroSection = function () {
-    return (react_1["default"].createElement("section", { className: "relative h-screen flex flex-col justify-center" },
+    return (react_1["default"].createElement("section", { className: "relative h-screen" },
         react_1["default"].createElement("div", { className: "absolute inset-0 z-0" },
-            react_1["default"].createElement(image_1["default"], { src: "/images/hero-background.jpg", alt: "Navigo background", fill: true, className: "object-cover", priority: true })),
-        react_1["default"].createElement("div", { className: "z-10 text-blie ml-16" },
-            react_1["default"].createElement("h1", { className: "text-6xl font-bold mb-2" }, "NAVIGO"),
-            react_1["default"].createElement("p", { className: "text-2xl mb-12" }, "Your Gateway to The Experience"),
+            react_1["default"].createElement(image_1["default"], { src: "/images/frontend/web/public/images/HeroSectionImage.jpg", alt: "Navigo background", fill: true, className: "object-cover", priority: true })),
+        react_1["default"].createElement("div", { className: "relative z-10 pt-8" },
+            react_1["default"].createElement(Header_1["default"], null)),
+        react_1["default"].createElement("div", { className: "z-10 relative text-yellow-600 ml-16 mt-24" },
+            react_1["default"].createElement("h1", { className: "text-8xl font mb-2" }, "NAVIGO"),
+            react_1["default"].createElement("p", { className: "text-6xl text-yellow-500 mb-12" }, " Your Gateway to The Experience"),
             react_1["default"].createElement("div", { className: "flex flex-col space-y-4" },
                 react_1["default"].createElement(link_1["default"], { href: "/booking", className: "w-[210px] h-[32px] bg-[#F3A522] hover:bg-[#003366] text-white rounded-2xl flex items-center justify-between px-4 transition-colors" },
                     react_1["default"].createElement("span", null, "Book now"),
