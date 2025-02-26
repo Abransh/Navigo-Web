@@ -88,7 +88,7 @@ const FeatureBoxes: React.FC = () => {
         >
           <div className="max-w-6xl mx-auto flex">
             {/* Text container */}
-            <div className="w-[760px] h-[300px] rounded-2xl bg-[#ECEBE9] p-6 flex flex-col justify-center">
+            <div className="w-[760px] h-[330px] rounded-2xl bg-[#ECEBE9] p-6 flex flex-col justify-center">
               <h3 className="text-[36px] font-bold mb-4">
                 {feature.title}
               </h3>
@@ -98,7 +98,7 @@ const FeatureBoxes: React.FC = () => {
             </div>
             
             {/* Middle image container */}
-            <div className="w-[101px] h-[300px] rounded-2xl mx-1 overflow-hidden">
+            <div className="w-[101px] h-[330px] rounded-2xl mx-1 overflow-hidden">
               <div className="w-full h-full relative">
                 <Image 
                   src={feature.leftImage}
@@ -110,7 +110,7 @@ const FeatureBoxes: React.FC = () => {
             </div>
             
             {/* Right image container */}
-            <div className="w-[522px] h-[300px] rounded-2xl overflow-hidden">
+            <div className="w-[522px] h-[330px] rounded-2xl overflow-hidden">
               <div className="w-full h-full relative">
                 <Image 
                   src={feature.rightImage}

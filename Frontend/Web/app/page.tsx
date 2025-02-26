@@ -5,6 +5,7 @@ import HeroSection from '../components/sections/HeroSection';
 import PlaneScrollSection from '../components/sections/PlaneScrollSection';
 import HelpSection from '../components/sections/section4';
 import FeatureBoxes from '../components/sections/FeatureBoxes';
+import AdvantagesSection from '@/components/sections/advantages';
 
 export default function Home() {
   return (
@@ -13,6 +14,7 @@ export default function Home() {
       <PlaneScrollSection />
       <HelpSection />
       <FeatureBoxes />
+      <AdvantagesSection />
     </MainLayout>
   );
 }

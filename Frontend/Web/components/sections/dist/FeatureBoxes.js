@@ -67,13 +67,13 @@ var FeatureBoxes = function () {
     }, []);
     return (react_1["default"].createElement("div", { className: "relative" }, featureBoxes.map(function (feature, index) { return (react_1["default"].createElement("section", { key: index, ref: function (el) { sectionRefs.current[index] = el; }, className: "py-8 opacity-0 translate-y-20 transition-all duration-700 sticky", style: { top: '14vh' } },
         react_1["default"].createElement("div", { className: "max-w-6xl mx-auto flex" },
-            react_1["default"].createElement("div", { className: "w-[760px] h-[300px] rounded-2xl bg-[#ECEBE9] p-6 flex flex-col justify-center" },
+            react_1["default"].createElement("div", { className: "w-[760px] h-[330px] rounded-2xl bg-[#ECEBE9] p-6 flex flex-col justify-center" },
                 react_1["default"].createElement("h3", { className: "text-[36px] font-bold mb-4" }, feature.title),
                 react_1["default"].createElement("p", { className: "text-base text-[24px]" }, feature.description)),
-            react_1["default"].createElement("div", { className: "w-[101px] h-[300px] rounded-2xl mx-1 overflow-hidden" },
+            react_1["default"].createElement("div", { className: "w-[101px] h-[330px] rounded-2xl mx-1 overflow-hidden" },
                 react_1["default"].createElement("div", { className: "w-full h-full relative" },
                     react_1["default"].createElement(image_1["default"], { src: feature.leftImage, alt: "Feature " + (index + 1), fill: true, className: "object-cover" }))),
-            react_1["default"].createElement("div", { className: "w-[522px] h-[300px] rounded-2xl overflow-hidden" },
+            react_1["default"].createElement("div", { className: "w-[522px] h-[330px] rounded-2xl overflow-hidden" },
                 react_1["default"].createElement("div", { className: "w-full h-full relative" },
                     react_1["default"].createElement(image_1["default"], { src: feature.rightImage, alt: "Feature " + (index + 1), fill: true, className: "object-cover" })))))); })));
 };

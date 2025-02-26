@@ -15,13 +15,13 @@ var HeroSection = function () {
             react_1["default"].createElement("h1", { className: "text-8xl font mb-2" }, "NAVIGO"),
             react_1["default"].createElement("p", { className: "text-6xl text-yellow-500 mb-12" }, " Your Gateway to The Experience"),
             react_1["default"].createElement("div", { className: "flex flex-col space-y-4" },
-                react_1["default"].createElement(link_1["default"], { href: "/booking", className: "w-[210px] h-[32px] bg-[#F3A522] hover:bg-[#003366] text-white rounded-2xl flex items-center justify-between px-4 transition-colors" },
+                react_1["default"].createElement(link_1["default"], { href: "/book-online", className: "w-[210px] h-[32px] bg-[#F3A522] hover:bg-[#003366] text-white rounded-2xl flex items-center justify-between px-4 transition-colors group" },
                     react_1["default"].createElement("span", null, "Book now"),
-                    react_1["default"].createElement("svg", { className: "w-4 h-4", fill: "none", stroke: "currentColor", viewBox: "0 0 24 24", xmlns: "http://www.w3.org/2000/svg" },
+                    react_1["default"].createElement("svg", { className: "w-4 h-4 transform group-hover:rotate-45 transition-transform duration-300", fill: "none", stroke: "currentColor", viewBox: "0 0 24 24", xmlns: "http://www.w3.org/2000/svg" },
                         react_1["default"].createElement("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M14 5l7 7m0 0l-7 7m7-7H3" }))),
-                react_1["default"].createElement(link_1["default"], { href: "/explore", className: "w-[210px] h-[32px] bg-[#F3A522] hover:bg-[#003366] text-white rounded-2xl flex items-center justify-between px-4 transition-colors" },
+                react_1["default"].createElement(link_1["default"], { href: "/explore", className: "w-[210px] h-[32px] bg-[#F3A522] hover:bg-[#003366] text-white rounded-2xl flex items-center justify-between px-4 transition-colors group" },
                     react_1["default"].createElement("span", null, "Explore"),
-                    react_1["default"].createElement("svg", { className: "w-4 h-4", fill: "none", stroke: "currentColor", viewBox: "0 0 24 24", xmlns: "http://www.w3.org/2000/svg" },
+                    react_1["default"].createElement("svg", { className: "w-4 h-4 transform group-hover:rotate-45 transition-transform duration-300", fill: "none", stroke: "currentColor", viewBox: "0 0 24 24", xmlns: "http://www.w3.org/2000/svg" },
                         react_1["default"].createElement("path", { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M14 5l7 7m0 0l-7 7m7-7H3" })))))));
 };
 exports["default"] = HeroSection;
