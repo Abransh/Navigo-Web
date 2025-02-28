@@ -8,12 +8,16 @@ var PlaneScrollSection_1 = require("../components/sections/PlaneScrollSection");
 var section4_1 = require("../components/sections/section4");
 var FeatureBoxes_1 = require("../components/sections/FeatureBoxes");
 var advantages_1 = require("@/components/sections/advantages");
+var ExploreDestinations_1 = require("@/components/sections/ExploreDestinations");
+var ExpDest_1 = require("@/components/sections/ExpDest");
 function Home() {
     return (react_1["default"].createElement(Mainlayout_1["default"], null,
         react_1["default"].createElement(HeroSection_1["default"], null),
         react_1["default"].createElement(PlaneScrollSection_1["default"], null),
         react_1["default"].createElement(section4_1["default"], null),
         react_1["default"].createElement(FeatureBoxes_1["default"], null),
-        react_1["default"].createElement(advantages_1["default"], null)));
+        react_1["default"].createElement(advantages_1["default"], null),
+        react_1["default"].createElement(ExpDest_1["default"], null),
+        react_1["default"].createElement(ExploreDestinations_1["default"], null)));
 }
 exports["default"] = Home;

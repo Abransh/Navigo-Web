@@ -13,38 +13,38 @@ export default function PlaneAnimation() {
       const scrollPercent =
         (window.scrollY /
           (document.documentElement.scrollHeight - window.innerHeight)) *
-        150
+        240    //change this value to adjust the speed of the plane
       const translateX = (scrollPercent * window.innerWidth) / 100
 
       planeRef.current.style.transform = `translateX(${translateX}px)`
     }
 
-    window.addEventListener("scroll", updatePlanePosition)
+    window.addEventListener("scroll", updatePlanePosition)  
     return () =>
-      window.removeEventListener("scroll", updatePlanePosition)
+      window.removeEventListener("scroll", updatePlanePosition)   
   }, [])
 
   return (
     <div className="relative h-[42px] w-full overflow-hidden">
-      {/* Dashed line */}
+      {/* Dashed line with custom styling */}
       <div
-        className="absolute left-0 top-1/2 h-[2px] w-full -translate-y-1/2"
+        className="absolute left-0 top-1/2 h-[1px] w-full -translate-y-1/2"  //height of dashed line
         style={{
           background:
-            "repeating-linear-gradient(to right, #333 0, #333 15px, transparent 15px, transparent 25px)",
+            "repeating-linear-gradient(to right, rgba(0, 0, 0, 0.3) 0, rgba(0, 0, 0, 0.3) 5px, transparent 5px, transparent 10px)", // Adjust this value to change the dash length
         }}
       />
       {/* Plane container */}
       <div
         ref={planeRef}
-        className="absolute left-0 top-1/2 -translate-y-1/2 transition-transform duration-75"
+        className="absolute left-0 top-1/2 -translate-y-1/2 transition-transform duration-75" // Adjust duration to fine-tune animation speed
       >
         <Image
           src="/images/frontend/web/public/images/plane.jpg"
           alt="Plane"
-          width={24}
-          height={24}
-          className="-translate-y-[11px]" // Adjust this value to fine-tune vertical position
+          width={36}   //width of plane
+          height={36}  //height of plane
+          className="-translate-y-[17px]" // Adjust this value to fine-tune vertical position
         />
       </div>
     </div>

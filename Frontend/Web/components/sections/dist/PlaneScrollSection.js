@@ -11,7 +11,7 @@ function PlaneAnimation() {
                 return;
             var scrollPercent = (window.scrollY /
                 (document.documentElement.scrollHeight - window.innerHeight)) *
-                150;
+                240; //change this value to adjust the speed of the plane
             var translateX = (scrollPercent * window.innerWidth) / 100;
             planeRef.current.style.transform = "translateX(" + translateX + "px)";
         };
@@ -21,11 +21,13 @@ function PlaneAnimation() {
         };
     }, []);
     return (React.createElement("div", { className: "relative h-[42px] w-full overflow-hidden" },
-        React.createElement("div", { className: "absolute left-0 top-1/2 h-[2px] w-full -translate-y-1/2", style: {
-                background: "repeating-linear-gradient(to right, #333 0, #333 15px, transparent 15px, transparent 25px)"
+        React.createElement("div", { className: "absolute left-0 top-1/2 h-[1px] w-full -translate-y-1/2" //height of dashed line
+            , style: {
+                background: "repeating-linear-gradient(to right, rgba(0, 0, 0, 0.3) 0, rgba(0, 0, 0, 0.3) 5px, transparent 5px, transparent 10px)"
             } }),
-        React.createElement("div", { ref: planeRef, className: "absolute left-0 top-1/2 -translate-y-1/2 transition-transform duration-75" },
-            React.createElement(image_1["default"], { src: "/images/frontend/web/public/images/plane.jpg", alt: "Plane", width: 24, height: 24, className: "-translate-y-[11px]" // Adjust this value to fine-tune vertical position
+        React.createElement("div", { ref: planeRef, className: "absolute left-0 top-1/2 -translate-y-1/2 transition-transform duration-75" // Adjust duration to fine-tune animation speed
+         },
+            React.createElement(image_1["default"], { src: "/images/frontend/web/public/images/plane.jpg", alt: "Plane", width: 36, height: 36, className: "-translate-y-[17px]" // Adjust this value to fine-tune vertical position
              }))));
 }
 exports["default"] = PlaneAnimation;

@@ -6,6 +6,8 @@ import PlaneScrollSection from '../components/sections/PlaneScrollSection';
 import HelpSection from '../components/sections/section4';
 import FeatureBoxes from '../components/sections/FeatureBoxes';
 import AdvantagesSection from '@/components/sections/advantages';
+import DestinationsSection from '@/components/sections/ExploreDestinations';
+import ExpDest from '@/components/sections/ExpDest';
 
 export default function Home() {
   return (
@@ -15,6 +17,8 @@ export default function Home() {
       <HelpSection />
       <FeatureBoxes />
       <AdvantagesSection />
+      <ExpDest />
+      <DestinationsSection />
     </MainLayout>
   );
 }
