@@ -4,7 +4,7 @@ import Link from 'next/link';
 
 const AdvantagesSection: React.FC = () => {
   return (
-    <section className="py-16 bg-gray-100">
+    <section className="py-16 bg-white-100">
       <div className="container mx-auto px-4">
         <div className="max-w-4xl mx-auto text-center">
           
@@ -36,3 +36,6 @@ const AdvantagesSection: React.FC = () => {
 };
 
 export default AdvantagesSection;
+
+
+
