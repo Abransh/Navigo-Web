@@ -11,7 +11,7 @@ var HeroSection = function () {
             react_1["default"].createElement(image_1["default"], { src: "/images/frontend/web/public/images/HeroSectionImage.jpg", alt: "Navigo background", fill: true, className: "object-cover", priority: true })),
         react_1["default"].createElement("div", { className: "relative z-10 pt-8" },
             react_1["default"].createElement(Header_1["default"], null)),
-        react_1["default"].createElement("div", { className: "z-10 relative text-yellow-600 ml-16 mt-24" },
+        react_1["default"].createElement("div", { className: "z-10 relative text-yellow-500 ml-16 mt-24" },
             react_1["default"].createElement("h1", { className: "text-8xl font mb-2" }, "NAVIGO"),
             react_1["default"].createElement("p", { className: "text-6xl text-yellow-500 mb-12" }, " Your Gateway to The Experience"),
             react_1["default"].createElement("div", { className: "flex flex-col space-y-4" },

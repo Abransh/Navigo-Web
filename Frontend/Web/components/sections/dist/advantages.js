@@ -4,7 +4,7 @@ exports.__esModule = true;
 var react_1 = require("react");
 var link_1 = require("next/link");
 var AdvantagesSection = function () {
-    return (react_1["default"].createElement("section", { className: "py-16 bg-white-100" },
+    return (react_1["default"].createElement("section", { className: "py-1 bg-white-100" },
         react_1["default"].createElement("div", { className: "container mx-auto px-4" },
             react_1["default"].createElement("div", { className: "max-w-4xl mx-auto text-center" },
                 react_1["default"].createElement("div", { className: "grid grid-cols-1 md:grid-cols-3 gap-6 mb-12" }),

@@ -18,19 +18,19 @@ const FeatureBoxes: React.FC = () => {
       title: 'Enhanced Safety & Specialized safety for Women',
       description: 'Traveling to a new city often means juggling multiple apps—for transport, food, events, and more. It\'s overwhelming, time-consuming, and many aren\'t even in English. We simplify it by bringing you local apps in English.',
       leftImage: '/images/frontend/web/public/images/QrBarBoxes.jpg', // Replace with your actual image paths
-      rightImage: '/images/frontend/web/public/images/featurebox1.jpg'
+      rightImage: '/images/frontend/web/public/images/featuresbox1.jpg'
     },
     {
       title: 'Protection from Tourist Inflation',
       description: 'With our companion you would get the best possible prices at public places, our companion would be there to assure no marked up price is charged.',
       leftImage: '/images/frontend/web/public/images/QrBarBoxes.jpg',
-      rightImage: '/images/frontend/web/public/images/featurebox2.jpg'
+      rightImage: '/images/frontend/web/public/images/featuresbox2.jpg'
     },
     {
       title: 'Seamless Communication',
       description: 'With our Companions you would be easily able to communicate with the other people. Our Companions speak English.',
       leftImage: '/images/frontend/web/public/images/QrBarBoxes.jpg',
-      rightImage: '/images/frontend/web/public/images/Featurebox3.jpg'
+      rightImage: '/images/frontend/web/public/images/Featuresbox3.jpg'
     },
     {
       title: 'TRAVEL APPS!!',
@@ -86,9 +86,9 @@ const FeatureBoxes: React.FC = () => {
           className="py-8 opacity-0 translate-y-20 transition-all duration-700 sticky"
           style={{ top: '14vh' }}
         >
-          <div className="max-w-6xl mx-auto flex">
+          <div className="max-w-7xl mx-auto flex">
             {/* Text container */}
-            <div className="w-[760px] h-[330px] rounded-2xl bg-[#ECEBE9] p-6 flex flex-col justify-center">
+            <div className="w-[700px] h-[330px] rounded-2xl bg-[#ECEBE9] p-6 flex flex-col justify-center">
               <h3 className="text-[36px] font-bold mb-4">
                 {feature.title}
               </h3>
@@ -98,7 +98,7 @@ const FeatureBoxes: React.FC = () => {
             </div>
             
             {/* Middle image container */}
-            <div className="w-[120px] h-[330px] rounded-2xl mx-1 overflow-hidden">
+            <div className="w-[100px] h-[330px] rounded-2xl mx-1 overflow-hidden">
               <div className="w-full h-full relative">
                 <Image 
                   src={feature.leftImage}
@@ -110,7 +110,7 @@ const FeatureBoxes: React.FC = () => {
             </div>
             
             {/* Right image container */}
-            <div className="w-[522px] h-[330px] rounded-2xl overflow-hidden">
+            <div className="w-[580px] h-[330px] rounded-2xl overflow-hidden">
               <div className="w-full h-full relative">
                 <Image 
                   src={feature.rightImage}
