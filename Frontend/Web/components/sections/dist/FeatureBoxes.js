@@ -13,8 +13,8 @@ var FeatureBoxes = function () {
             rightImage: '/images/feature-image-1-right.jpg'
         },
         {
-            title: 'Enhanced Safety & Specialized safety for Women',
-            description: 'Traveling to a new city often means juggling multiple apps—for transport, food, events, and more. It\'s overwhelming, time-consuming, and many aren\'t even in English. We simplify it by bringing you local apps in English.',
+            title: 'Protection from Tourist Inflation',
+            description: 'With our companion you would get the best possible prices at public places, our companion would be there to assure no marked up price is charged.',
             leftImage: '/images/frontend/web/public/images/QrBarBoxes.jpg',
             rightImage: '/images/feature-image-2-right.jpg'
         },
