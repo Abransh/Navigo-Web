@@ -61,7 +61,7 @@ export default function DestinationsSection() {
       <div className="mt-8 flex justify-end">
         <Link
           href="/destinations"
-          className="inline-flex items-center gap-2 rounded-full bg-gray-900 px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-navy-blue"
+          className="inline-flex w-full items-center gap-2 rounded-full bg-gray-900 px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-[#F3A522] hover:text-navy-blue"
         >
           ALL DESTINATIONS
           <ArrowRight className="h-4 w-4" />

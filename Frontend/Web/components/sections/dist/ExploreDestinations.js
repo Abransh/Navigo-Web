@@ -37,7 +37,7 @@ function DestinationsSection() {
                     "EXPLORE",
                     React.createElement(lucide_react_1.ArrowRight, { className: "h-4 w-4" }))))); })),
         React.createElement("div", { className: "mt-8 flex justify-end" },
-            React.createElement(link_1["default"], { href: "/destinations", className: "inline-flex items-center gap-2 rounded-full bg-gray-900 px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-navy-blue" },
+            React.createElement(link_1["default"], { href: "/destinations", className: "inline-flex w-full items-center gap-2 rounded-full bg-gray-900 px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-[#F3A522] hover:text-navy-blue" },
                 "ALL DESTINATIONS",
                 React.createElement(lucide_react_1.ArrowRight, { className: "h-4 w-4" })))));
 }

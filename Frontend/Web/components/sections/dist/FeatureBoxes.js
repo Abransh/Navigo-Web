@@ -15,14 +15,14 @@ var FeatureBoxes = function () {
         {
             title: 'Protection from Tourist Inflation',
             description: 'With our companion you would get the best possible prices at public places, our companion would be there to assure no marked up price is charged.',
-            leftImage: '/images/frontend/web/public/images/featurebox2.jpg',
-            rightImage: '/images/feature-image-2-right.jpg'
+            leftImage: '/images/frontend/web/public/images/QrBarBoxes.jpg',
+            rightImage: '/images/frontend/web/public/images/featurebox2.jpg'
         },
         {
             title: 'Seamless Communication',
             description: 'With our Companions you would be easily able to communicate with the other people. Our Companions speak English.',
-            leftImage: '/images/frontend/web/public/images/Featurebox3.jpg',
-            rightImage: '/images/feature-image-3-right.jpg'
+            leftImage: '/images/frontend/web/public/images/QrBarBoxes.jpg',
+            rightImage: '/images/frontend/web/public/images/Featurebox3.jpg'
         },
         {
             title: 'TRAVEL APPS!!',
