@@ -10,23 +10,23 @@ var FeatureBoxes = function () {
             title: 'Enhanced Safety & Specialized safety for Women',
             description: 'Traveling to a new city often means juggling multiple apps—for transport, food, events, and more. It\'s overwhelming, time-consuming, and many aren\'t even in English. We simplify it by bringing you local apps in English.',
             leftImage: '/images/frontend/web/public/images/QrBarBoxes.jpg',
-            rightImage: '/images/feature-image-1-right.jpg'
+            rightImage: '/images/frontend/web/public/images/featurebox1.jpg'
         },
         {
             title: 'Protection from Tourist Inflation',
             description: 'With our companion you would get the best possible prices at public places, our companion would be there to assure no marked up price is charged.',
-            leftImage: '/images/frontend/web/public/images/QrBarBoxes.jpg',
+            leftImage: '/images/frontend/web/public/images/featurebox2.jpg',
             rightImage: '/images/feature-image-2-right.jpg'
         },
         {
-            title: 'Enhanced Safety & Specialized safety for Women',
-            description: 'Traveling to a new city often means juggling multiple apps—for transport, food, events, and more. It\'s overwhelming, time-consuming, and many aren\'t even in English. We simplify it by bringing you local apps in English.',
-            leftImage: '/images/frontend/web/public/images/QrBarBoxes.jpg',
+            title: 'Seamless Communication',
+            description: 'With our Companions you would be easily able to communicate with the other people. Our Companions speak English.',
+            leftImage: '/images/frontend/web/public/images/Featurebox3.jpg',
             rightImage: '/images/feature-image-3-right.jpg'
         },
         {
-            title: 'Enhanced Safety & Specialized safety for Women',
-            description: 'Traveling to a new city often means juggling multiple apps—for transport, food, events, and more. It\'s overwhelming, time-consuming, and many aren\'t even in English. We simplify it by bringing you local apps in English.',
+            title: 'TRAVEL APPS!!',
+            description: 'With our companion you would get the best possible prices at public places, our companion would be there to assure no marked up price is charged.',
             leftImage: '/images/frontend/web/public/images/QrBarBoxes.jpg',
             rightImage: '/images/feature-image-4-right.jpg'
         }
@@ -70,7 +70,7 @@ var FeatureBoxes = function () {
             react_1["default"].createElement("div", { className: "w-[760px] h-[330px] rounded-2xl bg-[#ECEBE9] p-6 flex flex-col justify-center" },
                 react_1["default"].createElement("h3", { className: "text-[36px] font-bold mb-4" }, feature.title),
                 react_1["default"].createElement("p", { className: "text-base text-[24px]" }, feature.description)),
-            react_1["default"].createElement("div", { className: "w-[101px] h-[330px] rounded-2xl mx-1 overflow-hidden" },
+            react_1["default"].createElement("div", { className: "w-[120px] h-[330px] rounded-2xl mx-1 overflow-hidden" },
                 react_1["default"].createElement("div", { className: "w-full h-full relative" },
                     react_1["default"].createElement(image_1["default"], { src: feature.leftImage, alt: "Feature " + (index + 1), fill: true, className: "object-cover" }))),
             react_1["default"].createElement("div", { className: "w-[522px] h-[330px] rounded-2xl overflow-hidden" },
