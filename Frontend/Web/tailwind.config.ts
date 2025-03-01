@@ -60,6 +60,9 @@ export default {
 			'Montserrat': [
 				'Montserrat',
 			],
+			'Poppins': [
+				'Poppins',
+			],
 			sans: ['var(--font-poppins)', 'sans-serif'],
   		},
   		borderRadius: {
