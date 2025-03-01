@@ -36,7 +36,7 @@ export default function DestinationsSection() {
             key={destination.name}
             className="group flex flex-col overflow-hidden rounded-3xl bg-gray-50 p-4 transition-colors hover:bg-[#F3A522]"
           >
-            <h3 className="mb-4 text-center text-xl font-bold">{destination.name}</h3>
+            <h3 className="mb-4 text-center text-xl font-light">{destination.name}</h3>
             <div className="relative mb-4 overflow-hidden rounded-2xl">
               <div className="relative aspect-[3/4] w-full">
                 <Image
@@ -47,20 +47,19 @@ export default function DestinationsSection() {
                 />
               </div>
             </div>
-            <div className="p-6">
-              <h3 className="mb-4 text-xl font-bold">{destination.name}</h3>
+         
               <Link
                 href={destination.href}
-                className="inline-flex items-center gap-2 text-sm font-medium transition-colors group-hover:text-navy-blue"
+                className="mt-auto inline-flex items-center justify-between px-2 text-sm font-medium transition-colors group-hover:text-navy-blue"
               >
                 EXPLORE
                 <ArrowRight className="h-4 w-4" />
               </Link>
-            </div>
+            
           </div>
         ))}
       </div>
-      <div className="mt-8 flex justify-end">
+      <div className="mt-2 flex justify-end">
         <Link
           href="/destinations"
           className="inline-flex w-full items-center gap-2 rounded-full bg-gray-900 px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-[#F3A522] hover:text-navy-blue"
