@@ -8,6 +8,12 @@ function AboutPage() {
                     React.createElement("h1", { className: "text-6xl font-bold text-[#1E1E1E]" },
                         "Our",
                         React.createElement("br", null),
-                        "Mission"))))));
+                        "Mission"),
+                    React.createElement("p", { className: "mt-8 text-xl text-gray-800" }, "Navigo is your trusted companion for exploring India safely and authentically. We're driven by our passion to make travel accessible, safe, and enriching for everyone.")),
+                React.createElement("div", { className: "space-y-16" },
+                    React.createElement("div", null,
+                        React.createElement("h2", { className: "mb-4 text-3xl font-bold text-[#1E1E1E]" }, "Our Vision"),
+                        React.createElement("p", { className: "text-xl text-gray-800" }, "We envision a world where travelers can experience the true essence of India without barriers, creating meaningful connections and unforgettable memories.")),
+                    "  ")))));
 }
 exports["default"] = AboutPage;
