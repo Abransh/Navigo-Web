@@ -8,6 +8,7 @@ import FeatureBoxes from '../components/sections/FeatureBoxes';
 import AdvantagesSection from '@/components/sections/advantages';
 import DestinationsSection from '@/components/sections/ExploreDestinations';
 import ExpDest from '@/components/sections/ExpDest';
+import Testimonials from '@/components/sections/testimonials';
 
 export default function Home() {
   return (
@@ -19,6 +20,7 @@ export default function Home() {
       <AdvantagesSection />
       <ExpDest />
       <DestinationsSection />
+      <Testimonials />
     </MainLayout>
   );
 }

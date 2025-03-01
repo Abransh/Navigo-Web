@@ -28,11 +28,11 @@ var destinations = [
 ];
 function DestinationsSection() {
     return (React.createElement("section", { className: "mx-auto max-w-[1440px] px-4 py-16" },
-        React.createElement("div", { className: "grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4" }, destinations.map(function (destination) { return (React.createElement("div", { key: destination.name, className: "group flex flex-col overflow-hidden rounded-3xl bg-gray-50 p-4 transition-colors hover:bg-[#F3A522]" },
-            React.createElement("h3", { className: "mb-4 text-center text-xl font-light" }, destination.name),
+        React.createElement("div", { className: "grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4" }, destinations.map(function (destination) { return (React.createElement("div", { key: destination.name, className: "group flex h-[500px] flex-col overflow-hidden rounded-3xl bg-gray-50 p-6 transition-colors hover:bg-[#F3A522]" },
+            React.createElement("h3", { className: "mb-6 text-center text-2xl font-light" }, destination.name),
             React.createElement("div", { className: "relative mb-4 overflow-hidden rounded-2xl" },
                 React.createElement("div", { className: "relative aspect-[3/4] w-full" },
-                    React.createElement(image_1["default"], { src: destination.image || "/placeholder.svg", alt: destination.name, fill: true, className: "object-cover p-2" }))),
+                    React.createElement(image_1["default"], { src: destination.image || "/placeholder.svg", alt: destination.name, fill: true, className: "object-cover p-3", style: { aspectRatio: "3/4" } }))),
             React.createElement(link_1["default"], { href: destination.href, className: "mt-auto inline-flex items-center justify-between px-2 text-sm font-medium transition-colors group-hover:text-navy-blue" },
                 "EXPLORE",
                 React.createElement(lucide_react_1.ArrowRight, { className: "h-4 w-4" })))); })),

@@ -30,20 +30,21 @@ const destinations = [
 export default function DestinationsSection() {
   return (
     <section className="mx-auto max-w-[1440px] px-4 py-16">
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
         {destinations.map((destination) => (
           <div
             key={destination.name}
-            className="group flex flex-col overflow-hidden rounded-3xl bg-gray-50 p-4 transition-colors hover:bg-[#F3A522]"
+            className="group flex h-[500px] flex-col overflow-hidden rounded-3xl bg-gray-50 p-6 transition-colors hover:bg-[#F3A522]"
           >
-            <h3 className="mb-4 text-center text-xl font-light">{destination.name}</h3>
+            <h3 className="mb-6 text-center text-2xl font-light">{destination.name}</h3>
             <div className="relative mb-4 overflow-hidden rounded-2xl">
               <div className="relative aspect-[3/4] w-full">
                 <Image
                   src={destination.image || "/placeholder.svg"}
                   alt={destination.name}
                   fill
-                  className="object-cover p-2"
+                  className="object-cover p-3"
+                  style={{ aspectRatio: "3/4" }}
                 />
               </div>
             </div>
