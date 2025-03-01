@@ -25,4 +25,22 @@ export default function AboutPage() {
                 We envision a world where travelers can experience the true essence of India without barriers, creating
                 meaningful connections and unforgettable memories.
               </p>
-            </div>  
+            </div>
+
+            {/* Goals Section */}
+            <div>
+              <h2 className="mb-6 text-3xl font-bold text-[#1E1E1E]">Our Goals</h2>
+              <ul className="space-y-4">
+                {[
+                  "Ensure safe and authentic travel experiences",
+                  "Bridge cultural and language gaps",
+                  "Empower local communities through tourism",
+                  "Make Indian travel accessible to everyone",
+                ].map((goal, index) => (
+                  <li key={index} className="text-xl text-gray-800">
+                    • {goal}
+                  </li>
+                ))}
+              </ul>
+            </div>
+  

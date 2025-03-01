@@ -14,6 +14,15 @@ function AboutPage() {
                     React.createElement("div", null,
                         React.createElement("h2", { className: "mb-4 text-3xl font-bold text-[#1E1E1E]" }, "Our Vision"),
                         React.createElement("p", { className: "text-xl text-gray-800" }, "We envision a world where travelers can experience the true essence of India without barriers, creating meaningful connections and unforgettable memories.")),
-                    "  ")))));
+                    React.createElement("div", null,
+                        React.createElement("h2", { className: "mb-6 text-3xl font-bold text-[#1E1E1E]" }, "Our Goals"),
+                        React.createElement("ul", { className: "space-y-4" }, [
+                            "Ensure safe and authentic travel experiences",
+                            "Bridge cultural and language gaps",
+                            "Empower local communities through tourism",
+                            "Make Indian travel accessible to everyone",
+                        ].map(function (goal, index) { return (React.createElement("li", { key: index, className: "text-xl text-gray-800" },
+                            "\u2022 ",
+                            goal)); }))))))));
 }
 exports["default"] = AboutPage;
