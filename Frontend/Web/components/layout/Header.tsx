@@ -12,10 +12,15 @@ const Header: React.FC = () => {
     const handleScroll = () => {
       const currentScrollPos = window.pageYOffset;
       
-      // Show header ONLY when scrolling up
-      const isScrollingUp = prevScrollPos > currentScrollPos;
+      // Always show header at the top of the page (hero section)
+      if (currentScrollPos < 200) {
+        setVisible(true);
+      } else {
+        // Otherwise, only show when scrolling up
+        const isScrollingUp = prevScrollPos > currentScrollPos;
+        setVisible(isScrollingUp);
+      }
       
-      setVisible(isScrollingUp);
       setPrevScrollPos(currentScrollPos);
     };
 
@@ -24,7 +29,7 @@ const Header: React.FC = () => {
   }, [prevScrollPos]);
 
   return (
-    <div className={`fixed top-0 left-0 right-0 z-50 transition-transform duration-300 px-4 ${
+    <div className={`fixed top-4 left-0 right-0 z-50 transition-transform duration-300 px-2 ${
       visible ? 'translate-y-0' : '-translate-y-full'
     }`}>
       <header className="flex justify-between items-center py-3 max-w-7xl mx-auto">
