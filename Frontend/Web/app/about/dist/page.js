@@ -23,6 +23,11 @@ function AboutPage() {
                             "Make Indian travel accessible to everyone",
                         ].map(function (goal, index) { return (React.createElement("li", { key: index, className: "text-xl text-gray-800" },
                             "\u2022 ",
-                            goal)); }))))))));
+                            goal)); }))),
+                    React.createElement("div", null,
+                        React.createElement("h2", { className: "mb-6 text-3xl font-bold text-[#1E1E1E]" }, "Our Values"),
+                        React.createElement("ul", { className: "space-y-4" }, ["Safety First", "Cultural Authenticity", "Community Connection", "Innovation"].map(function (value, index) { return (React.createElement("li", { key: index, className: "text-xl text-gray-800" },
+                            "\u2022 ",
+                            value)); }))))))));
 }
 exports["default"] = AboutPage;
