@@ -41,8 +41,8 @@ export default function PlaneAnimation() {
         <Image
           src="/images/frontend/web/public/images/plane.jpg"
           alt="Plane"
-          width={36}   //width of plane
-          height={36}  //height of plane
+          width={38}   //width of plane
+          height={38}  //height of plane
           className="-translate-y-[17px]" // Adjust this value to fine-tune vertical position
         />
       </div>

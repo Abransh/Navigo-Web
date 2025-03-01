@@ -86,13 +86,13 @@ const FeatureBoxes: React.FC = () => {
           className="py-8 opacity-0 translate-y-20 transition-all duration-700 sticky"
           style={{ top: '14vh' }}
         >
-          <div className="max-w-7xl mx-auto flex">
+          <div className="max-w-7xl mx-auto flex">  
             {/* Text container */}
             <div className="w-[700px] h-[330px] rounded-2xl bg-[#ECEBE9] p-6 flex flex-col justify-center">
-              <h3 className="text-[36px] font-bold mb-4">
+              <h3 className="text-[36px] font-bold mb-6 font-sofia">
                 {feature.title}
               </h3>
-              <p className="text-base text-[24px]">
+              <p className="text-base text-[25px] leading-[32px] font-sofia-pro text-[#192328]">
                 {feature.description}
               </p>
             </div>
