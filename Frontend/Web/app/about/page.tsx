@@ -11,7 +11,7 @@ export default function AboutPage() {
                 Mission
                 </h1>
             <p className="mt-8 text-xl text-gray-800">
-              Navigo is your trusted companion for exploring India safely and authentically. We're driven by our passion
+              Navigo is your trusted companion for exploring India safely and authentically. We&apos;re driven by our passion
               to make travel accessible, safe, and enriching for everyone.
             </p>
           </div>
@@ -44,7 +44,7 @@ export default function AboutPage() {
               </ul>
             </div>
                 {/* Values Section */}
-                
+
             <div>
               <h2 className="mb-6 text-3xl font-bold text-[#1E1E1E]">Our Values</h2>
               <ul className="space-y-4">
