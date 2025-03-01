@@ -35,11 +35,16 @@ export default function Testimonials() {
                        <div className="mb-4">
                           <p className="text-sm text-gray-500">Name.</p>
                              <h3 className="text-xl font-medium">{testimonial.name}</h3>
+                        </div>
+                         <div className="mb-4 flex items-center gap-1 rounded-full bg-[#1E1E1E] px-4 py-1 text-white w-fit">
+                            <Star className="h-4 w-4 fill-current" />
+                               <span className="text-sm">{testimonial.rating} / 5</span>
                          </div>
-
-
-
-
+                         <p className="text-gray-600">{testimonial.text}</p>
+                    </div>
+                  ))}
+                </div>
+             </section>
 
     )
 

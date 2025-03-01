@@ -1,6 +1,7 @@
 "use client";
 "use strict";
 exports.__esModule = true;
+var lucide_react_1 = require("lucide-react");
 var testimonials = [
     {
         name: "Michael Jake",
@@ -29,6 +30,11 @@ function Testimonials() {
             React.createElement("div", { className: "mb-4" },
                 React.createElement("p", { className: "text-sm text-gray-500" }, "Name."),
                 React.createElement("h3", { className: "text-xl font-medium" }, testimonial.name)),
-            ") }")); }))));
+            React.createElement("div", { className: "mb-4 flex items-center gap-1 rounded-full bg-[#1E1E1E] px-4 py-1 text-white w-fit" },
+                React.createElement(lucide_react_1.Star, { className: "h-4 w-4 fill-current" }),
+                React.createElement("span", { className: "text-sm" },
+                    testimonial.rating,
+                    " / 5")),
+            React.createElement("p", { className: "text-gray-600" }, testimonial.text))); }))));
 }
 exports["default"] = Testimonials;
