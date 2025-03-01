@@ -34,16 +34,18 @@ export default function DestinationsSection() {
         {destinations.map((destination) => (
           <div
             key={destination.name}
-            className="group relative overflow-hidden rounded-3xl bg-gray-50 transition-colors hover:bg-[#F3A522]"
+            className="group flex flex-col overflow-hidden rounded-3xl bg-gray-50 p-4 transition-colors hover:bg-[#F3A522]"
           >
-            <div className="aspect-[3/4] w-full">
-              <Image
-                src={destination.image || "/placeholder.svg"}
-                alt={destination.name}
-                className="h-full w-full object-cover"
-                width={400}
-                height={600}
-              />
+            <h3 className="mb-4 text-center text-xl font-bold">{destination.name}</h3>
+            <div className="relative mb-4 overflow-hidden rounded-2xl">
+              <div className="relative aspect-[3/4] w-full">
+                <Image
+                  src={destination.image || "/placeholder.svg"}
+                  alt={destination.name}
+                  fill
+                  className="object-cover p-2"
+                />
+              </div>
             </div>
             <div className="p-6">
               <h3 className="mb-4 text-xl font-bold">{destination.name}</h3>
