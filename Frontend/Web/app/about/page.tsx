@@ -1,18 +1,28 @@
+import Header from "@/components/layout/Header";
+
 export default function AboutPage() {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-[#F3A522] to-[#FFC107]">
+      <div className="min-h-screen bg-gradient-to-b from-[#f2dcb6] to-[#f3e2b0]">
+        <div className="relative z-10 pt-8">
+        <Header />
+      </div>
         <div className="mx-auto max-w-7xl px-4 py-24">
+        <h2 className="text-8xl font-Montserrat font mb-2">Our Mission</h2>
+        <p className="text-6xl text-black mb-12"> Your Gateway to The Experience<br></br><br></br></p>
+
           <div className="grid gap-16 lg:grid-cols-2">
             {/* Left Column - Mission */}
             <div>
-              <h1 className="text-6xl font-bold text-[#1E1E1E]">
-                Our
+              <h1 className="text-5xl font-bold text-[#1E1E1E]">
+                Why Us?
                 <br />
-                Mission
+               
                 </h1>
-            <p className="mt-8 text-xl text-gray-800">
-              Navigo is your trusted companion for exploring India safely and authentically. We&apos;re driven by our passion
-              to make travel accessible, safe, and enriching for everyone.
+            <p className="mt-10 text-xl text-gray-800">
+            At Navigo, our mission is to revolutionize the travel experience by seamlessly connecting international explorers with trusted, knowledgeable local
+             companions. We empower travelers to break down language barriers,
+            navigate unfamiliar environments, and immerse themselves in authentic cultural experiences—all while ensuring safety and convenience.
+            By leveraging innovative technology and a passionate network of local experts, we strive to transform every journey into a meaningful, enriching adventure that bridges cultural divides and fosters lasting connections.
             </p>
           </div>
 
