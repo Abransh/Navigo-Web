@@ -53,10 +53,14 @@ export default {
   			}
   		},
   		fontFamily: {
-  			'sofia-pro': [
+  			'Sofia pro': [
   				'Sofia Pro',
   				'sans-serif'
-  			]
+  			],
+			'Montserrat': [
+				'Montserrat',
+			],
+			sans: ['var(--font-poppins)', 'sans-serif'],
   		},
   		borderRadius: {
   			lg: 'var(--radius)',

@@ -12,7 +12,7 @@ var HeroSection = function () {
         react_1["default"].createElement("div", { className: "relative z-10 pt-8" },
             react_1["default"].createElement(Header_1["default"], null)),
         react_1["default"].createElement("div", { className: "z-10 relative text-yellow-500 ml-16 mt-24" },
-            react_1["default"].createElement("h1", { className: "text-8xl font mb-2" }, "NAVIGO"),
+            react_1["default"].createElement("h1", { className: "text-8xl font-Montserrat font mb-2" }, "NAVIGO"),
             react_1["default"].createElement("p", { className: "text-6xl text-yellow-500 mb-12" }, " Your Gateway to The Experience"),
             react_1["default"].createElement("div", { className: "flex flex-col space-y-4" },
                 react_1["default"].createElement(link_1["default"], { href: "/book-online", className: "w-[210px] h-[32px] bg-[#F3A522] hover:bg-[#003366] text-white rounded-2xl flex items-center justify-between px-4 transition-colors group" },

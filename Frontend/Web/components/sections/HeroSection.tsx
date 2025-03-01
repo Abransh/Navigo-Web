@@ -26,7 +26,7 @@ const HeroSection: React.FC = () => {
       
       {/* Content overlay */}
       <div className="z-10 relative text-yellow-500 ml-16 mt-24">
-        <h1 className="text-8xl font mb-2">NAVIGO</h1>
+        <h1 className="text-8xl font-Montserrat font mb-2">NAVIGO</h1>
         <p className="text-6xl text-yellow-500 mb-12"> Your Gateway to The Experience</p>
         
         

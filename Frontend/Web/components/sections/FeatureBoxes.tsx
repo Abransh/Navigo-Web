@@ -89,10 +89,10 @@ const FeatureBoxes: React.FC = () => {
           <div className="max-w-7xl mx-auto flex">  
             {/* Text container */}
             <div className="w-[700px] h-[330px] rounded-2xl bg-[#ECEBE9] p-6 flex flex-col justify-center">
-              <h3 className="text-[36px] font-bold mb-6 font-sofia">
+              <h3 className="text-[36px] font-bold mb-6 font-Poppins-  ">
                 {feature.title}
               </h3>
-              <p className="text-base text-[25px] leading-[32px] font-sofia-pro text-[#192328]">
+              <p className="text-base text-[25px] leading-[32px] font-Sofia protext-[#192328]">
                 {feature.description}
               </p>
             </div>
