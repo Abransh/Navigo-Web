@@ -1,6 +1,7 @@
 "use strict";
 exports.__esModule = true;
 var link_1 = require("next/link");
+var lucide_react_1 = require("lucide-react");
 function Footer() {
     return (React.createElement("footer", { className: "bg-[#1E1E1E] text-white" },
         React.createElement("div", { className: "mx-auto max-w-7xl px-4 py-12" },
@@ -18,6 +19,22 @@ function Footer() {
                         React.createElement("li", null,
                             React.createElement(link_1["default"], { href: "/advantages", className: "text-gray-400 hover:text-white" }, "Advantages")),
                         React.createElement("li", null,
-                            React.createElement(link_1["default"], { href: "/contact", className: "text-gray-400 hover:text-white" }, "Contact"))))))));
+                            React.createElement(link_1["default"], { href: "/contact", className: "text-gray-400 hover:text-white" }, "Contact"))))),
+            React.createElement("div", null,
+                React.createElement("h3", { className: "mb-4 text-lg font-semibold" }, "Connect With Us"),
+                React.createElement("div", { className: "flex space-x-4" },
+                    React.createElement(link_1["default"], { href: "#", className: "text-gray-400 hover:text-white" },
+                        React.createElement(lucide_react_1.Instagram, { className: "h-6 w-6" })),
+                    React.createElement(link_1["default"], { href: "#", className: "text-gray-400 hover:text-white" },
+                        React.createElement(lucide_react_1.Facebook, { className: "h-6 w-6" })),
+                    React.createElement(link_1["default"], { href: "#", className: "text-gray-400 hover:text-white" },
+                        React.createElement(lucide_react_1.Twitter, { className: "h-6 w-6" })),
+                    React.createElement(link_1["default"], { href: "#", className: "text-gray-400 hover:text-white" },
+                        React.createElement(lucide_react_1.Mail, { className: "h-6 w-6" })))),
+            React.createElement("div", { className: "mt-8 border-t border-gray-800 pt-8 text-center text-sm text-gray-400" },
+                React.createElement("p", null,
+                    "\u00A9 ",
+                    new Date().getFullYear(),
+                    " Navigo. All rights reserved.")))));
 }
 exports["default"] = Footer;

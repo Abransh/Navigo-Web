@@ -40,14 +40,34 @@ export default function Footer() {
                 </ul>
                 </div>
                </div>
-          </div>
 
+               {/* Social Links */}
+             <div>
+                    <h3 className="mb-4 text-lg font-semibold">Connect With Us</h3>
+                    <div className="flex space-x-4">
+                        <Link href="#" className="text-gray-400 hover:text-white">
+                          <Instagram className="h-6 w-6" />
+                        </Link>
 
+                        <Link href="#" className="text-gray-400 hover:text-white">
+                         <Facebook className="h-6 w-6" />
+                        </Link>
 
+                        <Link href="#" className="text-gray-400 hover:text-white">
+                         <Twitter className="h-6 w-6" />
+                        </Link>
 
+                        <Link href="#" className="text-gray-400 hover:text-white">
+                         <Mail className="h-6 w-6" />
+                        </Link>
+                    </div>
+             </div>
+          
 
-
-        
-        </footer>
+         <div className="mt-8 border-t border-gray-800 pt-8 text-center text-sm text-gray-400">
+                <p>&copy; {new Date().getFullYear()} Navigo. All rights reserved.</p>
+         </div>
+      </div>        
+   </footer>
     )
 }
