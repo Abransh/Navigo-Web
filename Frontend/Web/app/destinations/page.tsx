@@ -45,14 +45,14 @@ const allDestinations = [
 
         return (
                 <div className="min-h-screen bg-gray-50">
-                    <div className="mx-auto max-w-7xl px-4 py-24">
+                    <div className="mx-auto max-w-8xl px-4 py-24">
                          <h1 className="mb-16 text-center text-5xl font-bold">Explore Indian Destinations</h1>
-                          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
+                          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4">
                           {allDestinations.map((destination) => (
                               <Link
                               key={destination.name}
                               href={destination.href}
-                              className="group block h-[500px] overflow-hidden rounded-3xl bg-white p-6 transition-colors hover:bg-[#F3A522]"
+                              className="group block h-[600px] overflow-hidden rounded-3xl bg-white p-6 transition-colors hover:bg-[#F3A522]"
                             >
                               <div className="flex h-full flex-col">
                                    <h3 className="mb-6 text-center text-2xl font-bold">{destination.name}</h3>
@@ -65,8 +65,10 @@ const allDestinations = [
                                                  alt={destination.name}
                                                  fill
                                                  className="object-cover "
-                                                  style={{ aspectRatio: "3/4" }}
-                                            />    
+                                                 style={{ aspectRatio: "3/4" }}
+                                                 
+                                            />  
+                                              
                                         </div> 
                                        
                                     </div>

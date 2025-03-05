@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { useState } from "react"
 import Image from "next/image"
@@ -69,7 +69,7 @@ const howItWorks = [
               <div className="flex flex-col">
                 {/* Heading */}
                 <div className="mb-6 rounded-2xl bg-white p-4 shadow-sm">
-                  <h2 className="text-center text-3xl font-bold text-navy-blue">HOW IT WORKS</h2>
+                  <h2 className="text-center text-3xl font-bold  text-navy-blue">HOW IT WORKS</h2>
                 </div>
 
                 {/* Accordion */}
@@ -114,7 +114,7 @@ const howItWorks = [
         </section>
 
         {/* Popular Destinations Section */}
-        <section className="mb-24">
+        <section className="mb-12">
           <h2 className="mb-12 text-3xl font-bold">Popular Destinations</h2>
           <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
             {popularDestinations.map((destination) => (

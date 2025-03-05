@@ -41,9 +41,9 @@ var allDestinations = [
 ];
 function DestinationsPage() {
     return (React.createElement("div", { className: "min-h-screen bg-gray-50" },
-        React.createElement("div", { className: "mx-auto max-w-7xl px-4 py-24" },
+        React.createElement("div", { className: "mx-auto max-w-8xl px-4 py-24" },
             React.createElement("h1", { className: "mb-16 text-center text-5xl font-bold" }, "Explore Indian Destinations"),
-            React.createElement("div", { className: "grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4" }, allDestinations.map(function (destination) { return (React.createElement(link_1["default"], { key: destination.name, href: destination.href, className: "group block h-[500px] overflow-hidden rounded-3xl bg-white p-6 transition-colors hover:bg-[#F3A522]" },
+            React.createElement("div", { className: "grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4" }, allDestinations.map(function (destination) { return (React.createElement(link_1["default"], { key: destination.name, href: destination.href, className: "group block h-[600px] overflow-hidden rounded-3xl bg-white p-6 transition-colors hover:bg-[#F3A522]" },
                 React.createElement("div", { className: "flex h-full flex-col" },
                     React.createElement("h3", { className: "mb-6 text-center text-2xl font-bold" }, destination.name),
                     React.createElement("div", { className: "relative mb-4 flex-1 overflow-hidden  " },
