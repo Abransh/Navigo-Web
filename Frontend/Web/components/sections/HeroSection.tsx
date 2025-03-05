@@ -11,7 +11,7 @@ const HeroSection: React.FC = () => {
       <div className="absolute inset-0 z-0">
         {/* Replace with your actual image path */}
         <Image 
-          src="/images/frontend/web/public/images/HeroSectionImage.jpg" 
+          src="/images/HeroSectionImage.jpg" 
           alt="Navigo background" 
           fill 
           className="object-cover"

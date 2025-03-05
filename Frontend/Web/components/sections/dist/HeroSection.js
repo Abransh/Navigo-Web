@@ -8,7 +8,7 @@ var Header_1 = require("../layout/Header");
 var HeroSection = function () {
     return (react_1["default"].createElement("section", { className: "relative h-screen" },
         react_1["default"].createElement("div", { className: "absolute inset-0 z-0" },
-            react_1["default"].createElement(image_1["default"], { src: "/images/frontend/web/public/images/HeroSectionImage.jpg", alt: "Navigo background", fill: true, className: "object-cover", priority: true })),
+            react_1["default"].createElement(image_1["default"], { src: "/images/HeroSectionImage.jpg", alt: "Navigo background", fill: true, className: "object-cover", priority: true })),
         react_1["default"].createElement("div", { className: "relative z-10 pt-8" },
             react_1["default"].createElement(Header_1["default"], null)),
         react_1["default"].createElement("div", { className: "z-10 relative text-amber-500 ml-16 mt-24" },

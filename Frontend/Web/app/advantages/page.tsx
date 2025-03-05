@@ -13,7 +13,7 @@ export default function AdvantagesPage(){
                             provide
                         </h1>
                       </div>
-                    </div>
+                    
 
                     {/* Right Column - Benefits Grid */}
                  <div className="grid gap-12 lg:col-span-2">
@@ -60,6 +60,7 @@ export default function AdvantagesPage(){
                                      English-speaking doctors/pharmacies
                                      </p>
                             </div>
+                         </div>   
                     </div>
                  </div>
                 </div>
