@@ -46,7 +46,7 @@ export default function AdvantagesPage(){
                              <div>
                                     <h2 className="mb-4 text-3xl font-medium">Travel Cashless</h2>
                                      <p className="text-gray-700">
-                                    Say Goodbye to Payment Hassles in India! Traveling in India and discovering your cards aren't
+                                    Say Goodbye to Payment Hassles in India! Traveling in India and discovering your cards aren&apos;t
                                     accepted everywhere? Watching locals easily pay with UPI while you struggle with cash? We understand
                                     the frustration! That&apos;s why we&apos;ve created a special solution just for foreign travelers.
                                     </p>
