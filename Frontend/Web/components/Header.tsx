@@ -43,7 +43,7 @@ const Header: React.FC = () => {
         <div className="w-[622px] h-[32px] bg-white/80 backdrop-blur-sm rounded-full shadow-md mx-2 flex justify-center items-center">
           <nav className="flex space-x-6">
             <Link href="/explore" className="hover:text-[#F3A522] text-sm">Explore Destinations</Link>
-            <Link href="/plan" className="hover:text-[#F3A522] text-sm">Plan Your Trip</Link>
+            <Link href="/planyourtrip" className="hover:text-[#F3A522] text-sm">Plan Your Trip</Link>
             <Link href="/magazine" className="hover:text-[#F3A522] text-sm">Magazine</Link>
             <Link href="/about" className="hover:text-[#F3A522] text-sm">Our Mission</Link>
           </nav>
