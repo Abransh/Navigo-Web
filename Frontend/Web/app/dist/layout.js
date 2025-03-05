@@ -16,6 +16,8 @@ exports.metadata = {
 function RootLayout(_a) {
     var children = _a.children;
     return (React.createElement("html", { lang: "en", className: poppins.variable },
-        React.createElement("body", { className: "font-sans" }, children)));
+        React.createElement("body", { className: "font-sans" },
+            children,
+            React.createElement("footer", null))));
 }
 exports["default"] = RootLayout;
