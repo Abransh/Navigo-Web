@@ -38,7 +38,7 @@ const HeroSection: React.FC = () => {
           >
             <span>Book now</span>
             <svg 
-              className="w-4 h-4 transform group-hover:rotate-45 transition-transform duration-300" 
+              className="w-5 h-5 transform group-hover:rotate-45 transition-transform duration-300" 
               fill="none" 
               stroke="currentColor" 
               viewBox="0 0 24 24" 
