@@ -18,6 +18,12 @@ function AdvantagesPage() {
                         React.createElement("div", null,
                             React.createElement("h2", { className: "mb-4 text-3xl font-medium" }, "Transportation"),
                             React.createElement("p", { className: "text-gray-700" }, "Confused about metro cards? Unsure which ticket to buy? Struggling with route maps? Transportation in a new city can be overwhelming and time-consuming. Let us help you skip the confusion and navigate efficiently from day one!"))),
-                    ") }")))));
+                    React.createElement("div", { className: "grid gap-12 md:grid-cols-2" },
+                        React.createElement("div", null,
+                            React.createElement("h2", { className: "mb-4 text-3xl font-medium" }, "Travel Cashless"),
+                            React.createElement("p", { className: "text-gray-700" }, "Say Goodbye to Payment Hassles in India! Traveling in India and discovering your cards aren't accepted everywhere? Watching locals easily pay with UPI while you struggle with cash? We understand the frustration! That's why we've created a special solution just for foreign travelers.")),
+                        React.createElement("div", null,
+                            React.createElement("h2", { className: "mb-4 text-3xl font-medium" }, "Medical & Healthcare"),
+                            React.createElement("p", { className: "text-gray-700" }, "In case of any emergency get the best available medication support without any hassle. Finding English-speaking doctors/pharmacies"))))))));
 }
 exports["default"] = AdvantagesPage;

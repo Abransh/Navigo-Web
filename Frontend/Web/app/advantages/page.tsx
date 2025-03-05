@@ -22,8 +22,8 @@ export default function AdvantagesPage(){
                           <div>
                                  <h2 className="mb-4 text-3xl font-medium">Overpricing & scams</h2>
                                 <p className="text-gray-700">
-                                        Being a tourist often means paying more and being targeted by scams. From "special tourist prices"
-                                        to classic tourist traps, it's frustrating to discover you've paid double what locals pay. Let us
+                                        Being a tourist often means paying more and being targeted by scams. From &quot;special tourist prices&quot;
+                                        to classic tourist traps, it&apos;s frustrating to discover you&apos;ve paid double what locals pay. Let us
                                         help you spend wisely and avoid common scams!
                                 </p>
                              </div>
@@ -40,6 +40,32 @@ export default function AdvantagesPage(){
                             </div>
                         </div>
 
-                        
-    )
+
+                        <div className="grid gap-12 md:grid-cols-2">
+                                                 {/* Travel Cashless */}
+                             <div>
+                                    <h2 className="mb-4 text-3xl font-medium">Travel Cashless</h2>
+                                     <p className="text-gray-700">
+                                    Say Goodbye to Payment Hassles in India! Traveling in India and discovering your cards aren't
+                                    accepted everywhere? Watching locals easily pay with UPI while you struggle with cash? We understand
+                                    the frustration! That&apos;s why we&apos;ve created a special solution just for foreign travelers.
+                                    </p>
+                            </div>
+
+                                            {/* Medical & Healthcare */}
+                            <div>
+                                    <h2 className="mb-4 text-3xl font-medium">Medical & Healthcare</h2>
+                                    <p className="text-gray-700">
+                                     In case of any emergency get the best available medication support without any hassle. Finding
+                                     English-speaking doctors/pharmacies
+                                     </p>
+                            </div>
+                    </div>
+                 </div>
+                </div>
+            </div>
+        </div>
+    
+  )
 }
+    
