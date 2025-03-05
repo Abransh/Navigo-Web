@@ -12,8 +12,35 @@ export default function Footer() {
                   <h2 className="text-2xl font-bold">Navigo</h2>
                   <p className="mt-4 text-gray-400">Your trusted companion for exploring India safely and authentically.</p>
                 </div>
+
+                  {/* Quick Links */}
+                 <div>
+                  <h3 className="mb-4 text-lg font-semibold">Quick Links</h3>
+                  <ul className="space-y-2">
+                   <li>
+                       <Link href="/about" className="text-gray-400 hover:text-white">
+                       About Us
+                       </Link>
+                   </li>
+                   <li>
+                       <Link href="/destinations" className="text-gray-400 hover:text-white">
+                       Destinations
+                       </Link>
+                  </li>
+                  <li>
+                      <Link href="/advantages" className="text-gray-400 hover:text-white">
+                      Advantages
+                      </Link>
+                  </li>
+                  <li>
+                      <Link href="/contact" className="text-gray-400 hover:text-white">
+                      Contact
+                      </Link>
+                 </li>
+                </ul>
                 </div>
-            </div>
+               </div>
+          </div>
 
 
 
