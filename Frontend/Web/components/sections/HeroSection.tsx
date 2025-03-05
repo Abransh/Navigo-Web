@@ -2,7 +2,7 @@
 import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import Header from '../layout/Header';
+import Header from '../Header';
 
 const HeroSection: React.FC = () => {
   return (
@@ -38,7 +38,7 @@ const HeroSection: React.FC = () => {
           >
             <span>Book now</span>
             <svg 
-              className="w-5 h-5 transform group-hover:rotate-45 transition-transform duration-300" 
+              className="w-5 h-5 transform group-hover:-rotate-40 transition-transform duration-300" 
               fill="none" 
               stroke="currentColor" 
               viewBox="0 0 24 24" 

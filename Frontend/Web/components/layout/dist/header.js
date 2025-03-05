@@ -1,6 +1,7 @@
 // frontend/web/components/layout/Header.tsx
 "use client";
 "use strict";
+
 exports.__esModule = true;
 var link_1 = require("next/link");
 var react_1 = require("react");

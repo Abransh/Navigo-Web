@@ -1,6 +1,6 @@
 "use strict";
 exports.__esModule = true;
-var Header_1 = require("@/components/layout/Header");
+var Header_1 = require("@/components/Header");
 function AboutPage() {
     return (React.createElement("div", { className: "min-h-screen bg-gradient-to-b from-[#f2dcb6] to-[#f3e2b0]" },
         React.createElement("div", { className: "relative z-10 pt-8" },
