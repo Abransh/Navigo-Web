@@ -2,6 +2,7 @@
 "use strict";
 exports.__esModule = true;
 var react_1 = require("react");
+var image_1 = require("next/image");
 var lucide_react_1 = require("lucide-react");
 var date_fns_1 = require("date-fns");
 var popover_1 = require("@/components/ui/popover");
@@ -23,7 +24,7 @@ function ContactSection() {
         from: undefined,
         to: undefined
     }), dateRange = _c[0], setDateRange = _c[1];
-    var _d = react_1.useState(false), isRangeMode = _d[0], setisRangeMode = _d[1];
+    var _d = react_1.useState(false), isRangeMode = _d[0], setIsRangeMode = _d[1];
     var _e = react_1.useState(""), selectedDestination = _e[0], setSelectedDestination = _e[1];
     var _f = react_1.useState(false), isDestinationOpen = _f[0], setIsDestinationOpen = _f[1];
     var handleSubmit = function (e) {
@@ -60,7 +61,7 @@ function ContactSection() {
                                 React.createElement(popover_1.Popover, null,
                                     React.createElement(popover_1.PopoverTrigger, { asChild: true },
                                         React.createElement("button", { id: "date", type: "button", className: "mt-1 flex w-full items-center border-b-2 border-gray-300 py-2 text-left outline-none focus:border-navy-blue" },
-                                            React.createElement(CalendarIcon, { className: "mr-2 h-4 w-4" }),
+                                            React.createElement(lucide_react_1.CalendarIcon, { className: "mr-2 h-4 w-4" }),
                                             isRangeMode ? (dateRange.from ? (dateRange.to ? (React.createElement(React.Fragment, null,
                                                 date_fns_1.format(dateRange.from, "PPP"),
                                                 " - ",
@@ -75,12 +76,14 @@ function ContactSection() {
                                         React.createElement("button", { id: "destination", type: "button", className: "mt-1 flex w-full items-center justify-between border-b-2 border-gray-300 py-2 text-left outline-none focus:border-navy-blue" },
                                             selectedDestination
                                                 ? (_a = destinations.find(function (d) { return d.value === selectedDestination; })) === null || _a === void 0 ? void 0 : _a.label : "Select destination",
-                                            React.createElement(ChevronDown, { className: "h-4 w-4" }))),
+                                            React.createElement(lucide_react_1.ChevronDown, { className: "h-4 w-4" }))),
                                     React.createElement(popover_1.PopoverContent, { className: "w-[200px] p-0" },
                                         React.createElement("div", { className: "max-h-[300px] overflow-auto" }, destinations.map(function (destination) { return (React.createElement("button", { key: destination.value, className: "w-full px-4 py-2 text-left hover:bg-gray-100", onClick: function () {
                                                 setSelectedDestination(destination.value);
                                                 setIsDestinationOpen(false);
-                                            } }, destination.label)); })))))),
-                        ") //continue here making contact form }"))))));
+                                            } }, destination.label)); }))))),
+                            React.createElement(button_1.Button, { type: "submit", className: "flex-1 rounded-full bg-navy-blue py-2 text-center text-white hover:bg-[#F3A522] hover:text-navy-blue" }, "Submit")))),
+                React.createElement("div", { className: "relative hidden md:block" },
+                    React.createElement(image_1["default"], { src: "/placeholder.svg", alt: "Contact Us", fill: true, className: "object-cover" }))))));
 }
 exports["default"] = ContactSection;

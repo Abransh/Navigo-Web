@@ -4,7 +4,7 @@ import type React from "react";
 
 import { useState } from "react";
 import Image from "next/image";
-import { Calendar } from "lucide-react";
+import { Calendar, CalendarIcon, ChevronDown } from "lucide-react";
 import { format } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover,  PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -35,7 +35,7 @@ const destinations = [
         to: undefined,
       })
 
-      const [isRangeMode, setisRangeMode] = useState(false)
+      const [isRangeMode, setIsRangeMode] = useState(false)
       const[selectedDestination, setSelectedDestination] = useState("")
       const[isDestinationOpen, setIsDestinationOpen] = useState(false)
 
@@ -149,7 +149,7 @@ const destinations = [
                       <Calendar
                         mode={isRangeMode ? "range" : "single"}
                         selected={isRangeMode ? dateRange : date}
-                        onSelect={isRangeMode ? setDateRange : setDate}
+                        onSelect ={isRangeMode ? setDateRange : setDate}
                         initialFocus
                       />
                     </PopoverContent>
@@ -193,10 +193,24 @@ const destinations = [
                   </Popover>
                 </div>
 
-            </div>
 
+                {/* Submit Button */}
+                <Button
+                  type="submit"
+                  className="flex-1 rounded-full bg-navy-blue py-2 text-center text-white hover:bg-[#F3A522] hover:text-navy-blue"
+                >
+                  Submit
+                </Button>
+              </div>
+            </form>
+          </div>
 
-
-      )
-//continue here making contact form 
-  }
+          {/* Image Section */}
+          <div className="relative hidden md:block">
+            <Image src="/placeholder.svg" alt="Contact Us" fill className="object-cover" />
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}
