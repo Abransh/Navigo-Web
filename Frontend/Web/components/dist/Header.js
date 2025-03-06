@@ -30,7 +30,7 @@ var Header = function () {
                 react_1["default"].createElement(link_1["default"], { href: "/", className: "text-xl font text-[#000000]" }, "Navigo")),
             react_1["default"].createElement("div", { className: "w-[622px] h-[32px] bg-white/80 backdrop-blur-sm rounded-full shadow-md mx-2 flex justify-center items-center" },
                 react_1["default"].createElement("nav", { className: "flex space-x-6" },
-                    react_1["default"].createElement(link_1["default"], { href: "/explore", className: "hover:text-[#F3A522] text-sm" }, "Explore Destinations"),
+                    react_1["default"].createElement(link_1["default"], { href: "/destinations", className: "hover:text-[#F3A522] text-sm" }, "Explore Destinations"),
                     react_1["default"].createElement(link_1["default"], { href: "/planyourtrip", className: "hover:text-[#F3A522] text-sm" }, "Plan Your Trip"),
                     react_1["default"].createElement(link_1["default"], { href: "/magazine", className: "hover:text-[#F3A522] text-sm" }, "Magazine"),
                     react_1["default"].createElement(link_1["default"], { href: "/about", className: "hover:text-[#F3A522] text-sm" }, "Our Mission"))),

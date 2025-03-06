@@ -27,7 +27,7 @@ const HeroSection: React.FC = () => {
       {/* Content overlay */}
       <div className="z-10 relative text-amber-500 ml-16 mt-24">
         <h1 className="text-8xl font-Montserrat font mb-2">NAVIGO</h1>
-        <p className="text-6xl text-amber-400 mb-12"> Your Gateway to The Experience</p>
+        <p className="text-6xl text-amber-400 mb-12"> Your Gateway to The Experience</p> <br></br> <br></br>
         
         
         {/* Buttons stacked vertically */}
@@ -38,7 +38,7 @@ const HeroSection: React.FC = () => {
           >
             <span>Book now</span>
             <svg 
-              className="w-5 h-5 transform group-hover:-rotate-40 transition-transform duration-300" 
+              className="w-5 h-5 transform group-hover:-rotate-45 transition-transform duration-300" 
               fill="none" 
               stroke="currentColor" 
               viewBox="0 0 24 24" 
@@ -53,7 +53,7 @@ const HeroSection: React.FC = () => {
           >
             <span>Explore</span>
             <svg 
-              className="w-5 h-5 transform group-hover:rotate-45 transition-transform duration-300" 
+              className="w-5 h-5 transform group-hover:-rotate-45 transition-transform duration-300" 
               fill="none" 
               stroke="currentColor" 
               viewBox="0 0 24 24" 
