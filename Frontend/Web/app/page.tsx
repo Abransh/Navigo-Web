@@ -22,6 +22,7 @@ export default function Home() {
       <DestinationsSection />
       <Testimonials />
     </MainLayout>
+
   );
 }
 

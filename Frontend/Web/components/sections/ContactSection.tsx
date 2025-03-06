@@ -24,3 +24,15 @@ const destinations = [
     { value: "agra", label: "Agra" },
     { value: "udaipur", label: "Udaipur" },
   ]
+
+  export default function ContactSection () {
+    const[date, setDate] = useState<Date | undefined>(undefined)
+    const [dateRange, setDateRange] = useState<{
+        from: Date | undefined
+        to: Date | undefined
+      }>({
+        from: undefined,
+        to: undefined,
+      })
+//continue here making contact form 
+  }
