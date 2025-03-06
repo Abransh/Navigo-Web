@@ -17,25 +17,25 @@ const FeatureBoxes: React.FC = () => {
     {
       title: 'Enhanced Safety & Specialized safety for Women',
       description: 'Traveling to a new city often means juggling multiple apps—for transport, food, events, and more. It\'s overwhelming, time-consuming, and many aren\'t even in English. We simplify it by bringing you local apps in English.',
-      leftImage: '/images/frontend/web/public/images/QrBarBoxes.jpg', // Replace with your actual image paths
-      rightImage: '/images/frontend/web/public/images/featuresbox1.jpg'
+      leftImage: '/images/QrBarBoxes.jpg', // Replace with your actual image paths
+      rightImage: '/images/featuresbox1.jpg'
     },
     {
       title: 'Protection from Tourist Inflation',
       description: 'With our companion you would get the best possible prices at public places, our companion would be there to assure no marked up price is charged.',
-      leftImage: '/images/frontend/web/public/images/QrBarBoxes.jpg',
-      rightImage: '/images/frontend/web/public/images/featuresbox2.jpg'
+      leftImage: '/images/QrBarBoxes.jpg',
+      rightImage: '/images/featuresbox2.jpg'
     },
     {
       title: 'Seamless Communication',
       description: 'With our Companions you would be easily able to communicate with the other people. Our Companions speak English.',
-      leftImage: '/images/frontend/web/public/images/QrBarBoxes.jpg',
-      rightImage: '/images/frontend/web/public/images/Featuresbox3.jpg'
+      leftImage: '/images/QrBarBoxes.jpg',
+      rightImage: '/images/Featuresbox3.jpg'
     },
     {
       title: 'TRAVEL APPS!!',
       description: 'With our companion you would get the best possible prices at public places, our companion would be there to assure no marked up price is charged.',
-      leftImage: '/images/frontend/web/public/images/QrBarBoxes.jpg',
+      leftImage: '/images/QrBarBoxes.jpg',
       rightImage: '/images/feature-image-4-right.jpg'
     }
   ];
