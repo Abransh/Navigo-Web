@@ -2,11 +2,11 @@
 exports.__esModule = true;
 // frontend/web/app/page.tsx
 var react_1 = require("react");
-var Mainlayout_1 = require("../components/layout/Mainlayout");
-var HeroSection_1 = require("../components/sections/HeroSection");
-var PlaneScrollSection_1 = require("../components/sections/PlaneScrollSection");
-var section4_1 = require("../components/sections/section4");
-var FeatureBoxes_1 = require("../components/sections/FeatureBoxes");
+var Mainlayout_1 = require("@/components/layout/Mainlayout");
+var HeroSection_1 = require("@/components/sections/HeroSection");
+var PlaneScrollSection_1 = require("@/components/sections/PlaneScrollSection");
+var section4_1 = require("@/components/sections/section4");
+var FeatureBoxes_1 = require("@/components/sections/FeatureBoxes");
 var advantages_1 = require("@/components/sections/advantages");
 var ExploreDestinations_1 = require("@/components/sections/ExploreDestinations");
 var ExpDest_1 = require("@/components/sections/ExpDest");

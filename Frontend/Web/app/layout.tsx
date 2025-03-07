@@ -1,5 +1,5 @@
 // frontend/web/app/layout.tsx
-import '../styles/globals.css';
+import '@/styles/globals.css';
 import { Metadata } from 'next';
 import { Poppins } from 'next/font/google';
 import Footer from "@/components/footer";

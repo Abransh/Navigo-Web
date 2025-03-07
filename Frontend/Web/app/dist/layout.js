@@ -2,7 +2,7 @@
 exports.__esModule = true;
 exports.metadata = void 0;
 // frontend/web/app/layout.tsx
-require("../styles/globals.css");
+require("@/styles/globals.css");
 var google_1 = require("next/font/google");
 var footer_1 = require("@/components/footer");
 var Header_1 = require("@/components/Header");
