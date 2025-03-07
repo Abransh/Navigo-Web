@@ -26,7 +26,7 @@ function PlaneAnimation() {
             } }),
         React.createElement("div", { ref: planeRef, className: "absolute left-0 top-1/2 -translate-y-1/2 transition-transform duration-75" // Adjust duration to fine-tune animation speed
          },
-            React.createElement(image_1["default"], { src: "/images/frontend/web/public/images/plane.jpg", alt: "Plane", width: 38, height: 38, className: "-translate-y-[17px]" // Adjust this value to fine-tune vertical position
+            React.createElement(image_1["default"], { src: "/images/plane.jpg", alt: "Plane", width: 38, height: 38, className: "-translate-y-[17px]" // Adjust this value to fine-tune vertical position
              }))));
 }
 exports["default"] = PlaneAnimation;

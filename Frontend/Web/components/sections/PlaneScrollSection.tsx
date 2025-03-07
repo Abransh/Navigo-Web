@@ -39,7 +39,7 @@ export default function PlaneAnimation() {
         className="absolute left-0 top-1/2 -translate-y-1/2 transition-transform duration-75" // Adjust duration to fine-tune animation speed
       >
         <Image
-          src="/images/frontend/web/public/images/plane.jpg"
+          src="/images/plane.jpg"
           alt="Plane"
           width={38}   //width of plane
           height={38}  //height of plane
