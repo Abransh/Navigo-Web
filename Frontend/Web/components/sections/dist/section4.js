@@ -4,6 +4,6 @@ exports.__esModule = true;
 var react_1 = require("react");
 var HelpSection = function () {
     return (react_1["default"].createElement("section", { className: "py-16 text-center" },
-        react_1["default"].createElement("h2", { className: "text-4xl font-Poppins mx-auto max-w-3xl" }, "How Navigo Helps you out to turn your trip into a seamless journey")));
+        react_1["default"].createElement("h2", { className: "text-4xl font-Poppins mx-auto max-w-3xl text-white " }, "How Navigo Helps you out to turn your trip into a seamless journey")));
 };
 exports["default"] = HelpSection;

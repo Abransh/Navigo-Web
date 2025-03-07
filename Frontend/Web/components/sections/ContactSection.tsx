@@ -1,18 +1,15 @@
-"use client"; 
+"use client"
 
-import type React from "react";
+import type React from "react"
 
-import { useState } from "react";
-import Image from "next/image";
-import { Calendar, CalendarIcon, ChevronDown } from "lucide-react";
-import { format } from "date-fns";
-import { Calendar } from "@/components/ui/calendar";
-import { Popover,  PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { useState } from "react"
+import Image from "next/image"
+import { CalendarIcon, ChevronDown } from "lucide-react"
+import { format } from "date-fns"
+import { Calendar } from "@/components/ui/calendar"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { cn } from "@/lib/utils"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 
 const destinations = [
@@ -48,14 +45,14 @@ const destinations = [
       return(
         <section className="mx-auto max-w-7xl px-4 py-16">
             <div className= "overflow-hidden">
-                <div className = "grid md:grid-cols-[1fr_300px]">
+                <div className = "grid md:grid-cols-[1fr_100px]">
                     {/* here is the submission of the form */}
                     <div>
-            <h2 className="mb-8 rounded-t-3xl bg-navy-blue p-6 text-3xl font-bold text-white">
+            <h2 className=" rounded-t-3xl bg-gray-700 p-6 text-3xl font-bold text-white">
               Contact Us to Book Your Trip
             </h2>
 
-            <form onSubmit={handleSubmit} className="bg-white p-6">
+            <form onSubmit={handleSubmit} className="rounded-b-3xl bg-gray-300 p-6">
               <div className="grid gap-8 md:grid-cols-2">
                 {/* First Name */}
                 <div>
@@ -65,9 +62,8 @@ const destinations = [
                   </Label>
                   <input
                     id="firstName"
-                    placeholder="Enter your first name"
                     required
-                    className="mt-1 w-full border-b-2 border-gray-300 py-2 outline-none focus:border-navy-blue"
+                    className="mt-1 w-full border-b-2 bg-gray-200 border-gray-300 py-2 outline-none focus:border-navy-blue"
                   />
                 </div>
 
@@ -80,7 +76,6 @@ const destinations = [
                   </Label>
                   <input
                     id="lastName"
-                    placeholder="Enter your last name"
                     required
                     className="mt-1 w-full border-b-2 border-gray-300 py-2 outline-none focus:border-navy-blue"
                   />
@@ -97,7 +92,6 @@ const destinations = [
                   <input
                     id="email"
                     type="email"
-                    placeholder="Enter your email"
                     required
                     className="mt-1 w-full border-b-2 border-gray-300 py-2 outline-none focus:border-navy-blue"
                   />
@@ -206,8 +200,13 @@ const destinations = [
           </div>
 
           {/* Image Section */}
-          <div className="relative hidden md:block">
-            <Image src="/placeholder.svg" alt="Contact Us" fill className="object-cover" />
+          <div className="w-[100px] h-[400px] rounded-2xl mx-1 overflow-hidden">
+          <div className="w-full h-full relative">
+            <Image src="/images/QrBarBoxes.jpg"
+             alt="Contact Us" 
+             fill 
+             className="object-cover" />
+          </div>
           </div>
         </div>
       </div>

@@ -8,7 +8,7 @@ import { motion, AnimatePresence } from "framer-motion"
 
 const howItWorks = [
     {
-      title: "Discover your adventure",
+      title: "Dscover your adventure",
       content:
         "This is the space to describe the service and explain how customers or clients can benefit from it. It's an opportunity to add a short description that includes relevant details, like pricing, duration, location and how to book the service.",
     },

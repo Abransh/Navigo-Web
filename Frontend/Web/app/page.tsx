@@ -9,6 +9,7 @@ import AdvantagesSection from '@/components/sections/advantages';
 import DestinationsSection from '@/components/sections/ExploreDestinations';
 import ExpDest from '@/components/sections/ExpDest';
 import Testimonials from '@/components/sections/testimonials';
+import ContactSection from '@/components/sections/ContactSection';
 
 export default function Home() {
   return (
@@ -21,6 +22,7 @@ export default function Home() {
       <ExpDest />
       <DestinationsSection />
       <Testimonials />
+      <ContactSection />
     </MainLayout>
 
   );
