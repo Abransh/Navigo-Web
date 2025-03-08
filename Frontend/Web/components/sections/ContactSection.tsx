@@ -25,12 +25,12 @@ const destinations = [
   export default function ContactSection () {
     const[date, setDate] = useState<Date | undefined>(undefined)
     const [dateRange, setDateRange] = useState<{
-        from: Date | undefined
-        to: Date | undefined
-      }>({
-        from: undefined,
-        to: undefined,
-      })
+            from: Date | undefined
+            to: Date | undefined
+          }>({
+            from: undefined,
+            to: undefined as Date | undefined,
+          })
 
       const [isRangeMode, setIsRangeMode] = useState(false)
       const[selectedDestination, setSelectedDestination] = useState("")
@@ -140,12 +140,26 @@ const destinations = [
                       </button>
                     </PopoverTrigger>
                     <PopoverContent className="w-auto p-0" align="start">
-                      <Calendar
-                        mode={isRangeMode ? "range" : "single"}
-                        selected={isRangeMode ? dateRange : date}
-                        onSelect ={isRangeMode ? setDateRange : setDate}
-                        initialFocus
-                      />
+                      {isRangeMode ? (
+                        <Calendar
+                          mode="range"
+                          selected={dateRange}
+                          onSelect={(selected: { from: Date | undefined; to?: Date | undefined }) => {
+                            setDateRange({ from: selected.from, to: selected.to ?? undefined });
+                          }}
+                          initialFocus
+                          required
+                        />
+                      ) : (
+                        <Calendar
+                          mode="single"
+                          selected={date}
+                          onSelect={(selected: Date | undefined) => {
+                            setDate(selected);
+                          }}
+                          initialFocus
+                        />
+                      )}
                     </PopoverContent>
                   </Popover>
                 </div>
