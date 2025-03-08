@@ -4,7 +4,7 @@
 import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import Header from '@/components/Header';
+
 import HeroSectionMobile from '@/components/sections/HeroSectionMobile';
 import { useMobile } from "@/hooks/use-mobile"
 
@@ -32,7 +32,7 @@ const HeroSection: React.FC = () => {
       
       {/* Header overlay */}
       <div className="relative z-10 pt-8">
-        <Header />
+        
       </div>
       
       {/* Content overlay */}

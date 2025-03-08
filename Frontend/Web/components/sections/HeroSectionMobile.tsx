@@ -29,10 +29,17 @@ export default function HeroSectionMobile() {
         </button>
       </div>
 
-      {/* Mobile menu overlay */}
+      {/* Mobile menu overlay - Fixed z-index issue */}
       {isMenuOpen && (
-        <div className="absolute inset-0 z-10 bg-black/80 backdrop-blur-sm">
-          <div className="flex h-full flex-col items-center justify-center gap-8 p-8">
+        <div className="fixed inset-0 z-30 bg-black/90 backdrop-blur-sm">
+          <div className="relative p-4">
+            <div className="flex justify-end">
+              <button className="rounded-full bg-white/20 p-2 backdrop-blur-sm" onClick={() => setIsMenuOpen(false)}>
+                <X className="h-6 w-6 text-white" />
+              </button>
+            </div>
+          </div>
+          <div className="flex h-full flex-col items-center justify-center gap-8 p-8 -mt-16">
             <Link
               href="/explore"
               className="text-2xl font-medium text-white hover:text-[#F3A522]"
@@ -65,21 +72,21 @@ export default function HeroSectionMobile() {
         </div>
       )}
 
-      {/* Content overlay */}
+      {/* Content overlay - Fixed button size and position */}
       <div className="relative z-10 flex h-full flex-col justify-between p-6">
         <div className="mt-16">
           <h1 className="text-5xl font-bold text-white">NAVIGO</h1>
           <p className="mt-2 text-xl text-white">Your Gateway to The Experience</p>
         </div>
 
-        <div className="mb-16 flex flex-col gap-4">
-          <button className="flex h-12 w-full items-center justify-between rounded-2xl bg-[#F3A522] px-6 text-white transition-colors hover:bg-navy-blue">
-            <span className="text-lg">Book Now</span>
-            <ArrowRight className="h-5 w-5" />
+        <div className="mb-8 flex flex-col gap-4 self-end">
+          <button className="flex h-10 w-[210px] items-center justify-between rounded-2xl bg-[#F3A522] px-6 text-white transition-colors hover:bg-navy-blue">
+            <span>Book Now</span>
+            <ArrowRight className="h-4 w-4" />
           </button>
-          <button className="flex h-12 w-full items-center justify-between rounded-2xl bg-[#F3A522] px-6 text-white transition-colors hover:bg-navy-blue">
-            <span className="text-lg">Explore</span>
-            <ArrowRight className="h-5 w-5" />
+          <button className="flex h-10 w-[210px] items-center justify-between rounded-2xl bg-[#F3A522] px-6 text-white transition-colors hover:bg-navy-blue">
+            <span>Explore</span>
+            <ArrowRight className="h-4 w-4" />
           </button>
         </div>
       </div>

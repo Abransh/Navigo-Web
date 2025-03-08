@@ -87,6 +87,6 @@ function ContactSection() {
                             React.createElement(button_1.Button, { type: "submit", className: "flex-1 rounded-full bg-navy-blue py-2 text-center text-white hover:bg-[#F3A522] hover:text-navy-blue" }, "Submit")))),
                 React.createElement("div", { className: "w-[100px] h-[400px] rounded-2xl mx-1 overflow-hidden" },
                     React.createElement("div", { className: "w-full h-full relative" },
-                        React.createElement(image_1["default"], { src: "/images/QrBarBoxes.jpg", alt: "Contact Us", fill: true, className: "object-cover" })))))));
+                        React.createElement(image_1["default"], { src: "/images/QrBarBoxes.png", alt: "Contact Us", fill: true, className: "object-cover" })))))));
 }
 exports["default"] = ContactSection;

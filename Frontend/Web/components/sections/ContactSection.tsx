@@ -206,7 +206,7 @@ const destinations = [
           {/* Image Section */}
           <div className="w-[100px] h-[400px] rounded-2xl mx-1 overflow-hidden">
           <div className="w-full h-full relative">
-            <Image src="/images/QrBarBoxes.jpg"
+            <Image src="/images/QrBarBoxes.png"
              alt="Contact Us" 
              fill 
              className="object-cover" />

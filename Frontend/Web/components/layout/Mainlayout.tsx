@@ -1,6 +1,6 @@
 // frontend/web/components/layout/MainLayout.tsx
 import React, { ReactNode } from 'react';
-//import Header from './Header';
+
 
 interface MainLayoutProps {
   children: ReactNode;
