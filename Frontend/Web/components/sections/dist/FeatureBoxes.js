@@ -65,15 +65,15 @@ var FeatureBoxes = function () {
             });
         };
     }, []);
-    return (react_1["default"].createElement("div", { className: "relative" }, featureBoxes.map(function (feature, index) { return (react_1["default"].createElement("section", { key: index, ref: function (el) { sectionRefs.current[index] = el; }, className: "py-8 opacity-0 translate-y-20 transition-all duration-700 sticky", style: { top: '14vh' } },
-        react_1["default"].createElement("div", { className: "max-w-7xl mx-auto flex" },
-            react_1["default"].createElement("div", { className: "w-[700px] h-[330px] rounded-2xl bg-[#ECEBE9] p-6 flex flex-col justify-center" },
+    return (react_1["default"].createElement("div", { className: "relative" }, featureBoxes.map(function (feature, index) { return (react_1["default"].createElement("section", { key: index, ref: function (el) { sectionRefs.current[index] = el; }, className: "py-8 opacity-0 translate-y-20 transition-all duration-700 sticky top-[3vh] md:top-[14vh]" },
+        react_1["default"].createElement("div", { className: "max-w-7xl mx-auto flex flex-col md:flex-row" },
+            react_1["default"].createElement("div", { className: "w-full md:w-[700px] h-[330px] rounded-2xl bg-[#ECEBE9] p-6 flex flex-col justify-center" },
                 react_1["default"].createElement("h3", { className: "text-[36px] font mb-6 font-Poppins-400 " }, feature.title),
                 react_1["default"].createElement("p", { className: "text-base text-[25px] leading-[32px] font-Poppins protext-[#192328]" }, feature.description)),
-            react_1["default"].createElement("div", { className: "w-[100px] h-[330px] rounded-2xl mx-1 overflow-hidden" },
+            react_1["default"].createElement("div", { className: "w-full md:w-[100px] h-[330px] rounded-2xl my-2 md:my-0 md:mx-1 overflow-hidden" },
                 react_1["default"].createElement("div", { className: "w-full h-full relative" },
                     react_1["default"].createElement(image_1["default"], { src: feature.leftImage, alt: "Feature " + (index + 1), fill: true, className: "object-cover" }))),
-            react_1["default"].createElement("div", { className: "w-[580px] h-[330px] rounded-2xl overflow-hidden" },
+            react_1["default"].createElement("div", { className: "w-full md:w-[580px] h-[330px] rounded-2xl overflow-hidden" },
                 react_1["default"].createElement("div", { className: "w-full h-full relative" },
                     react_1["default"].createElement(image_1["default"], { src: feature.rightImage, alt: "Feature " + (index + 1), fill: true, className: "object-cover" })))))); })));
 };

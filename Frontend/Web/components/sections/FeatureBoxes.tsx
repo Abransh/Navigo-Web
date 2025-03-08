@@ -83,12 +83,17 @@ const FeatureBoxes: React.FC = () => {
         <section 
           key={index}
           ref={el => { sectionRefs.current[index] = el as HTMLDivElement }}
-          className="py-8 opacity-0 translate-y-20 transition-all duration-700 sticky"
-          style={{ top: '14vh' }}
+          className="py-8 opacity-0 translate-y-20 transition-all duration-700 sticky top-[3vh] md:top-[14vh]"
+          // style={{ top: '14vh' }}
         >
-          <div className="max-w-7xl mx-auto flex">  
-            {/* Text container */}
-            <div className="w-[700px] h-[330px] rounded-2xl bg-[#ECEBE9] p-6 flex flex-col justify-center">
+           {/* 
+            On mobile: flex-col makes the items stack vertically.
+            On md and larger screens, flex-row applies.
+          */}
+          <div className="max-w-7xl mx-auto flex flex-col md:flex-row">
+            
+             {/* Text container: full width on mobile, fixed width on desktop */}
+             <div className="w-full md:w-[700px] h-[330px] rounded-2xl bg-[#ECEBE9] p-6 flex flex-col justify-center">
               <h3 className="text-[36px] font mb-6 font-Poppins-400 ">
                 {feature.title}
               </h3>
@@ -98,7 +103,7 @@ const FeatureBoxes: React.FC = () => {
             </div>
             
             {/* Middle image container */}
-            <div className="w-[100px] h-[330px] rounded-2xl mx-1 overflow-hidden">
+            <div className="w-full md:w-[100px] h-[330px] rounded-2xl my-2 md:my-0 md:mx-1 overflow-hidden">
               <div className="w-full h-full relative">
                 <Image 
                   src={feature.leftImage}
@@ -110,7 +115,7 @@ const FeatureBoxes: React.FC = () => {
             </div>
             
             {/* Right image container */}
-            <div className="w-[580px] h-[330px] rounded-2xl overflow-hidden">
+            <div className="w-full md:w-[580px] h-[330px] rounded-2xl overflow-hidden">
               <div className="w-full h-full relative">
                 <Image 
                   src={feature.rightImage}
