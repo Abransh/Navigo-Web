@@ -8,7 +8,7 @@ import { motion, AnimatePresence } from "framer-motion"
 
 const howItWorks = [
     {
-      title: "Dscover your adventure",
+      title: "Discover your adventure",
       content:
         "This is the space to describe the service and explain how customers or clients can benefit from it. It's an opportunity to add a short description that includes relevant details, like pricing, duration, location and how to book the service.",
     },
@@ -31,22 +31,22 @@ const howItWorks = [
   const popularDestinations = [
     {
       name: "VARANASI",
-      image: "/placeholder.svg",
+      image: "/images/Varanasi1.jpg",
       href: "/destinations/varanasi",
     },
     {
       name: "GOA",
-      image: "/placeholder.svg",
+      image: "/images/Goa.jpg",
       href: "/destinations/goa",
     },
     {
       name: "NEW DELHI",
-      image: "/placeholder.svg",
+      image: "/images/NewDelhi.jpg",
       href: "/destinations/new-delhi",
     },
     {
       name: "JAIPUR",
-      image: "/placeholder.svg",
+      image: "/images/Jaipur.jpg",
       href: "/destinations/jaipur",
     },
   ]

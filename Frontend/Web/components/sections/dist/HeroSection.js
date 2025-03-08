@@ -1,11 +1,18 @@
+// frontend/web/components/sections/HeroSection.tsx
+"use client";
 "use strict";
 exports.__esModule = true;
-// frontend/web/components/sections/HeroSection.tsx
 var react_1 = require("react");
 var image_1 = require("next/image");
 var link_1 = require("next/link");
-var Header_1 = require("../Header");
+var Header_1 = require("@/components/Header");
+var HeroSectionMobile_1 = require("@/components/sections/HeroSectionMobile");
+var use_mobile_1 = require("@/hooks/use-mobile");
 var HeroSection = function () {
+    var isMobile = use_mobile_1.useMobile();
+    if (isMobile) {
+        return react_1["default"].createElement(HeroSectionMobile_1["default"], null);
+    }
     return (react_1["default"].createElement("section", { className: "relative h-screen" },
         react_1["default"].createElement("div", { className: "absolute inset-0 z-0" },
             react_1["default"].createElement(image_1["default"], { src: "/images/HeroSectionImage.jpg", alt: "Navigo background", fill: true, className: "object-cover", priority: true })),

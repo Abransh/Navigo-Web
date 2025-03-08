@@ -1,10 +1,21 @@
 // frontend/web/components/sections/HeroSection.tsx
+"use client"
+
 import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import Header from '../Header';
+import Header from '@/components/Header';
+import HeroSectionMobile from '@/components/sections/HeroSectionMobile';
+import { useMobile } from "@/hooks/use-mobile"
 
 const HeroSection: React.FC = () => {
+
+  const isMobile = useMobile()
+
+  if (isMobile) {
+    return <HeroSectionMobile />
+  }
+
   return (
     <section className="relative h-screen">
       {/* Background image container */}

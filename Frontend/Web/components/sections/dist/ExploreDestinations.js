@@ -7,22 +7,22 @@ var lucide_react_1 = require("lucide-react");
 var destinations = [
     {
         name: "VARANASI",
-        image: "/images/frontend/web/public/images/Varanasi1.jpg",
+        image: "/images/Varanasi1.jpg",
         href: "/destinations/varanasi"
     },
     {
         name: "GOA",
-        image: "/images/frontend/web/public/images/Goa.jpg",
+        image: "/images/Goa.jpg",
         href: "/destinations/goa"
     },
     {
         name: "NEW DELHI",
-        image: "/images/frontend/web/public/images/NewDelhi.jpg",
+        image: "/images/NewDelhi.jpg",
         href: "/destinations/new-delhi"
     },
     {
         name: "JAIPUR",
-        image: "/images/frontend/web/public/images/Jaipur.jpg",
+        image: "/images/Jaipur.jpg",
         href: "/destinations/jaipur"
     },
 ];

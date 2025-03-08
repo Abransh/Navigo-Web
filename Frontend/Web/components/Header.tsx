@@ -45,7 +45,7 @@ const Header: React.FC = () => {
             <Link href="/destinations" className="hover:text-[#F3A522] text-sm">Explore Destinations</Link>
             <Link href="/planyourtrip" className="hover:text-[#F3A522] text-sm">Plan Your Trip</Link>
             <Link href="/magazine" className="hover:text-[#F3A522] text-sm">Magazine</Link>
-            <Link href="/about" className="hover:text-[#F3A522] text-sm">Our Mission</Link>
+            <Link href="/OurMission" className="hover:text-[#F3A522] text-sm">Our Mission</Link>
           </nav>
         </div>
         {/* Right section */}
