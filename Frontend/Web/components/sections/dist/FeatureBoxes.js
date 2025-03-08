@@ -5,7 +5,7 @@ var react_1 = require("react");
 var image_1 = require("next/image");
 var FeatureBoxMobile_1 = require("@/components/sections/FeatureBoxMobile");
 var use_mobile_1 = require("@/hooks/use-mobile");
-var FeaturesSection = function () {
+var FeatureBoxes = function () {
     var isMobile = use_mobile_1.useMobile();
     var sectionRefs = react_1.useRef([]);
     react_1.useEffect(function () {
@@ -86,3 +86,4 @@ var FeaturesSection = function () {
                 React.createElement("div", { className: "w-full h-full relative" },
                     React.createElement(image_1["default"], { src: feature.rightImage || "/placeholder.svg", alt: "Feature " + (index + 1), fill: true, className: "object-cover" })))))); })));
 };
+exports["default"] = FeatureBoxes;

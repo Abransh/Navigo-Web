@@ -14,7 +14,7 @@ interface FeatureBox {
   rightImage: string
 }
 
-const FeaturesSection: React.FC = () => {
+const FeatureBoxes: React.FC = () => {
   const isMobile = useMobile()
   const sectionRefs = useRef<(HTMLDivElement | null)[]>([])
 
@@ -140,5 +140,5 @@ const FeaturesSection: React.FC = () => {
   )
 }
 
-export default FeatureBox
+export default FeatureBoxes
 
