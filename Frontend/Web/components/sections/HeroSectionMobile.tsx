@@ -20,57 +20,9 @@ export default function HeroSectionMobile() {
       />
 
       {/* Mobile header with hamburger */}
-      <div className="relative z-20 flex items-center justify-between p-4">
-        <Link href="/" className="text-xl font-bold text-white">
-          Navigo
-        </Link>
-        <button className="rounded-full bg-white/20 p-2 backdrop-blur-sm" onClick={() => setIsMenuOpen(!isMenuOpen)}>
-          {isMenuOpen ? <X className="h-6 w-6 text-white" /> : <Menu className="h-6 w-6 text-white" />}
-        </button>
-      </div>
+     
 
-      {/* Mobile menu overlay - Fixed z-index issue */}
-      {isMenuOpen && (
-        <div className="fixed inset-0 z-30 bg-black/90 backdrop-blur-sm">
-          <div className="relative p-4">
-            <div className="flex justify-end">
-              <button className="rounded-full bg-white/20 p-2 backdrop-blur-sm" onClick={() => setIsMenuOpen(false)}>
-                <X className="h-6 w-6 text-white" />
-              </button>
-            </div>
-          </div>
-          <div className="flex h-full flex-col items-center justify-center gap-8 p-8 -mt-16">
-            <Link
-              href="/explore"
-              className="text-2xl font-medium text-white hover:text-[#F3A522]"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Explore Destinations
-            </Link>
-            <Link
-              href="/plan"
-              className="text-2xl font-medium text-white hover:text-[#F3A522]"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Plan Your Trip
-            </Link>
-            <Link
-              href="/magazine"
-              className="text-2xl font-medium text-white hover:text-[#F3A522]"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Magazine
-            </Link>
-            <Link
-              href="/about"
-              className="text-2xl font-medium text-white hover:text-[#F3A522]"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              About Us
-            </Link>
-          </div>
-        </div>
-      )}
+      
 
       {/* Content overlay - Fixed button size and position */}
       <div className="relative z-10 flex h-full flex-col justify-between p-6">
