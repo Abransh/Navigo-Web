@@ -67,10 +67,7 @@ function ContactSection() {
                                                 date_fns_1.format(dateRange.from, "PPP"),
                                                 " - ",
                                                 date_fns_1.format(dateRange.to, "PPP"))) : (date_fns_1.format(dateRange.from, "PPP"))) : (React.createElement("span", null, "Select date range"))) : date ? (date_fns_1.format(date, "PPP")) : (React.createElement("span", null, "Select date")))),
-                                    React.createElement(popover_1.PopoverContent, { className: "w-auto p-0", align: "start" }, isRangeMode ? (React.createElement(calendar_1.Calendar, { mode: "range", selected: dateRange, onSelect: function (selected) {
-                                            var _a;
-                                            setDateRange({ from: selected.from, to: (_a = selected.to) !== null && _a !== void 0 ? _a : undefined });
-                                        }, initialFocus: true, required: true })) : (React.createElement(calendar_1.Calendar, { mode: "single", selected: date, onSelect: function (selected) {
+                                    React.createElement(popover_1.PopoverContent, { className: "w-auto p-0", align: "start" }, (React.createElement(calendar_1.Calendar, { mode: "single", selected: date, onSelect: function (selected) {
                                             setDate(selected);
                                         }, initialFocus: true })))))),
                         React.createElement("div", { className: "mt-8 flex items-end gap-8" },

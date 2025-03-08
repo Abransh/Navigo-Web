@@ -140,17 +140,7 @@ const destinations = [
                       </button>
                     </PopoverTrigger>
                     <PopoverContent className="w-auto p-0" align="start">
-                      {isRangeMode ? (
-                        <Calendar
-                          mode="range"
-                          selected={dateRange}
-                          onSelect={(selected: { from: Date | undefined; to?: Date | undefined }) => {
-                            setDateRange({ from: selected.from, to: selected.to ?? undefined });
-                          }}
-                          initialFocus
-                          required
-                        />
-                      ) : (
+                      { (
                         <Calendar
                           mode="single"
                           selected={date}
