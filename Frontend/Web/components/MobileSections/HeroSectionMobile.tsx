@@ -25,7 +25,7 @@ export default function HeroSectionMobile() {
           <h2 className="mt-2 text-xl text-white">Your Gateway to The Experience</h2>
         </div>
 
-        <div className="mb-12 flex py-40 flex-col gap-6 self-end">
+        <div className="absolute top-[500px] py-10 mb-4 flex flex-col gap-6 ">
           <button className="flex h-10 w-[210px] items-center justify-between rounded-2xl bg-[#F3A522] px-6 text-white transition-colors hover:bg-navy-blue">
             <span>Book Now</span>
             <ArrowRight className="h-4 w-4" />
