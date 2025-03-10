@@ -5,7 +5,7 @@ import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 
-import HeroSectionMobile from '@/components/sections/HeroSectionMobile';
+import HeroSectionMobile from '@/components/MobileSections/HeroSectionMobile';
 import { useMobile } from "@/hooks/use-mobile"
 
 const HeroSection: React.FC = () => {

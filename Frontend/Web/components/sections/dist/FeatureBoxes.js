@@ -3,7 +3,7 @@
 exports.__esModule = true;
 var react_1 = require("react");
 var image_1 = require("next/image");
-var FeatureBoxMobile_1 = require("@/components/sections/FeatureBoxMobile");
+var FeatureBoxMobile_1 = require("@/components/MobileSections/FeatureBoxMobile");
 var use_mobile_1 = require("@/hooks/use-mobile");
 var FeatureBoxes = function () {
     var isMobile = use_mobile_1.useMobile();

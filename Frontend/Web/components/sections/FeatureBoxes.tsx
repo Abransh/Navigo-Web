@@ -3,7 +3,7 @@
 import type React from "react"
 import { useEffect, useRef } from "react"
 import Image from "next/image"
-import FeatureBoxesMobile from "@/components/sections/FeatureBoxMobile"
+import FeatureBoxesMobile from "@/components/MobileSections/FeatureBoxMobile"
 import { useMobile } from "@/hooks/use-mobile"
 
 // Define the feature box data structure

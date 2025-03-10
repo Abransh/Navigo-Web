@@ -18,20 +18,14 @@ export default function HeroSectionMobile() {
           backgroundPosition: "center",
         }}
       />
-
-      {/* Mobile header with hamburger */}
-     
-
-      
-
       {/* Content overlay - Fixed button size and position */}
       <div className="relative z-10 flex h-full flex-col justify-between p-6">
         <div className="mt-16">
           <h1 className="text-5xl font-bold text-white">NAVIGO</h1>
-          <p className="mt-2 text-xl text-white">Your Gateway to The Experience</p>
+          <h2 className="mt-2 text-xl text-white">Your Gateway to The Experience</h2>
         </div>
 
-        <div className="mb-8 flex flex-col gap-4 self-end">
+        <div className="mb-12 flex py-40 flex-col gap-6 self-end">
           <button className="flex h-10 w-[210px] items-center justify-between rounded-2xl bg-[#F3A522] px-6 text-white transition-colors hover:bg-navy-blue">
             <span>Book Now</span>
             <ArrowRight className="h-4 w-4" />
