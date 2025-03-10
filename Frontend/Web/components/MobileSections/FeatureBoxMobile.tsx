@@ -18,7 +18,7 @@ const FeatureBoxesMobile: React.FC = () => {
     {
       title: "Enhanced Safety & Specialized safety for Women",
       description:
-        "Traveling to a new city often means juggling multiple apps—for transport, food, events, and more. It's overwhelming, time-consuming, and many aren't even in English. We simplify it by bringing you local apps in English.",
+        "Exploring new places should be exciting, not stressful. For female travelers facing unique safety challenges—like unwanted attention or navigating unfamiliar areas—we put safety first.",
       leftImage: "/images/QrBarBoxesHorizontal.png", // Replace with your actual image paths
       rightImage: "/images/featuresbox1.jpg",
     },

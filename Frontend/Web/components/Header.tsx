@@ -166,7 +166,7 @@ const Header: React.FC = () => {
         {!isMobile && (
           <div className="w-[249px] h-8 bg-white/80 backdrop-blur-sm rounded-full shadow-md flex items-center px-6 justify-between group hover:bg-[#6babea] transition-all duration-300">
             <Link
-              href="/trip-planner"
+              href="/planyoutrip"
               className="text-sm group-hover:text-white transition-colors duration-300"
             >
               Plan Your Trip
@@ -240,7 +240,7 @@ const Header: React.FC = () => {
                     Magazine
                   </Link>
                   <Link 
-                    href="/OurMission" 
+                    href="/about" 
                     className="hover:text-[#F3A522] text-sm py-2 px-3 rounded-md hover:bg-gray-100"
                     onClick={() => setMenuOpen(false)}
                   >
