@@ -82,9 +82,6 @@ const FeatureBoxesMobile: React.FC = () => {
     }
   }, [])
 
-
-  
-
   return (
     <div className="relative space-y-16 py-8">
       {featureBoxes.map((feature, index) => (
@@ -94,30 +91,18 @@ const FeatureBoxesMobile: React.FC = () => {
             sectionRefs.current[index] = el as HTMLDivElement
           }}
           className="py-4 opacity-0 translate-y-20 transition-all duration-700 sticky"
-          style={{ top: "14vh" }}
+          style={{ top: "6vh" }}
         >
           
-          <div className="mx-auto flex flex-col gap-4">
-            {/* Text container - full width on mobile */}
-            <div className="w-full rounded-2xl bg-[#ECEBE9] p-6 flex flex-col justify-center">
+          <div className="mx-auto flex flex-col gap-4 px-4 h-[600px]">
+            {/* Text container - fixed height */}
+            <div className="w-full h-[250px] rounded-2xl bg-[#ECEBE9] p-6 flex flex-col justify-center overflow-auto">
               <h3 className="text-2xl mb-4 font-Poppins-400">{feature.title}</h3>
               <p className="text-base leading-relaxed font-Poppins text-[#192328]">{feature.description}</p>
             </div>
 
-            {/* Left image container - horizontal on mobile */}
-            <div className="w-full h-[120px] rounded-2xl overflow-hidden">
-              <div className="w-full h-full relative">
-                <Image
-                  src={feature.leftImage || "/placeholder.svg"}
-                  alt={`Feature ${index + 1} left`}
-                  fill
-                  className="object-cover"
-                />
-              </div>
-            </div>
-
             {/* Right image container */}
-            <div className="w-full h-[200px] rounded-2xl overflow-hidden">
+            <div className="w-full h-[250px] rounded-2xl overflow-hidden">
               <div className="w-full h-full relative">
                 <Image
                   src={feature.rightImage || "/placeholder.svg"}
