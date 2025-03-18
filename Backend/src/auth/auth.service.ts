@@ -1,11 +1,12 @@
 import { Injectable, NotFoundException, BadRequestException, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '../users/users.service';
-import { MailService } from '../mail/mail.service';
+import { MailService } from '../mail/mail.service'; // Ensure this path is correct or update it to the correct path
 import { PasswordResetRepository } from './repositories/password-reset.repository';
 import { PasswordReset } from './entities/password-reset.entity';
 import * as bcrypt from 'bcrypt';
 import { v4 as uuidv4 } from 'uuid';
+
 
 interface SocialUser {
   email: string;
