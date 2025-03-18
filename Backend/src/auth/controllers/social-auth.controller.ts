@@ -39,7 +39,10 @@ export class SocialAuthController {
   @Get('google/callback')
   @UseGuards(AuthGuard('google'))
   @ApiOperation({ summary: 'Handle Google OAuth callback' })
-  @ApiResponse({ status: 302, description: 'Redirect to frontend with auth token' })
+  @ApiResponse({ 
+    status: 302, 
+    description: 'Redirect to frontend with auth token', 
+  })
   googleAuthCallback(@Req() req, @Res() res) {
     // Extract the access token from the authenticated user
     const token = req.user.access_token;

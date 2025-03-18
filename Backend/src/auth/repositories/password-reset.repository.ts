@@ -1,7 +1,7 @@
-// Backend/src/auth/repositories/password-reset.repository.ts
+// src/auth/repositories/password-reset.repository.ts
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, MoreThan } from 'typeorm';
 import { PasswordReset } from '../entities/password-reset.entity';
 
 @Injectable()
@@ -22,13 +22,20 @@ export class PasswordResetRepository {
     });
   }
 
-  async findByToken(token: string): Promise<PasswordReset> {
+  async findByToken(token: string): Promise<PasswordReset | null> {
     return this.repository.findOne({
       where: { token },
     });
   }
 
-  async find(options: any): Promise<PasswordReset[]> {
+  async find(options?: any): Promise<PasswordReset[]> {
+    if (options?.where?.expires?.$gt) {
+      // Convert MongoDB-style query to TypeORM
+      const date = options.where.expires.$gt;
+      return this.repository.find({
+        where: { expires: MoreThan(date) },
+      });
+    }
     return this.repository.find(options);
   }
 

@@ -46,9 +46,10 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 exports.__esModule = true;
 exports.PasswordResetRepository = void 0;
-// Backend/src/auth/repositories/password-reset.repository.ts
+// src/auth/repositories/password-reset.repository.ts
 var common_1 = require("@nestjs/common");
 var typeorm_1 = require("@nestjs/typeorm");
+var typeorm_2 = require("typeorm");
 var password_reset_entity_1 = require("../entities/password-reset.entity");
 var PasswordResetRepository = /** @class */ (function () {
     function PasswordResetRepository(repository) {
@@ -81,8 +82,16 @@ var PasswordResetRepository = /** @class */ (function () {
         });
     };
     PasswordResetRepository.prototype.find = function (options) {
+        var _a, _b;
         return __awaiter(this, void 0, Promise, function () {
-            return __generator(this, function (_a) {
+            var date;
+            return __generator(this, function (_c) {
+                if ((_b = (_a = options === null || options === void 0 ? void 0 : options.where) === null || _a === void 0 ? void 0 : _a.expires) === null || _b === void 0 ? void 0 : _b.$gt) {
+                    date = options.where.expires.$gt;
+                    return [2 /*return*/, this.repository.find({
+                            where: { expires: typeorm_2.MoreThan(date) }
+                        })];
+                }
                 return [2 /*return*/, this.repository.find(options)];
             });
         });

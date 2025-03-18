@@ -1,81 +1,123 @@
 // src/email/email.service.ts
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import * as nodemailer from 'nodemailer';
+import { MailerService } from '@nestjs-modules/mailer';
+
+interface BookingDetails {
+  id: string;
+  date: string;
+  location: string;
+  [key: string]: any;
+}
 
 @Injectable()
 export class EmailService {
-  private transporter;
+  constructor(
+    private readonly mailerService: MailerService,
+    private readonly configService: ConfigService,
+  ) {}
 
-  constructor(private configService: ConfigService) {
-    this.transporter = nodemailer.createTransport({
-      host: configService.get('MAIL_HOST'),
-      port: configService.get('MAIL_PORT'),
-      secure: configService.get('MAIL_SECURE', false),
-      auth: {
-        user: configService.get('MAIL_USER'),
-        pass: configService.get('MAIL_PASSWORD'),
-      },
-    });
+  private getAppUrl(): string {
+    return this.configService.get('FRONTEND_URL', 'http://localhost:3000');
   }
 
-  async sendMail(to: string, subject: string, html: string) {
-    return this.transporter.sendMail({
-      from: `"Navigo" <${this.configService.get('MAIL_FROM')}>`,
+  private getAppName(): string {
+    return this.configService.get('APP_NAME', 'Navigo');
+  }
+
+  private getSupportEmail(): string {
+    return this.configService.get('SUPPORT_EMAIL', 'support@navigo.com');
+  }
+
+  async sendMail(
+    to: string,
+    subject: string,
+    template: string,
+    context: Record<string, any>,
+  ): Promise<any> {
+    // Add common context variables
+    const commonContext = {
+      appName: this.getAppName(),
+      appUrl: this.getAppUrl(),
+      supportEmail: this.getSupportEmail(),
+      year: new Date().getFullYear(),
+      ...context,
+    };
+
+    return this.mailerService.sendMail({
       to,
       subject,
-      html,
+      template,
+      context: commonContext,
     });
   }
 
-  async sendWelcomeEmail(user: any) {
-    const subject = 'Welcome to Navigo!';
-    const html = `
-      <h1>Welcome to Navigo, ${user.firstName}!</h1>
-      <p>Thank you for joining our community. We're excited to help you explore India with local companions.</p>
-      <p>Get started by:</p>
-      <ul>
-        <li>Completing your profile</li>
-        <li>Browsing available companions</li>
-        <li>Making your first booking</li>
-      </ul>
-      <p>Safe travels!</p>
-      <p>The Navigo Team</p>
-    `;
-    
-    return this.sendMail(user.email, subject, html);
+  async sendWelcomeEmail(email: string, firstName: string): Promise<void> {
+    await this.sendMail(email, `Welcome to ${this.getAppName()}!`, 'welcome', {
+      firstName,
+      loginUrl: `${this.getAppUrl()}/login`,
+    });
   }
 
-  async sendBookingConfirmation(booking: any, userEmail: string) {
-    const subject = 'Booking Confirmation';
-    const html = `
-      <h1>Your Booking is Confirmed!</h1>
-      <p>Your booking with ${booking.companion.user.firstName} has been confirmed.</p>
-      <p><strong>Details:</strong></p>
-      <ul>
-        <li>Date: ${new Date(booking.startDate).toLocaleDateString()} - ${new Date(booking.endDate).toLocaleDateString()}</li>
-        <li>Location: ${booking.location}</li>
-        <li>Total Amount: ₹${booking.totalAmount}</li>
-      </ul>
-      <p>You can contact your companion through the chat in our app.</p>
-      <p>Enjoy your experience!</p>
-      <p>The Navigo Team</p>
-    `;
-    
-    return this.sendMail(userEmail, subject, html);
+  async sendPasswordResetEmail(
+    email: string,
+    firstName: string,
+    resetLink: string,
+  ): Promise<void> {
+    await this.sendMail(
+      email,
+      `${this.getAppName()} - Password Reset Request`,
+      'password-reset',
+      {
+        firstName,
+        resetLink,
+      });
   }
 
-  // Add more email templates as needed
+  async sendPasswordResetConfirmationEmail(
+    email: string,
+    firstName: string,
+  ): Promise<void> {
+    await this.sendMail(
+      email,
+      `${this.getAppName()} - Password Reset Successful`,
+      'password-reset-confirmation',
+      {
+        firstName,
+      });
+  }
+
+  async sendBookingConfirmation(
+    email: string,
+    firstName: string,
+    bookingDetails: any,
+  ): Promise<void> {
+    await this.sendMail(
+      email,
+      `${this.getAppName()} - Booking Confirmation`,
+      'booking-confirmation',
+      {
+  async sendBookingCancellation(
+    email: string,
+    firstName: string,
+    bookingDetails: BookingDetails,
+  ): Promise<void> {
+  }
+
+  async sendBookingCancellation(
+    email: string,
+    firstName: string,
+    bookingDetails: any,
+  ): Promise<void> {
+    await this.sendMail(
+      email,
+      `${this.getAppName()} - Booking Cancelled`,
+      'booking-cancellation',
+      {
+        firstName,
+        booking: bookingDetails,
+        myBookingsUrl: `${this.getAppUrl()}/bookings`,
+      }
+    );
+  }
 }
-
-// src/email/email.module.ts
-import { Module } from '@nestjs/common';
-import { EmailService } from './email.service';
-import { ConfigModule } from '@nestjs/config';
-
-@Module({
-  imports: [ConfigModule],
-  providers: [EmailService],
-  exports: [EmailService],
-})
-export class EmailModule {}

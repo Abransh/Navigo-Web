@@ -7,7 +7,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { FaGoogle, FaApple, FaFacebook } from "react-icons/fa";
-import { toast } from "react-hot-toast";
+import  { toast } from "react-hot-toast"; 
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");

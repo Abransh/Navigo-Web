@@ -102,7 +102,10 @@ var SocialAuthController = /** @class */ (function () {
         common_1.Get('google/callback'),
         common_1.UseGuards(passport_1.AuthGuard('google')),
         swagger_1.ApiOperation({ summary: 'Handle Google OAuth callback' }),
-        swagger_1.ApiResponse({ status: 302, description: 'Redirect to frontend with auth token' }),
+        swagger_1.ApiResponse({
+            status: 302,
+            description: 'Redirect to frontend with auth token'
+        }),
         __param(0, common_1.Req()), __param(1, common_1.Res())
     ], SocialAuthController.prototype, "googleAuthCallback");
     __decorate([
