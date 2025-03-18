@@ -26,21 +26,40 @@ export interface AuthResponse {
 }
 
 const login = async (credentials: LoginCredentials): Promise<AuthResponse> => {
-  const response = await apiClient.post<AuthResponse>('/auth/login', credentials);
-  // Store token in localStorage
-  localStorage.setItem('token', response.data.access_token);
-  return response.data;
+  try {
+    const response = await apiClient.post<AuthResponse>('/auth/login', credentials);
+    
+    // Store token in localStorage
+    if (response.data && response.data.access_token) {
+      localStorage.setItem('token', response.data.access_token);
+    }
+    
+    return response.data;
+  } catch (error) {
+    console.error('Login API error:', error);
+    throw error;
+  }
 };
 
 const register = async (data: RegisterData): Promise<AuthResponse> => {
-  const response = await apiClient.post<AuthResponse>('/auth/register', data);
-  // Store token in localStorage
-  localStorage.setItem('token', response.data.access_token);
-  return response.data;
+  try {
+    const response = await apiClient.post<AuthResponse>('/auth/register', data);
+    
+    // Store token in localStorage
+    if (response.data && response.data.access_token) {
+      localStorage.setItem('token', response.data.access_token);
+    }
+    
+    return response.data;
+  } catch (error) {
+    console.error('Registration API error:', error);
+    throw error;
+  }
 };
 
 const logout = (): void => {
   localStorage.removeItem('token');
+  localStorage.removeItem('user');
 };
 
 const isAuthenticated = (): boolean => {

@@ -17,7 +17,8 @@ export default function RegisterPage() {
     confirmPassword: "",
   });
   const [error, setError] = useState("");
-  const { register, isAuthenticated } = useAuth();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { register, isAuthenticated, loading } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirectTo = searchParams.get('redirectTo') || '/';
@@ -25,10 +26,11 @@ export default function RegisterPage() {
 
   // Redirect if already logged in
   useEffect(() => {
-    if (isAuthenticated) {
+    if (isAuthenticated && !loading) {
+      console.log('Already authenticated, redirecting to:', redirectTo);
       router.push(redirectTo);
     }
-  }, [isAuthenticated, redirectTo, router]);
+  }, [isAuthenticated, redirectTo, router, loading]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
@@ -41,31 +43,74 @@ export default function RegisterPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    setIsSubmitting(true);
     
     // Basic validation
+    if (!formData.firstName || !formData.lastName || !formData.email || !formData.password) {
+      setError("All fields are required");
+      setIsSubmitting(false);
+      return;
+    }
+    
     if (formData.password !== formData.confirmPassword) {
       setError("Passwords don't match");
+      setIsSubmitting(false);
+      return;
+    }
+    
+    if (formData.password.length < 6) {
+      setError("Password must be at least 6 characters");
+      setIsSubmitting(false);
       return;
     }
     
     try {
-      // Remove confirmPassword and add default tourist role before sending
+      console.log('Attempting registration with:', { 
+        email: formData.email,
+        firstName: formData.firstName,
+        lastName: formData.lastName
+      });
+      
+      // Remove confirmPassword before sending
       const { confirmPassword, ...registrationData } = formData;
+      
       await register({
         ...registrationData,
         role: 'tourist' // Set default role to tourist
       });
-      // Redirect will be handled by useEffect
+      
+      console.log('Registration successful, redirecting to:', redirectTo);
+      router.push(redirectTo);
     } catch (err: any) {
-      setError(err.response?.data?.message || "Registration failed. Please try again.");
+      console.error('Registration error:', err);
+      if (err.response?.data?.message) {
+        setError(err.response.data.message);
+      } else if (err.message) {
+        setError(err.message);
+      } else {
+        setError("Registration failed. Please try again later.");
+      }
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   const handleSocialSignup = (provider: string) => {
     // This would be implemented with your actual OAuth provider
-    console.log(`Signing up with ${provider}`);
-    // In a real implementation, you would redirect to the OAuth provider's auth page
+    alert(`Social signup with ${provider} is not implemented yet.`);
   };
+
+  // Show loading state while auth state is being determined
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-[#F3A522] border-t-transparent rounded-full animate-spin mx-auto"></div>
+          <p className="mt-4 text-xl">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col md:flex-row">
@@ -112,6 +157,7 @@ export default function RegisterPage() {
             {/* Social Login Buttons */}
             <div className="space-y-3 mb-6">
               <button 
+                type="button"
                 onClick={() => handleSocialSignup('google')}
                 className="w-full flex items-center justify-center gap-3 py-3 px-4 bg-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-50 transition-colors"
               >
@@ -120,6 +166,7 @@ export default function RegisterPage() {
               </button>
               
               <button 
+                type="button"
                 onClick={() => handleSocialSignup('apple')}
                 className="w-full flex items-center justify-center gap-3 py-3 px-4 bg-black text-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-900 transition-colors"
               >
@@ -128,6 +175,7 @@ export default function RegisterPage() {
               </button>
               
               <button 
+                type="button"
                 onClick={() => handleSocialSignup('facebook')}
                 className="w-full flex items-center justify-center gap-3 py-3 px-4 bg-[#1877F2] text-white border border-gray-300 rounded-lg shadow-sm hover:bg-[#0e6ae4] transition-colors"
               >
@@ -194,6 +242,7 @@ export default function RegisterPage() {
                   onChange={handleChange}
                   className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#F3A522] focus:border-transparent transition"
                   placeholder="••••••••"
+                  minLength={6}
                   required
                 />
               </div>
@@ -213,9 +262,21 @@ export default function RegisterPage() {
               
               <button 
                 type="submit"
-                className="w-full py-3 px-4 bg-[#F3A522] text-white rounded-lg hover:bg-[#003366] transition-colors font-medium"
+                disabled={isSubmitting}
+                className={`w-full py-3 px-4 ${
+                  isSubmitting 
+                    ? 'bg-gray-400 cursor-not-allowed' 
+                    : 'bg-[#F3A522] hover:bg-[#003366]'
+                } text-white rounded-lg transition-colors font-medium flex items-center justify-center`}
               >
-                Create Account
+                {isSubmitting ? (
+                  <>
+                    <span className="mr-2 h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                    Creating Account...
+                  </>
+                ) : (
+                  'Create Account'
+                )}
               </button>
             </form>
             

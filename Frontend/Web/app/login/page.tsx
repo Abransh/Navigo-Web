@@ -12,7 +12,8 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const { login, isAuthenticated } = useAuth();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { login, isAuthenticated, loading } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirectTo = searchParams.get('redirectTo') || '/';
@@ -20,28 +21,58 @@ export default function LoginPage() {
 
   // Redirect if already logged in
   useEffect(() => {
-    if (isAuthenticated) {
+    if (isAuthenticated && !loading) {
+      console.log('Already authenticated, redirecting to:', redirectTo);
       router.push(redirectTo);
     }
-  }, [isAuthenticated, redirectTo, router]);
+  }, [isAuthenticated, redirectTo, router, loading]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    setIsSubmitting(true);
+    
+    if (!email || !password) {
+      setError("Email and password are required");
+      setIsSubmitting(false);
+      return;
+    }
     
     try {
+      console.log('Attempting login with:', { email });
       await login(email, password);
-      // The useEffect above will handle the redirect
+      console.log('Login successful, redirecting to:', redirectTo);
+      router.push(redirectTo);
     } catch (err: any) {
-      setError(err.response?.data?.message || "Login failed. Please try again.");
+      console.error('Login error:', err);
+      if (err.response?.data?.message) {
+        setError(err.response.data.message);
+      } else if (err.message) {
+        setError(err.message);
+      } else {
+        setError("Login failed. Please check your credentials and try again.");
+      }
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   const handleSocialLogin = (provider: string) => {
     // This would be implemented with your actual OAuth provider
-    console.log(`Logging in with ${provider}`);
-    // In a real implementation, you would redirect to the OAuth provider's auth page
+    alert(`Social login with ${provider} is not implemented yet.`);
   };
+
+  // Show loading state while auth state is being determined
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-[#F3A522] border-t-transparent rounded-full animate-spin mx-auto"></div>
+          <p className="mt-4 text-xl">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col md:flex-row">
@@ -88,6 +119,7 @@ export default function LoginPage() {
             {/* Social Login Buttons */}
             <div className="space-y-3 mb-6">
               <button 
+                type="button"
                 onClick={() => handleSocialLogin('google')}
                 className="w-full flex items-center justify-center gap-3 py-3 px-4 bg-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-50 transition-colors"
               >
@@ -96,6 +128,7 @@ export default function LoginPage() {
               </button>
               
               <button 
+                type="button"
                 onClick={() => handleSocialLogin('apple')}
                 className="w-full flex items-center justify-center gap-3 py-3 px-4 bg-black text-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-900 transition-colors"
               >
@@ -104,6 +137,7 @@ export default function LoginPage() {
               </button>
               
               <button 
+                type="button"
                 onClick={() => handleSocialLogin('facebook')}
                 className="w-full flex items-center justify-center gap-3 py-3 px-4 bg-[#1877F2] text-white border border-gray-300 rounded-lg shadow-sm hover:bg-[#0e6ae4] transition-colors"
               >
@@ -153,9 +187,21 @@ export default function LoginPage() {
               
               <button 
                 type="submit"
-                className="w-full py-3 px-4 bg-[#F3A522] text-white rounded-lg hover:bg-[#003366] transition-colors font-medium"
+                disabled={isSubmitting}
+                className={`w-full py-3 px-4 ${
+                  isSubmitting 
+                    ? 'bg-gray-400 cursor-not-allowed' 
+                    : 'bg-[#F3A522] hover:bg-[#003366]'
+                } text-white rounded-lg transition-colors font-medium flex items-center justify-center`}
               >
-                Sign In
+                {isSubmitting ? (
+                  <>
+                    <span className="mr-2 h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                    Signing In...
+                  </>
+                ) : (
+                  'Sign In'
+                )}
               </button>
             </form>
             

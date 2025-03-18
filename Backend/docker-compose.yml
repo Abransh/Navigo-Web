@@ -1,28 +1,9 @@
+# docker-compose.dev.yml
 version: '3.8'
 
 services:
-  api:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    ports:
-      - '3001:3001'
-    depends_on:
-      - postgres
-    environment:
-      - DB_HOST=postgres
-      - DB_PORT=5432
-      - DB_USERNAME=postgres
-      - DB_PASSWORD=postgres
-      - DB_NAME=navigo
-      - NODE_ENV=production
-      - PORT=3001
-    volumes:
-      - .:/usr/src/app
-      - /usr/src/app/node_modules
-
   postgres:
-    image: postgres:13-alpine
+    image: postgres:14-alpine
     ports:
       - '5432:5432'
     environment:
@@ -31,6 +12,22 @@ services:
       - POSTGRES_DB=navigo
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  # Optionally add pgAdmin for database management
+  pgadmin:
+    image: dpage/pgadmin4
+    ports:
+      - '5050:80'
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@example.com
+      - PGADMIN_DEFAULT_PASSWORD=pgadmin
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    depends_on:
+      - postgres
+    restart: unless-stopped
 
 volumes:
   postgres_data:
+  pgadmin_data:
