@@ -6,31 +6,29 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 exports.__esModule = true;
-exports.PaymentsModule = void 0;
-// src/payments/payments.module.ts
+exports.ScheduleModule = void 0;
+// src/schedule/schedule.module.ts
 var common_1 = require("@nestjs/common");
-var typeorm_1 = require("@nestjs/typeorm");
-var payments_controller_1 = require("./payments.controller");
-var payments_services_1 = require("./payments.services");
-var payment_entity_1 = require("./entities/payment.entity");
+var schedule_1 = require("@nestjs/schedule");
+var schedule_service_1 = require("./schedule.service");
 var bookings_module_1 = require("../bookings/bookings.module");
-var stripe_service_1 = require("./services/stripe.service");
+var email_module_1 = require("../email/email.module");
 var notifications_module_1 = require("../notifications/notifications.module");
-var PaymentsModule = /** @class */ (function () {
-    function PaymentsModule() {
+var ScheduleModule = /** @class */ (function () {
+    function ScheduleModule() {
     }
-    PaymentsModule = __decorate([
+    ScheduleModule = __decorate([
         common_1.Module({
             imports: [
-                typeorm_1.TypeOrmModule.forFeature([payment_entity_1.Payment]),
+                schedule_1.ScheduleModule.forRoot(),
                 bookings_module_1.BookingsModule,
+                email_module_1.EmailModule,
                 notifications_module_1.NotificationsModule,
             ],
-            controllers: [payments_controller_1.PaymentsController],
-            providers: [payments_services_1.PaymentsService, stripe_service_1.StripeService],
-            exports: [payments_services_1.PaymentsService]
+            providers: [schedule_service_1.ScheduleService],
+            exports: [schedule_service_1.ScheduleService]
         })
-    ], PaymentsModule);
-    return PaymentsModule;
+    ], ScheduleModule);
+    return ScheduleModule;
 }());
-exports.PaymentsModule = PaymentsModule;
+exports.ScheduleModule = ScheduleModule;

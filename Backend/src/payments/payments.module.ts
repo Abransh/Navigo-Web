@@ -2,7 +2,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { PaymentsController } from './payments.controller';
-import { PaymentsService } from './payments.service';
+import { PaymentsService } from './payments.services';
 import { Payment } from './entities/payment.entity';
 import { BookingsModule } from '../bookings/bookings.module';
 import { StripeService } from './services/stripe.service';
