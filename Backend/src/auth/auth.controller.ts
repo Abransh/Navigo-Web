@@ -1,15 +1,13 @@
+// src/auth/auth.controller.ts
 import { Controller, Post, Body, HttpCode, HttpStatus } from '@nestjs/common';
-import { AuthService } from './auth.service';
+import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { AuthService } from './services/auth.service';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
-import { JwtAuthGuard } from './guards/jwt-auth.guard';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
-import { AuthController } from './controllers/auth.controller';
-import { SocialAuthController } from './controllers/social-auth.controller';
 
 @ApiTags('auth')
 @Controller('auth')
-export class AuthController {
+export class LocalAuthController {
   constructor(private authService: AuthService) {}
 
   @Post('login')

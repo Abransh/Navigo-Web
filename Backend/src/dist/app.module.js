@@ -41,13 +41,17 @@ var AppModule = /** @class */ (function () {
             imports: [
                 // Config first for initialization
                 config_module_1.ConfigModule,
-                // eslint-disable-next-line prettier/prettier
                 // Rate limiting
                 throttler_1.ThrottlerModule.forRootAsync({
+                    imports: [config_module_1.ConfigModule],
                     inject: [config_1.ConfigService],
-                    useFactory: function (config) { return ({
-                        ttl: config.get('THROTTLE_TTL', 60),
-                        limit: config.get('THROTTLE_LIMIT', 10)
+                    useFactory: function (configService) { return ({
+                        throttlers: [
+                            {
+                                ttl: configService.get('THROTTLE_TTL', 60),
+                                limit: configService.get('THROTTLE_LIMIT', 10)
+                            },
+                        ]
                     }); }
                 }),
                 // Scheduled tasks

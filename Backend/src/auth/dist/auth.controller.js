@@ -45,21 +45,22 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 exports.__esModule = true;
-exports.AuthController = void 0;
+exports.LocalAuthController = void 0;
+// src/auth/auth.controller.ts
 var common_1 = require("@nestjs/common");
 var swagger_1 = require("@nestjs/swagger");
-var AuthController = /** @class */ (function () {
-    function AuthController(authService) {
+var LocalAuthController = /** @class */ (function () {
+    function LocalAuthController(authService) {
         this.authService = authService;
     }
-    AuthController.prototype.login = function (loginDto) {
+    LocalAuthController.prototype.login = function (loginDto) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 return [2 /*return*/, this.authService.login(loginDto)];
             });
         });
     };
-    AuthController.prototype.register = function (registerDto) {
+    LocalAuthController.prototype.register = function (registerDto) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 return [2 /*return*/, this.authService.register(registerDto)];
@@ -73,18 +74,18 @@ var AuthController = /** @class */ (function () {
         swagger_1.ApiResponse({ status: 200, description: 'Login successful' }),
         swagger_1.ApiResponse({ status: 401, description: 'Invalid credentials' }),
         __param(0, common_1.Body())
-    ], auth_controller_1.AuthController.prototype, "login");
+    ], LocalAuthController.prototype, "login");
     __decorate([
         common_1.Post('register'),
         swagger_1.ApiOperation({ summary: 'User registration' }),
         swagger_1.ApiResponse({ status: 201, description: 'User successfully registered' }),
         swagger_1.ApiResponse({ status: 400, description: 'Invalid input data' }),
         __param(0, common_1.Body())
-    ], auth_controller_1.AuthController.prototype, "register");
-    AuthController = __decorate([
+    ], LocalAuthController.prototype, "register");
+    LocalAuthController = __decorate([
         swagger_1.ApiTags('auth'),
         common_1.Controller('auth')
-    ], AuthController);
-    return AuthController;
+    ], LocalAuthController);
+    return LocalAuthController;
 }());
-exports.AuthController = AuthController;
+exports.LocalAuthController = LocalAuthController;

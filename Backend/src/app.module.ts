@@ -25,25 +25,26 @@ import { PaymentsModule } from './payments/payments.module';
 import { ReviewsModule } from './reviews/reviews.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { DestinationsModule } from './destinations/destinations.module';
-import { ThrottlerModule, ThrottlerModuleOptions } from '@nestjs/throttler';
 
 // Tasks Module
 import { TasksModule } from './tasks/tasks.module';
-
-
 
 @Module({
   imports: [
     // Config first for initialization
     ConfigModule,
-    // eslint-disable-next-line prettier/prettier
     
     // Rate limiting
     ThrottlerModule.forRootAsync({
+      imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: (config: ConfigService): ThrottlerModuleOptions => ({
-        ttl: config.get<number>('THROTTLE_TTL', 60),
-        limit: config.get<number>('THROTTLE_LIMIT', 10),
+      useFactory: (configService: ConfigService) => ({
+        throttlers: [
+          {
+            ttl: configService.get<number>('THROTTLE_TTL', 60),
+            limit: configService.get<number>('THROTTLE_LIMIT', 10),
+          },
+        ],
       }),
     }),
     
@@ -70,7 +71,8 @@ import { TasksModule } from './tasks/tasks.module';
     ReviewsModule,
     NotificationsModule,
     DestinationsModule,
-   // Tasks module
+   
+    // Tasks module
     TasksModule,
   ],
   controllers: [AppController],
