@@ -1,17 +1,25 @@
-// app/login/page.tsx
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/auth-context";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const { login } = useAuth();
+  const { login, isAuthenticated } = useAuth();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectTo = searchParams.get('redirectTo') || '/';
+
+  // Redirect if already logged in
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.push(redirectTo);
+    }
+  }, [isAuthenticated, redirectTo, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -19,13 +27,25 @@ export default function LoginPage() {
     
     try {
       await login(email, password);
-      router.push("/"); // Redirect to home page after login
+      // The useEffect above will handle the redirect
     } catch (err: any) {
       setError(err.response?.data?.message || "Login failed. Please try again.");
     }
   };
 
+
+
   return (
+    <div className="min-h-screen bg-gray-100 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full space-y-8 bg-white p-10 rounded-xl shadow-md">
+        <div>
+          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">Sign in to your account</h2>
+          {redirectTo === '/planyourtrip' && (
+            <p className="mt-2 text-center text-sm text-gray-600">
+              Sign in to plan your perfect trip with Navigo
+            </p>
+          )}
+        </div>
     <div className="min-h-screen bg-gray-100 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8 bg-white p-10 rounded-xl shadow-md">
         <div>
@@ -86,6 +106,8 @@ export default function LoginPage() {
           </div>
         </form>
       </div>
+    </div>
+    </div>
     </div>
   );
 }

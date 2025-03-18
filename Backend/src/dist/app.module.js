@@ -7,6 +7,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 exports.__esModule = true;
 exports.AppModule = void 0;
+// Backend/src/app.module.ts
 var common_1 = require("@nestjs/common");
 var config_1 = require("@nestjs/config");
 var throttler_1 = require("@nestjs/throttler");
@@ -23,6 +24,7 @@ var reviews_module_1 = require("./reviews/reviews.module");
 var notifications_module_1 = require("./notifications/notifications.module");
 var schedule_1 = require("@nestjs/schedule");
 var email_module_1 = require("./email/email.module");
+var destinations_module_1 = require("./destinations/destinations.module"); // Add this
 var AppModule = /** @class */ (function () {
     function AppModule() {
     }
@@ -47,6 +49,7 @@ var AppModule = /** @class */ (function () {
                 reviews_module_1.ReviewsModule,
                 notifications_module_1.NotificationsModule,
                 email_module_1.EmailModule,
+                destinations_module_1.DestinationsModule,
             ],
             controllers: [app_controller_1.AppController],
             providers: [app_service_1.AppService]

@@ -1,3 +1,4 @@
+// Backend/src/app.module.ts
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { ThrottlerModule } from '@nestjs/throttler';
@@ -14,6 +15,7 @@ import { ReviewsModule } from './reviews/reviews.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { EmailModule } from './email/email.module';
+import { DestinationsModule } from './destinations/destinations.module'; // Add this
 
 @Module({
   imports: [
@@ -35,10 +37,9 @@ import { EmailModule } from './email/email.module';
     ReviewsModule,
     NotificationsModule,
     EmailModule,
+    DestinationsModule, // Add this
   ],
   controllers: [AppController],
   providers: [AppService],
-  
 })
-
 export class AppModule {}

@@ -1,9 +1,9 @@
 // app/register/page.tsx
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/auth-context";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 
 export default function RegisterPage() {
@@ -16,8 +16,17 @@ export default function RegisterPage() {
     role: "tourist" // Default role
   });
   const [error, setError] = useState("");
-  const { register } = useAuth();
+
+  const { register, isAuthenticated } = useAuth();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectTo = searchParams.get('redirectTo') || '/';
+  
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.push(redirectTo);
+    }
+  }, [isAuthenticated, redirectTo, router]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -48,6 +57,18 @@ export default function RegisterPage() {
   };
 
   return (
+
+    <div className="min-h-screen bg-gray-100 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full space-y-8 bg-white p-10 rounded-xl shadow-md">
+        <div>
+          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">Create your account</h2>
+          {redirectTo === '/planyourtrip' && (
+            <p className="mt-2 text-center text-sm text-gray-600">
+              Join Navigo to plan your perfect trip in India
+            </p>
+          )}
+        </div>
+        
     <div className="min-h-screen bg-gray-100 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8 bg-white p-10 rounded-xl shadow-md">
         <div>
@@ -168,6 +189,8 @@ export default function RegisterPage() {
           </div>
         </form>
       </div>
+    </div>
+    </div>
     </div>
   );
 }
