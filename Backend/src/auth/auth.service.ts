@@ -16,6 +16,22 @@ export class AuthService {
     private passwordResetRepository: PasswordResetRepository,
   ) {}
 
+  interface SocialUser {
+    email: string;
+    firstName: string;
+    lastName: string;
+    picture?: string;
+    accessToken: string;
+    provider: 'google' | 'facebook' | 'apple';
+  }
+  
+  interface SocialProfile {
+    provider: string;
+    providerId: string;
+    accessToken: string;
+    userId: string;
+  }
+
   async validateUser(email: string, password: string): Promise<any> {
     const user = await this.usersService.findByEmail(email);
     if (user && await bcrypt.compare(password, user.password)) {
@@ -159,5 +175,88 @@ export class AuthService {
       access_token: this.jwtService.sign(payload),
       user: newUser,
     };
+
+    async validateSocialLogin(socialUser: SocialUser) {
+      try {
+        // Check if user exists by email
+        let user = await this.usersService.findByEmail(socialUser.email).catch(() => null);
+        
+        // If user doesn't exist, create a new one
+        if (!user) {
+          user = await this.usersService.create({
+            email: socialUser.email,
+            firstName: socialUser.firstName,
+            lastName: socialUser.lastName,
+            profilePicture: socialUser.picture,
+            password: await bcrypt.hash(uuidv4(), 10), // Random password
+            role: UserRole.TOURIST,
+          });
+          
+          // Create social profile link
+          await this.socialProfileRepository.save({
+            provider: socialUser.provider,
+            providerId: socialUser.email, // Using email as providerId for simplicity
+            accessToken: socialUser.accessToken,
+            userId: user.id,
+          });
+          
+          // Send welcome email to new user
+          await this.mailService.sendWelcomeEmail(user.email, user.firstName);
+        } else {
+          // Check if social profile exists
+          const socialProfile = await this.socialProfileRepository.findOne({
+            where: {
+              provider: socialUser.provider,
+              userId: user.id,
+            },
+          }).catch(() => null);
+          
+          // If not, create it
+          if (!socialProfile) {
+            await this.socialProfileRepository.save({
+              provider: socialUser.provider,
+              providerId: socialUser.email,
+              accessToken: socialUser.accessToken,
+              userId: user.id,
+            });
+          } else {
+            // Update access token
+            await this.socialProfileRepository.update(
+              { id: socialProfile.id },
+              { accessToken: socialUser.accessToken },
+            );
+          }
+          
+          // Update profile pic if not set
+          if (!user.profilePicture && socialUser.picture) {
+            await this.usersService.update(user.id, {
+              profilePicture: socialUser.picture,
+            });
+          }
+        }
+        
+        // Generate JWT token
+        const payload = { 
+          sub: user.id, 
+          email: user.email,
+          role: user.role,
+        };
+        
+        return {
+          access_token: this.jwtService.sign(payload),
+          user: {
+            id: user.id,
+            email: user.email,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            role: user.role,
+            profilePicture: user.profilePicture,
+          },
+        };
+      } catch (error) {
+        console.error('Social login error:', error);
+        throw new InternalServerErrorException('Social login failed');
+      }
+    }; 
   }
 }
