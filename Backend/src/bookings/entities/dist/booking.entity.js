@@ -9,10 +9,9 @@ exports.__esModule = true;
 exports.Booking = void 0;
 var typeorm_1 = require("typeorm");
 var user_entity_1 = require("../../users/entities/user.entity");
-var companion_entity_1 = require("../../companions/entities/companion.entity");
+var companion_entity_1 = require("../../companions/entities/companion.entity"); // Ensure this path is correct and the file exists
 var booking_status_enum_1 = require("../enums/booking-status.enum");
 var payment_entity_1 = require("../../payments/entities/payment.entity");
-var review_entity_1 = require("../../reviews/entities/review.entity");
 var Booking = /** @class */ (function () {
     function Booking() {
     }
@@ -57,7 +56,7 @@ var Booking = /** @class */ (function () {
         typeorm_1.OneToMany(function () { return payment_entity_1.Payment; }, function (payment) { return payment.booking; })
     ], Booking.prototype, "payments");
     __decorate([
-        typeorm_1.OneToMany(function () { return review_entity_1.Review; }, function (review) { return review.booking; })
+        typeorm_1.OneToMany(function () { return Review; }, function (review) { return review.booking; })
     ], Booking.prototype, "reviews");
     Booking = __decorate([
         typeorm_1.Entity('bookings')
