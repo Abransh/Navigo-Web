@@ -1,5 +1,16 @@
 "use client";
 "use strict";
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 exports.__esModule = true;
 var react_1 = require("react");
 var image_1 = require("next/image");
@@ -9,6 +20,7 @@ var calendar_1 = require("@/components/ui/calendar");
 var popover_1 = require("@/components/ui/popover");
 var button_1 = require("@/components/ui/button");
 var label_1 = require("@/components/ui/label");
+var auth_context_1 = require("@/contexts/auth-context");
 var destinations = [
     { value: "varanasi", label: "Varanasi" },
     { value: "goa", label: "Goa" },
@@ -20,41 +32,64 @@ var destinations = [
 ];
 function ContactSection() {
     var _a;
-    var _b = react_1.useState(undefined), date = _b[0], setDate = _b[1];
+    var _b = auth_context_1.useAuth(), user = _b.user, isAuthenticated = _b.isAuthenticated;
     var _c = react_1.useState({
+        firstName: "",
+        lastName: "",
+        email: ""
+    }), formData = _c[0], setFormData = _c[1];
+    react_1.useEffect(function () {
+        if (isAuthenticated && user) {
+            setFormData({
+                firstName: user.firstName || "",
+                lastName: user.lastName || "",
+                email: user.email || ""
+            });
+        }
+    }, [isAuthenticated, user]);
+    var _d = react_1.useState(undefined), date = _d[0], setDate = _d[1];
+    var _e = react_1.useState({
         from: undefined,
         to: undefined
-    }), dateRange = _c[0], setDateRange = _c[1];
-    var _d = react_1.useState(false), isRangeMode = _d[0], setIsRangeMode = _d[1];
-    var _e = react_1.useState(""), selectedDestination = _e[0], setSelectedDestination = _e[1];
-    var _f = react_1.useState(false), isDestinationOpen = _f[0], setIsDestinationOpen = _f[1];
+    }), dateRange = _e[0], setDateRange = _e[1];
+    var _f = react_1.useState(false), isRangeMode = _f[0], setIsRangeMode = _f[1];
+    var _g = react_1.useState(""), selectedDestination = _g[0], setSelectedDestination = _g[1];
+    var _h = react_1.useState(false), isDestinationOpen = _h[0], setIsDestinationOpen = _h[1];
     var handleSubmit = function (e) {
         e.preventDefault();
-        console.log("Form Submitted");
+        console.log("Form Submitted", formData);
+        // Process form submission
+    };
+    var handleChange = function (e) {
+        var _a = e.target, id = _a.id, value = _a.value;
+        setFormData(function (prev) {
+            var _a;
+            return (__assign(__assign({}, prev), (_a = {}, _a[id] = value, _a)));
+        });
     };
     return (React.createElement("section", { className: "mx-auto max-w-7xl px-4 py-16" },
         React.createElement("div", { className: "overflow-hidden" },
             React.createElement("div", { className: "grid md:grid-cols-[1fr_100px]" },
                 React.createElement("div", null,
-                    React.createElement("h2", { className: " rounded-t-3xl bg-gray-700 p-6 text-3xl font-bold text-white" }, "Contact Us to Book Your Trip"),
+                    React.createElement("h2", { className: "rounded-t-3xl bg-gray-700 p-6 text-3xl font-bold text-white" }, "Contact Us to Book Your Trip"),
                     React.createElement("form", { onSubmit: handleSubmit, className: "rounded-b-3xl bg-gray-300 p-6" },
                         React.createElement("div", { className: "grid gap-8 md:grid-cols-2" },
                             React.createElement("div", null,
                                 React.createElement(label_1.Label, { htmlFor: "firstName", className: "flex items-center" },
                                     "First Name",
                                     React.createElement("span", { className: "ml-1 text-grey-500" }, "*")),
-                                React.createElement("input", { id: "firstName", required: true, className: "mt-1 w-full border-b-2 bg-gray-200 border-gray-300 py-2 outline-none focus:border-navy-blue" })),
+                                React.createElement("input", { id: "firstName", required: true, className: "mt-1 w-full border-b-2 bg-gray-200 border-gray-300 py-2 outline-none focus:border-navy-blue", value: formData.firstName, onChange: handleChange })),
                             React.createElement("div", null,
                                 React.createElement(label_1.Label, { htmlFor: "lastName", className: "flex items-center" },
                                     "Last Name",
                                     React.createElement("span", { className: "ml-1 text-red-500" }, "*")),
-                                React.createElement("input", { id: "lastName", required: true, className: "mt-1 w-full border-b-2 border-gray-300 py-2 outline-none focus:border-navy-blue" }))),
+                                React.createElement("input", { id: "lastName", required: true, className: "mt-1 w-full border-b-2 border-gray-300 py-2 outline-none focus:border-navy-blue", value: formData.lastName, onChange: handleChange }))),
                         React.createElement("div", { className: "mt-8 grid gap-8 md:grid-cols-2" },
                             React.createElement("div", null,
                                 React.createElement(label_1.Label, { htmlFor: "email", className: "flex items-center" },
                                     "Email",
                                     React.createElement("span", { className: "ml-1 text-red-500" }, "*")),
-                                React.createElement("input", { id: "email", type: "email", required: true, className: "mt-1 w-full border-b-2 border-gray-300 py-2 outline-none focus:border-navy-blue" })),
+                                React.createElement("input", { id: "email", type: "email", required: true, className: "mt-1 w-full border-b-2 border-gray-300 py-2 outline-none focus:border-navy-blue", value: formData.email, onChange: handleChange })),
                             React.createElement("div", null,
                                 React.createElement("div", { className: "flex items-center justify-between" },
                                     React.createElement(label_1.Label, { htmlFor: "date" }, "Preferred Dates"),

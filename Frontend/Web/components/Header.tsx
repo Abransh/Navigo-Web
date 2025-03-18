@@ -1,21 +1,20 @@
-
-
-// frontend/web/components/layout/Header.tsx
-"use client";
+// components/Header.tsx
+"use client"; 
 
 import Link from 'next/link';
 import React, { useEffect, useState, useRef } from 'react';
 import { useMobile } from '@/hooks/use-mobile';
 import { useAuth } from '@/contexts/auth-context';
+import PlanTripButton from './PlanTripButton';
 
 const Header: React.FC = () => {
   const { isAuthenticated, user, logout } = useAuth();
-  const isMobile = useMobile(768);
+  const isMobile = useMobile(768); // Use your custom hook
   const [visible, setVisible] = useState(true);
   const [prevScrollPos, setPrevScrollPos] = useState(0);
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
-
+  
   // Handle scroll behavior
   useEffect(() => {
     const handleScroll = () => {
@@ -62,11 +61,12 @@ const Header: React.FC = () => {
     setMenuOpen(!menuOpen);
   };
 
+  // Handle logout
   const handleLogout = () => {
     logout();
     setMenuOpen(false);
   };
-  
+
   return (
     <div className={`fixed top-4 left-0 right-0 z-50 transition-transform duration-300 px-2 ${
       visible ? 'translate-y-0' : '-translate-y-full'
@@ -91,24 +91,41 @@ const Header: React.FC = () => {
           </div>
         )}
 
-        {/* Right section - CTA (hidden on mobile) */}
+        {/* Right section - Authentication / CTA (hidden on mobile) */}
         {!isMobile && (
           <div className="w-[249px] h-8 bg-white/80 backdrop-blur-sm rounded-full shadow-md flex items-center px-6 justify-between group hover:bg-[#6babea] transition-all duration-300">
-            <Link
-              href="/planyoutrip"
-              className="text-sm group-hover:text-white transition-colors duration-300"
-            >
-              Plan Your Trip
-            </Link>
-            <svg
-              className="w-4 h-4 transform group-hover:rotate-45 transition-transform duration-300"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-            </svg>
+            {isAuthenticated ? (
+              <div className="flex items-center justify-between w-full">
+                <span className="text-sm truncate">{user?.firstName || 'User'}</span>
+                <button
+                  onClick={handleLogout}
+                  className="text-sm group-hover:text-white transition-colors duration-300"
+                >
+                  Logout
+                </button>
+              </div>
+            ) : (
+              <div className="flex items-center justify-between w-full">
+                <Link
+                  href="/login"
+                  className="text-sm group-hover:text-white transition-colors duration-300"
+                >
+                  Login
+                </Link>
+                <PlanTripButton className="text-sm group-hover:text-white transition-colors duration-300 flex items-center">
+                  <span>Plan Trip</span>
+                  <svg
+                    className="w-4 h-4 transform group-hover:rotate-45 transition-transform duration-300 ml-2"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                  </svg>
+                </PlanTripButton>
+              </div>
+            )}
           </div>
         )}
 
@@ -169,17 +186,51 @@ const Header: React.FC = () => {
                     Magazine
                   </Link>
                   <Link 
-                    href="/about" 
+                    href="/OurMission" 
                     className="hover:text-[#F3A522] text-sm py-2 px-3 rounded-md hover:bg-gray-100"
                     onClick={() => setMenuOpen(false)}
                   >
                     Our Mission
                   </Link>
+                  
+                  {/* Authentication section */}
                   <div className="border-t border-gray-200 my-1"></div>
-                  <Link 
-                    href="/trip-planner" 
+                  
+                  {isAuthenticated ? (
+                    <>
+                      <div className="px-3 py-2 text-sm font-medium">
+                        Hello, {user?.firstName || 'User'}
+                      </div>
+                      <button 
+                        onClick={handleLogout}
+                        className="text-left text-sm py-2 px-3 rounded-md hover:bg-gray-100 text-red-500"
+                      >
+                        Logout
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <Link 
+                        href="/login" 
+                        className="hover:text-[#F3A522] text-sm py-2 px-3 rounded-md hover:bg-gray-100"
+                        onClick={() => setMenuOpen(false)}
+                      >
+                        Login
+                      </Link>
+                      <Link 
+                        href="/register" 
+                        className="hover:text-[#F3A522] text-sm py-2 px-3 rounded-md hover:bg-gray-100"
+                        onClick={() => setMenuOpen(false)}
+                      >
+                        Register
+                      </Link>
+                    </>
+                  )}
+                  
+                  <div className="border-t border-gray-200 my-1"></div>
+                  
+                  <PlanTripButton 
                     className="flex justify-between items-center text-sm py-2 px-3 rounded-md bg-[#6babea] text-white"
-                    onClick={() => setMenuOpen(false)}
                   >
                     <span>Plan Your Trip</span>
                     <svg
@@ -191,7 +242,7 @@ const Header: React.FC = () => {
                     >
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
                     </svg>
-                  </Link>
+                  </PlanTripButton>
                 </nav>
               </div>
             )}

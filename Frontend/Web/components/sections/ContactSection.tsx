@@ -1,8 +1,7 @@
 "use client"
 
 import type React from "react"
-
-import { useState } from "react"
+import { useState, useEffect } from "react";
 import Image from "next/image"
 import { CalendarIcon, ChevronDown } from "lucide-react"
 import { format } from "date-fns"
@@ -10,6 +9,8 @@ import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
+import { useAuth } from "@/contexts/auth-context";
+
 
 
 const destinations = [
@@ -23,6 +24,23 @@ const destinations = [
   ]
 
   export default function ContactSection () {
+    const { user, isAuthenticated } = useAuth();
+    const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+  });
+
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      setFormData({
+        firstName: user.firstName || "",
+        lastName: user.lastName || "",
+        email: user.email || "",
+      });
+    }
+  }, [isAuthenticated, user]);
+
     const[date, setDate] = useState<Date | undefined>(undefined)
     const [dateRange, setDateRange] = useState<{
             from: Date | undefined
@@ -38,35 +56,49 @@ const destinations = [
 
 
       const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault()
-        console.log("Form Submitted")
-      }
+        e.preventDefault();
+        console.log("Form Submitted", formData);
+        // Process form submission
+      };
+    
+      const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { id, value } = e.target;
+        setFormData(prev => ({
+          ...prev,
+          [id]: value
+        }));
+      };
+    
+
+      
+
 
       return(
         <section className="mx-auto max-w-7xl px-4 py-16">
-            <div className= "overflow-hidden">
-                <div className = "grid md:grid-cols-[1fr_100px]">
-                    {/* here is the submission of the form */}
-                    <div>
-            <h2 className=" rounded-t-3xl bg-gray-700 p-6 text-3xl font-bold text-white">
-              Contact Us to Book Your Trip
-            </h2>
-
-            <form onSubmit={handleSubmit} className="rounded-b-3xl bg-gray-300 p-6">
-              <div className="grid gap-8 md:grid-cols-2">
-                {/* First Name */}
-                <div>
-                  <Label htmlFor="firstName" className="flex items-center">
-                    First Name
-                    <span className="ml-1 text-grey-500">*</span>
-                  </Label>
-                  <input
-                    id="firstName"
-                    required
-                    className="mt-1 w-full border-b-2 bg-gray-200 border-gray-300 py-2 outline-none focus:border-navy-blue"
+        <div className="overflow-hidden">
+          <div className="grid md:grid-cols-[1fr_100px]">
+            {/* Form section */}
+            <div>
+              <h2 className="rounded-t-3xl bg-gray-700 p-6 text-3xl font-bold text-white">
+                Contact Us to Book Your Trip
+              </h2>
+  
+              <form onSubmit={handleSubmit} className="rounded-b-3xl bg-gray-300 p-6">
+                <div className="grid gap-8 md:grid-cols-2">
+                  {/* First Name */}
+                  <div>
+                    <Label htmlFor="firstName" className="flex items-center">
+                      First Name
+                      <span className="ml-1 text-grey-500">*</span>
+                    </Label>
+                    <input
+                      id="firstName"
+                      required
+                      className="mt-1 w-full border-b-2 bg-gray-200 border-gray-300 py-2 outline-none focus:border-navy-blue"
+                      value={formData.firstName}
+                      onChange={handleChange}
                   />
                 </div>
-
 
                 {/* Last Name */}
                 <div>
@@ -78,6 +110,8 @@ const destinations = [
                     id="lastName"
                     required
                     className="mt-1 w-full border-b-2 border-gray-300 py-2 outline-none focus:border-navy-blue"
+                    value={formData.lastName}
+                    onChange={handleChange}
                   />
                 </div>
               </div>
@@ -94,6 +128,8 @@ const destinations = [
                     type="email"
                     required
                     className="mt-1 w-full border-b-2 border-gray-300 py-2 outline-none focus:border-navy-blue"
+                    value={formData.email}
+                    onChange={handleChange}
                   />
                 </div>
 
@@ -205,15 +241,17 @@ const destinations = [
 
           {/* Image Section */}
           <div className="w-[100px] h-[400px] rounded-2xl mx-1 overflow-hidden">
-          <div className="w-full h-full relative">
-            <Image src="/images/QrBarBoxes.png"
-             alt="Contact Us" 
-             fill 
-             className="object-cover" />
-          </div>
+            <div className="w-full h-full relative">
+              <Image 
+                src="/images/QrBarBoxes.png"
+                alt="Contact Us" 
+                fill 
+                className="object-cover" 
+              />
+            </div>
           </div>
         </div>
       </div>
     </section>
-  )
+  );
 }
