@@ -1,12 +1,23 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  OneToMany,
+} from 'typeorm';
 import { UserRole } from '../enums/user-role.enum';
 import { Companion } from '../../companions/entities/companion.entity';
 import { Booking } from '../../bookings/entities/booking.entity';
+import { SocialProfile } from '../../auth/entities/social-profile.entity';
 
 @Entity('users')
 export class User {
   @PrimaryGeneratedColumn('uuid')
   id: string;
+
+  @Column({ type: 'text', nullable: true })
+  bio: string;
 
   @Column()
   firstName: string;
@@ -56,4 +67,9 @@ export class User {
 
   @OneToMany(() => Companion, companion => companion.user)
   companionProfiles: Companion[];
+
+  @OneToMany(() => SocialProfile, socialProfile => socialProfile.user)
+socialProfiles: SocialProfile[];
+
+
 }

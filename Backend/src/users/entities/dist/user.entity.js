@@ -11,12 +11,16 @@ var typeorm_1 = require("typeorm");
 var user_role_enum_1 = require("../enums/user-role.enum");
 var companion_entity_1 = require("../../companions/entities/companion.entity");
 var booking_entity_1 = require("../../bookings/entities/booking.entity");
+var social_profile_entity_1 = require("../../auth/entities/social-profile.entity");
 var User = /** @class */ (function () {
     function User() {
     }
     __decorate([
         typeorm_1.PrimaryGeneratedColumn('uuid')
     ], User.prototype, "id");
+    __decorate([
+        typeorm_1.Column({ type: 'text', nullable: true })
+    ], User.prototype, "bio");
     __decorate([
         typeorm_1.Column()
     ], User.prototype, "firstName");
@@ -66,6 +70,9 @@ var User = /** @class */ (function () {
     __decorate([
         typeorm_1.OneToMany(function () { return companion_entity_1.Companion; }, function (companion) { return companion.user; })
     ], User.prototype, "companionProfiles");
+    __decorate([
+        typeorm_1.OneToMany(function () { return social_profile_entity_1.SocialProfile; }, function (socialProfile) { return socialProfile.user; })
+    ], User.prototype, "socialProfiles");
     User = __decorate([
         typeorm_1.Entity('users')
     ], User);
