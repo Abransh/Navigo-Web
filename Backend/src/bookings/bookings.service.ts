@@ -283,12 +283,26 @@ export class BookingsService {
     return this.bookingsRepository.save(booking);
   }
 
-  async calculatePrice(
-    companionId: string,
-    startDate: string,
-    endDate: string,
-  ): Promise<{ totalAmount: number }> {
-    const companion = await this.companionsService.findOne(companionId);
-    if (!companion) {
-      throw new NotFoundException('Companion not found');
-    }
+  // Edit the bookings.service.ts file to complete the calculatePrice method
+async calculatePrice(
+  companionId: string,
+  startDate: string,
+  endDate: string,
+): Promise<{ totalAmount: number }> {
+  const companion = await this.companionsService.findOne(companionId);
+  if (!companion) {
+    throw new NotFoundException('Companion not found');
+  }
+  
+  const start = new Date(startDate);
+  const end = new Date(endDate);
+  
+  if (start >= end) {
+    throw new BadRequestException('End date must be after start date');
+  }
+  
+  const hours = Math.max(0.5, Math.abs(end.getTime() - start.getTime()) / 36e5);
+  const totalAmount = parseFloat((hours * companion.hourlyRate).toFixed(2));
+  
+  return { totalAmount };
+}

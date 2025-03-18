@@ -55,49 +55,49 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 exports.__esModule = true;
-exports.AppleStrategy = void 0;
-// src/auth/strategies/apple.strategy.ts
+exports.FacebookStrategy = void 0;
+// src/auth/strategies/facebook.strategy.ts
 var passport_1 = require("@nestjs/passport");
-var passport_apple_1 = require("passport-apple");
+var passport_facebook_1 = require("passport-facebook");
 var common_1 = require("@nestjs/common");
-var AppleStrategy = /** @class */ (function (_super) {
-    __extends(AppleStrategy, _super);
-    function AppleStrategy(configService, authService) {
+var FacebookStrategy = /** @class */ (function (_super) {
+    __extends(FacebookStrategy, _super);
+    function FacebookStrategy(configService, authService) {
         var _this = _super.call(this, {
-            clientID: configService.get('APPLE_CLIENT_ID') || '',
-            teamID: configService.get('APPLE_TEAM_ID') || '',
-            keyID: configService.get('APPLE_KEY_ID') || '',
-            privateKeyLocation: configService.get('APPLE_PRIVATE_KEY_PATH') || '',
-            callbackURL: configService.get('APPLE_CALLBACK_URL') || '',
-            scope: ['email', 'name'],
-            passReqToCallback: false
+            clientID: configService.get('FACEBOOK_APP_ID') || '',
+            clientSecret: configService.get('FACEBOOK_APP_SECRET') || '',
+            callbackURL: configService.get('FACEBOOK_CALLBACK_URL') || '',
+            profileFields: ['id', 'emails', 'name', 'picture.type(large)'],
+            scope: ['email']
         }) || this;
         _this.configService = configService;
         _this.authService = authService;
         return _this;
     }
-    AppleStrategy.prototype.validate = function (accessToken, refreshToken, profile, done) {
-        var _a, _b;
+    FacebookStrategy.prototype.validate = function (accessToken, refreshToken, profile, done) {
+        var _a;
         return __awaiter(this, void 0, Promise, function () {
-            var firstName, lastName, user;
-            return __generator(this, function (_c) {
-                firstName = ((_a = profile.name) === null || _a === void 0 ? void 0 : _a.firstName) || 'Apple';
-                lastName = ((_b = profile.name) === null || _b === void 0 ? void 0 : _b.lastName) || 'User';
+            var name, emails, photos, user;
+            return __generator(this, function (_b) {
+                name = profile.name, emails = profile.emails, photos = profile.photos;
+                if (!emails || emails.length === 0) {
+                    throw new Error('Email not provided from Facebook');
+                }
                 user = {
-                    email: profile.email,
-                    firstName: firstName,
-                    lastName: lastName,
-                    picture: undefined,
+                    email: emails[0].value,
+                    firstName: name ? name.givenName : 'Facebook',
+                    lastName: name ? name.familyName : 'User',
+                    picture: (_a = photos === null || photos === void 0 ? void 0 : photos[0]) === null || _a === void 0 ? void 0 : _a.value,
                     accessToken: accessToken,
-                    provider: 'apple'
+                    provider: 'facebook'
                 };
                 return [2 /*return*/, this.authService.validateSocialLogin(user)];
             });
         });
     };
-    AppleStrategy = __decorate([
+    FacebookStrategy = __decorate([
         common_1.Injectable()
-    ], AppleStrategy);
-    return AppleStrategy;
-}(passport_1.PassportStrategy(passport_apple_1.Strategy, 'apple')));
-exports.AppleStrategy = AppleStrategy;
+    ], FacebookStrategy);
+    return FacebookStrategy;
+}(passport_1.PassportStrategy(passport_facebook_1.Strategy, 'facebook')));
+exports.FacebookStrategy = FacebookStrategy;

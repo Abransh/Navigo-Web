@@ -1,3 +1,4 @@
+// src/auth/strategies/apple.strategy.ts
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-apple';
 import { Injectable } from '@nestjs/common';
@@ -11,13 +12,14 @@ export class AppleStrategy extends PassportStrategy(Strategy, 'apple') {
     private authService: AuthService,
   ) {
     super({
-      clientID: configService.get<string>('APPLE_CLIENT_ID'),
-      teamID: configService.get<string>('APPLE_TEAM_ID'),
-      keyID: configService.get<string>('APPLE_KEY_ID'),
-      privateKeyLocation: configService.get<string>('APPLE_PRIVATE_KEY_PATH'),
-      callbackURL: configService.get<string>('APPLE_CALLBACK_URL'),
+      clientID: configService.get<string>('APPLE_CLIENT_ID') || '',
+      teamID: configService.get<string>('APPLE_TEAM_ID') || '',
+      keyID: configService.get<string>('APPLE_KEY_ID') || '',
+      privateKeyLocation: configService.get<string>('APPLE_PRIVATE_KEY_PATH') || '',
+      callbackURL: configService.get<string>('APPLE_CALLBACK_URL') || '',
       scope: ['email', 'name'],
-    });
+      passReqToCallback: false,
+    } as any);
   }
 
   async validate(
@@ -35,9 +37,9 @@ export class AppleStrategy extends PassportStrategy(Strategy, 'apple') {
       email: profile.email,
       firstName,
       lastName,
-      picture: null, // Apple doesn't provide profile picture
+      picture: undefined, // Apple doesn't provide profile picture
       accessToken,
-      provider: 'apple',
+      provider: 'apple' as 'google' | 'facebook' | 'apple',
     };
     
     return this.authService.validateSocialLogin(user);

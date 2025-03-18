@@ -1,3 +1,4 @@
+// src/chat/chat.service.ts
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -17,10 +18,15 @@ export class ChatService {
     const sender = await this.userRepository.findOne({ where: { id: messageData.senderId } });
     const recipient = await this.userRepository.findOne({ where: { id: messageData.recipientId } });
     
+    if (!sender || !recipient) {
+      throw new Error('Sender or recipient not found');
+    }
+    
     const message = this.messageRepository.create({
       sender,
       recipient,
       content: messageData.content,
+      isRead: false,
     });
     
     return this.messageRepository.save(message);

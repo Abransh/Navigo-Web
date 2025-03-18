@@ -55,49 +55,32 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 exports.__esModule = true;
-exports.AppleStrategy = void 0;
-// src/auth/strategies/apple.strategy.ts
-var passport_1 = require("@nestjs/passport");
-var passport_apple_1 = require("passport-apple");
+exports.JwtStrategy = void 0;
+// src/auth/strategies/jwt.strategy.ts
 var common_1 = require("@nestjs/common");
-var AppleStrategy = /** @class */ (function (_super) {
-    __extends(AppleStrategy, _super);
-    function AppleStrategy(configService, authService) {
+var passport_1 = require("@nestjs/passport");
+var passport_jwt_1 = require("passport-jwt");
+var JwtStrategy = /** @class */ (function (_super) {
+    __extends(JwtStrategy, _super);
+    function JwtStrategy(configService) {
         var _this = _super.call(this, {
-            clientID: configService.get('APPLE_CLIENT_ID') || '',
-            teamID: configService.get('APPLE_TEAM_ID') || '',
-            keyID: configService.get('APPLE_KEY_ID') || '',
-            privateKeyLocation: configService.get('APPLE_PRIVATE_KEY_PATH') || '',
-            callbackURL: configService.get('APPLE_CALLBACK_URL') || '',
-            scope: ['email', 'name'],
-            passReqToCallback: false
+            jwtFromRequest: passport_jwt_1.ExtractJwt.fromAuthHeaderAsBearerToken(),
+            ignoreExpiration: false,
+            secretOrKey: configService.get('JWT_SECRET') || 'default-secret-key-replace-me'
         }) || this;
         _this.configService = configService;
-        _this.authService = authService;
         return _this;
     }
-    AppleStrategy.prototype.validate = function (accessToken, refreshToken, profile, done) {
-        var _a, _b;
-        return __awaiter(this, void 0, Promise, function () {
-            var firstName, lastName, user;
-            return __generator(this, function (_c) {
-                firstName = ((_a = profile.name) === null || _a === void 0 ? void 0 : _a.firstName) || 'Apple';
-                lastName = ((_b = profile.name) === null || _b === void 0 ? void 0 : _b.lastName) || 'User';
-                user = {
-                    email: profile.email,
-                    firstName: firstName,
-                    lastName: lastName,
-                    picture: undefined,
-                    accessToken: accessToken,
-                    provider: 'apple'
-                };
-                return [2 /*return*/, this.authService.validateSocialLogin(user)];
+    JwtStrategy.prototype.validate = function (payload) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                return [2 /*return*/, { id: payload.sub, email: payload.email, role: payload.role }];
             });
         });
     };
-    AppleStrategy = __decorate([
+    JwtStrategy = __decorate([
         common_1.Injectable()
-    ], AppleStrategy);
-    return AppleStrategy;
-}(passport_1.PassportStrategy(passport_apple_1.Strategy, 'apple')));
-exports.AppleStrategy = AppleStrategy;
+    ], JwtStrategy);
+    return JwtStrategy;
+}(passport_1.PassportStrategy(passport_jwt_1.Strategy)));
+exports.JwtStrategy = JwtStrategy;

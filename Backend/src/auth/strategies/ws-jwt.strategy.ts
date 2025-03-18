@@ -1,28 +1,30 @@
-// src/auth/strategies/ws-jwt.strategy.ts
-import { Injectable } from '@nestjs/common';
-import { PassportStrategy } from '@nestjs/passport';
-import { ExtractJwt, Strategy } from 'passport-jwt';
-import { ConfigService } from '@nestjs/config';
-import { WsException } from '@nestjs/websockets';
+// src/auth/guards/ws-jwt.guard.ts
+import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import { Observable } from 'rxjs';
+import { Socket } from 'socket.io';
 
 @Injectable()
-export class WsJwtStrategy extends PassportStrategy(Strategy, 'ws-jwt') {
-  constructor(private configService: ConfigService) {
-    super({
-      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-      ignoreExpiration: false,
-      secretOrKey: configService.get<string>('JWT_SECRET', 'defaultSecret'),
-    });
-  }
+export class WsJwtGuard implements CanActivate {
+  constructor(private jwtService: JwtService) {}
 
-  validate(payload: { sub: string; email: string; role: string }) {
-    if (!payload) {
-      throw new WsException('Invalid token');
+  canActivate(
+    context: ExecutionContext,
+  ): boolean | Promise<boolean> | Observable<boolean> {
+    const client: Socket = context.switchToWs().getClient();
+    const authToken = client.handshake.headers.authorization;
+    
+    try {
+      // Check if authToken exists
+      if (!authToken) {
+        return false;
+      }
+      
+      const payload = this.jwtService.verify<{ sub: string }>(authToken);
+      client.handshake.headers.authorization = payload.sub; // Set userId in headers
+      return true;
+    } catch (error) {
+      return false;
     }
-    return {
-      userId: payload.sub,
-      email: payload.email,
-      role: payload.role,
-    };
   }
 }

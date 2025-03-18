@@ -46,12 +46,14 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 exports.__esModule = true;
 exports.CompanionsService = void 0;
+// src/companions/companions.service.ts
 var common_1 = require("@nestjs/common");
 var typeorm_1 = require("@nestjs/typeorm");
 var companion_entity_1 = require("./entities/companion.entity");
 var CompanionsService = /** @class */ (function () {
-    function CompanionsService(companionsRepository) {
+    function CompanionsService(companionsRepository, usersService) {
         this.companionsRepository = companionsRepository;
+        this.usersService = usersService;
     }
     CompanionsService.prototype.findAll = function () {
         return __awaiter(this, void 0, Promise, function () {
@@ -73,6 +75,16 @@ var CompanionsService = /** @class */ (function () {
             });
         });
     };
+    CompanionsService.prototype.findByUserId = function (userId) {
+        return __awaiter(this, void 0, Promise, function () {
+            return __generator(this, function (_a) {
+                return [2 /*return*/, this.companionsRepository.findOne({
+                        where: { user: { id: userId } },
+                        relations: ['user']
+                    })];
+            });
+        });
+    };
     CompanionsService.prototype.search = function (searchDto) {
         return __awaiter(this, void 0, Promise, function () {
             var query;
@@ -81,12 +93,12 @@ var CompanionsService = /** @class */ (function () {
                     .leftJoinAndSelect('companion.user', 'user')
                     .where('companion.isVerified = :isVerified', { isVerified: true })
                     .andWhere('companion.isAvailable = :isAvailable', { isAvailable: true });
-                if (searchDto.languages) {
+                if (searchDto.languages && searchDto.languages.length > 0) {
                     query.andWhere('companion.languages && :languages', {
                         languages: searchDto.languages
                     });
                 }
-                if (searchDto.specialties) {
+                if (searchDto.specialties && searchDto.specialties.length > 0) {
                     query.andWhere('companion.specialties && :specialties', {
                         specialties: searchDto.specialties
                     });
@@ -96,7 +108,78 @@ var CompanionsService = /** @class */ (function () {
                         minRating: searchDto.minRating
                     });
                 }
+                if (searchDto.maxHourlyRate) {
+                    query.andWhere('companion.hourlyRate <= :maxHourlyRate', {
+                        maxHourlyRate: searchDto.maxHourlyRate
+                    });
+                }
+                if (searchDto.location) {
+                    query.andWhere('LOWER(user.location) LIKE LOWER(:location)', {
+                        location: "%" + searchDto.location + "%"
+                    });
+                }
                 return [2 /*return*/, query.getMany()];
+            });
+        });
+    };
+    CompanionsService.prototype.create = function (createCompanionDto) {
+        return __awaiter(this, void 0, Promise, function () {
+            var user, companion;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, this.usersService.findById(createCompanionDto.userId)];
+                    case 1:
+                        user = _a.sent();
+                        companion = this.companionsRepository.create({
+                            user: user,
+                            bio: createCompanionDto.bio,
+                            languages: createCompanionDto.languages,
+                            specialties: createCompanionDto.specialties,
+                            hourlyRate: createCompanionDto.hourlyRate,
+                            isVerified: false,
+                            isAvailable: true,
+                            averageRating: 0,
+                            totalReviews: 0
+                        });
+                        return [2 /*return*/, this.companionsRepository.save(companion)];
+                }
+            });
+        });
+    };
+    CompanionsService.prototype.update = function (id, updateCompanionDto) {
+        return __awaiter(this, void 0, Promise, function () {
+            var companion;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, this.findOne(id)];
+                    case 1:
+                        companion = _a.sent();
+                        if (!companion) {
+                            return [2 /*return*/, null];
+                        }
+                        if (updateCompanionDto.bio !== undefined) {
+                            companion.bio = updateCompanionDto.bio;
+                        }
+                        if (updateCompanionDto.languages !== undefined) {
+                            companion.languages = updateCompanionDto.languages;
+                        }
+                        if (updateCompanionDto.specialties !== undefined) {
+                            companion.specialties = updateCompanionDto.specialties;
+                        }
+                        if (updateCompanionDto.hourlyRate !== undefined) {
+                            companion.hourlyRate = updateCompanionDto.hourlyRate;
+                        }
+                        if (updateCompanionDto.isAvailable !== undefined) {
+                            companion.isAvailable = updateCompanionDto.isAvailable;
+                        }
+                        if (updateCompanionDto.averageRating !== undefined) {
+                            companion.averageRating = updateCompanionDto.averageRating;
+                        }
+                        if (updateCompanionDto.totalReviews !== undefined) {
+                            companion.totalReviews = updateCompanionDto.totalReviews;
+                        }
+                        return [2 /*return*/, this.companionsRepository.save(companion)];
+                }
             });
         });
     };
