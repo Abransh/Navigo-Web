@@ -5,6 +5,9 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -42,88 +45,98 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 exports.__esModule = true;
-exports.StripeService = void 0;
+exports.UsersService = void 0;
 var common_1 = require("@nestjs/common");
-var stripe_1 = require("stripe");
-var payment_status_enum_1 = require("../enums/payment-status.enum");
-var StripeService = /** @class */ (function () {
-    function StripeService(configService) {
-        this.configService = configService;
-        this.stripe = new stripe_1["default"](this.configService.get('STRIPE_SECRET_KEY'), {
-            apiVersion: '2023-10-16'
-        });
+var typeorm_1 = require("@nestjs/typeorm");
+var user_entity_1 = require("./entities/user.entity");
+var UsersService = /** @class */ (function () {
+    function UsersService(usersRepository) {
+        this.usersRepository = usersRepository;
     }
-    StripeService.prototype.createPaymentIntent = function (amount, currency, metadata) {
-        if (currency === void 0) { currency = 'usd'; }
+    UsersService.prototype.create = function (createUserDto) {
         return __awaiter(this, void 0, Promise, function () {
-            var paymentIntent;
+            var existingUser, user;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.stripe.paymentIntents.create({
-                            amount: Math.round(amount * 100),
-                            currency: currency,
-                            metadata: metadata
-                        })];
+                    case 0: return [4 /*yield*/, this.findByEmail(createUserDto.email)];
                     case 1:
-                        paymentIntent = _a.sent();
-                        return [2 /*return*/, {
-                                clientSecret: paymentIntent.client_secret,
-                                paymentIntentId: paymentIntent.id
-                            }];
-                }
-            });
-        });
-    };
-    StripeService.prototype.retrievePaymentIntent = function (paymentIntentId) {
-        return __awaiter(this, void 0, Promise, function () {
-            var paymentIntent, status;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.stripe.paymentIntents.retrieve(paymentIntentId)];
-                    case 1:
-                        paymentIntent = _a.sent();
-                        switch (paymentIntent.status) {
-                            case 'succeeded':
-                                status = payment_status_enum_1.PaymentStatus.COMPLETED;
-                                break;
-                            case 'canceled':
-                                status = payment_status_enum_1.PaymentStatus.FAILED;
-                                break;
-                            default:
-                                status = payment_status_enum_1.PaymentStatus.PENDING;
+                        existingUser = _a.sent();
+                        if (existingUser) {
+                            throw new common_1.ConflictException('Email already in use');
                         }
-                        return [2 /*return*/, {
-                                status: status,
-                                amount: paymentIntent.amount / 100
-                            }];
+                        user = this.usersRepository.create(createUserDto);
+                        return [2 /*return*/, this.usersRepository.save(user)];
                 }
             });
         });
     };
-    StripeService.prototype.createRefund = function (paymentIntentId) {
+    UsersService.prototype.findAll = function () {
         return __awaiter(this, void 0, Promise, function () {
-            var error_1;
+            return __generator(this, function (_a) {
+                return [2 /*return*/, this.usersRepository.find()];
+            });
+        });
+    };
+    UsersService.prototype.findOne = function (id) {
+        return __awaiter(this, void 0, Promise, function () {
+            var user;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0:
-                        _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, this.stripe.refunds.create({
-                                payment_intent: paymentIntentId
-                            })];
+                    case 0: return [4 /*yield*/, this.usersRepository.findOne({ where: { id: id } })];
                     case 1:
-                        _a.sent();
-                        return [2 /*return*/, true];
-                    case 2:
-                        error_1 = _a.sent();
-                        return [2 /*return*/, false];
-                    case 3: return [2 /*return*/];
+                        user = _a.sent();
+                        if (!user) {
+                            throw new common_1.NotFoundException('User not found');
+                        }
+                        return [2 /*return*/, user];
                 }
             });
         });
     };
-    StripeService = __decorate([
-        common_1.Injectable()
-    ], StripeService);
-    return StripeService;
+    UsersService.prototype.findByEmail = function (email) {
+        return __awaiter(this, void 0, Promise, function () {
+            return __generator(this, function (_a) {
+                return [2 /*return*/, this.usersRepository.findOne({
+                        where: { email: email },
+                        select: ['id', 'email', 'password', 'firstName', 'lastName', 'role', 'isVerified', 'isActive']
+                    })];
+            });
+        });
+    };
+    UsersService.prototype.update = function (id, updateUserDto) {
+        return __awaiter(this, void 0, Promise, function () {
+            var user;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, this.findOne(id)];
+                    case 1:
+                        user = _a.sent();
+                        Object.assign(user, updateUserDto);
+                        return [2 /*return*/, this.usersRepository.save(user)];
+                }
+            });
+        });
+    };
+    UsersService.prototype.remove = function (id) {
+        return __awaiter(this, void 0, Promise, function () {
+            var user;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, this.findOne(id)];
+                    case 1:
+                        user = _a.sent();
+                        return [4 /*yield*/, this.usersRepository.remove(user)];
+                    case 2:
+                        _a.sent();
+                        return [2 /*return*/];
+                }
+            });
+        });
+    };
+    UsersService = __decorate([
+        common_1.Injectable(),
+        __param(0, typeorm_1.InjectRepository(user_entity_1.User))
+    ], UsersService);
+    return UsersService;
 }());
-exports.StripeService = StripeService;
+exports.UsersService = UsersService;
