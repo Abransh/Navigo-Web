@@ -42,65 +42,52 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 exports.__esModule = true;
-exports.EmailService = void 0;
+exports.EmailModule = exports.EmailService = void 0;
+// src/email/email.service.ts
 var common_1 = require("@nestjs/common");
 var nodemailer = require("nodemailer");
 var EmailService = /** @class */ (function () {
     function EmailService(configService) {
         this.configService = configService;
         this.transporter = nodemailer.createTransport({
-            host: this.configService.get('SMTP_HOST'),
-            port: this.configService.get('SMTP_PORT'),
+            host: configService.get('MAIL_HOST'),
+            port: configService.get('MAIL_PORT'),
+            secure: configService.get('MAIL_SECURE', false),
             auth: {
-                user: this.configService.get('SMTP_USER'),
-                pass: this.configService.get('SMTP_PASS')
+                user: configService.get('MAIL_USER'),
+                pass: configService.get('MAIL_PASSWORD')
             }
         });
     }
-    EmailService.prototype.sendRegistrationConfirmation = function (to, verificationLink) {
-        return __awaiter(this, void 0, Promise, function () {
+    EmailService.prototype.sendMail = function (to, subject, html) {
+        return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.transporter.sendMail({
-                            from: '"Navigo" <no-reply@navigo.com>',
-                            to: to,
-                            subject: 'Welcome to Navigo - Please Verify Your Email',
-                            text: "Welcome to Navigo! Please verify your email by clicking the following link: " + verificationLink,
-                            html: "\n        <div style=\"font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;\">\n          <h2>Welcome to Navigo!</h2>\n          <p>Thank you for joining our platform. To complete your registration, please verify your email address by clicking the button below:</p>\n          <p>\n            <a href=\"" + verificationLink + "\" style=\"display: inline-block; background-color: #F3A522; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; margin-top: 15px;\">\n              Verify Email\n            </a>\n          </p>\n          <p>If the button doesn't work, copy and paste this link into your browser:</p>\n          <p>" + verificationLink + "</p>\n          <p>If you didn't create an account with us, please ignore this email.</p>\n          <p>Best regards,<br>The Navigo Team</p>\n        </div>\n      "
-                        })];
-                    case 1:
-                        _a.sent();
-                        return [2 /*return*/];
-                }
+                return [2 /*return*/, this.transporter.sendMail({
+                        from: "\"Navigo\" <" + this.configService.get('MAIL_FROM') + ">",
+                        to: to,
+                        subject: subject,
+                        html: html
+                    })];
             });
         });
     };
-    EmailService.prototype.sendBookingConfirmation = function (to, bookingDetails) {
-        return __awaiter(this, void 0, Promise, function () {
-            var formatDate;
+    EmailService.prototype.sendWelcomeEmail = function (user) {
+        return __awaiter(this, void 0, void 0, function () {
+            var subject, html;
             return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        formatDate = function (date) {
-                            return new Date(date).toLocaleString('en-US', {
-                                year: 'numeric',
-                                month: 'long',
-                                day: 'numeric',
-                                hour: '2-digit',
-                                minute: '2-digit'
-                            });
-                        };
-                        return [4 /*yield*/, this.transporter.sendMail({
-                                from: '"Navigo" <no-reply@navigo.com>',
-                                to: to,
-                                subject: "Booking Confirmation - Navigo (ID: " + bookingDetails.id + ")",
-                                text: "Your booking with " + bookingDetails.companionName + " has been confirmed! Details: From " + formatDate(bookingDetails.startDate) + " to " + formatDate(bookingDetails.endDate) + " at " + bookingDetails.location + ". Total amount: $" + bookingDetails.totalAmount.toFixed(2),
-                                html: "\n        <div style=\"font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;\">\n          <h2>Booking Confirmation</h2>\n          <p>Your booking with <strong>" + bookingDetails.companionName + "</strong> has been confirmed!</p>\n          \n          <div style=\"background-color: #f7f7f7; padding: 15px; border-radius: 5px; margin: 20px 0;\">\n            <p><strong>Booking ID:</strong> " + bookingDetails.id + "</p>\n            <p><strong>Start:</strong> " + formatDate(bookingDetails.startDate) + "</p>\n            <p><strong>End:</strong> " + formatDate(bookingDetails.endDate) + "</p>\n            <p><strong>Location:</strong> " + bookingDetails.location + "</p>\n            <p><strong>Total Amount:</strong> $" + bookingDetails.totalAmount.toFixed(2) + "</p>\n          </div>\n          \n          <p>We hope you have a great experience with your local companion!</p>\n          <p>Best regards,<br>The Navigo Team</p>\n        </div>\n      "
-                            })];
-                    case 1:
-                        _a.sent();
-                        return [2 /*return*/];
-                }
+                subject = 'Welcome to Navigo!';
+                html = "\n      <h1>Welcome to Navigo, " + user.firstName + "!</h1>\n      <p>Thank you for joining our community. We're excited to help you explore India with local companions.</p>\n      <p>Get started by:</p>\n      <ul>\n        <li>Completing your profile</li>\n        <li>Browsing available companions</li>\n        <li>Making your first booking</li>\n      </ul>\n      <p>Safe travels!</p>\n      <p>The Navigo Team</p>\n    ";
+                return [2 /*return*/, this.sendMail(user.email, subject, html)];
+            });
+        });
+    };
+    EmailService.prototype.sendBookingConfirmation = function (booking, userEmail) {
+        return __awaiter(this, void 0, void 0, function () {
+            var subject, html;
+            return __generator(this, function (_a) {
+                subject = 'Booking Confirmation';
+                html = "\n      <h1>Your Booking is Confirmed!</h1>\n      <p>Your booking with " + booking.companion.user.firstName + " has been confirmed.</p>\n      <p><strong>Details:</strong></p>\n      <ul>\n        <li>Date: " + new Date(booking.startDate).toLocaleDateString() + " - " + new Date(booking.endDate).toLocaleDateString() + "</li>\n        <li>Location: " + booking.location + "</li>\n        <li>Total Amount: \u20B9" + booking.totalAmount + "</li>\n      </ul>\n      <p>You can contact your companion through the chat in our app.</p>\n      <p>Enjoy your experience!</p>\n      <p>The Navigo Team</p>\n    ";
+                return [2 /*return*/, this.sendMail(userEmail, subject, html)];
             });
         });
     };
@@ -110,3 +97,21 @@ var EmailService = /** @class */ (function () {
     return EmailService;
 }());
 exports.EmailService = EmailService;
+// src/email/email.module.ts
+var common_2 = require("@nestjs/common");
+var email_service_1 = require("./email.service");
+exports.EmailService = email_service_1.EmailService;
+var config_1 = require("@nestjs/config");
+var EmailModule = /** @class */ (function () {
+    function EmailModule() {
+    }
+    EmailModule = __decorate([
+        common_2.Module({
+            imports: [config_1.ConfigModule],
+            providers: [email_service_1.EmailService],
+            exports: [email_service_1.EmailService]
+        })
+    ], EmailModule);
+    return EmailModule;
+}());
+exports.EmailModule = EmailModule;
