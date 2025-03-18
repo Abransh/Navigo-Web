@@ -1,43 +1,74 @@
-// Backend/src/app.module.ts
+// src/app.module.ts
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule } from './config/config.module';
 import { ThrottlerModule } from '@nestjs/throttler';
+import { ConfigService } from '@nestjs/config';
+import { ScheduleModule } from '@nestjs/schedule';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
+
+// Controllers & Services
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+
+// Core Modules
 import { DatabaseModule } from './database/database.module';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
+import { EmailModule } from './email/email.module';
+
+// Feature Modules
 import { BookingsModule } from './bookings/bookings.module';
 import { CompanionsModule } from './companions/companions.module';
 import { ChatModule } from './chat/chat.module';
 import { PaymentsModule } from './payments/payments.module';
 import { ReviewsModule } from './reviews/reviews.module';
 import { NotificationsModule } from './notifications/notifications.module';
-import { ScheduleModule } from '@nestjs/schedule';
-import { EmailModule } from './email/email.module';
-import { DestinationsModule } from './destinations/destinations.module'; // Add this
+import { DestinationsModule } from './destinations/destinations.module';
+
+// Tasks Module
+import { TasksModule } from './tasks/tasks.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({
-      isGlobal: true,
+    // Config first for initialization
+    ConfigModule,
+    // eslint-disable-next-line prettier/prettier
+    
+    // Rate limiting
+    ThrottlerModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: (config: ConfigService): ThrottlerModuleOptions => ({
+        ttl: config.get<number>('THROTTLE_TTL', 60),
+        limit: config.get<number>('THROTTLE_LIMIT', 10),
+      }),
     }),
-    ThrottlerModule.forRoot({
-      ttl: 60,
-      limit: 10,
-    }),
+    
+    // Scheduled tasks
     ScheduleModule.forRoot(),
+    
+    // Static file serving (for uploaded content)
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'uploads'),
+      serveRoot: '/uploads',
+    }),
+    
+    // Core modules
     DatabaseModule,
     UsersModule,
     AuthModule,
+    EmailModule,
+    
+    // Feature modules
     BookingsModule,
     CompanionsModule,
     ChatModule,
     PaymentsModule,
     ReviewsModule,
     NotificationsModule,
-    EmailModule,
-    DestinationsModule, // Add this
+    DestinationsModule,
+   // Tasks module
+    TasksModule,
   ],
   controllers: [AppController],
   providers: [AppService],

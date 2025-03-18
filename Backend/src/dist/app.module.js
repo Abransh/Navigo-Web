@@ -7,49 +7,71 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 exports.__esModule = true;
 exports.AppModule = void 0;
-// Backend/src/app.module.ts
+// src/app.module.ts
 var common_1 = require("@nestjs/common");
-var config_1 = require("@nestjs/config");
+var config_module_1 = require("./config/config.module");
 var throttler_1 = require("@nestjs/throttler");
+var config_1 = require("@nestjs/config");
+var schedule_1 = require("@nestjs/schedule");
+var serve_static_1 = require("@nestjs/serve-static");
+var path_1 = require("path");
+// Controllers & Services
 var app_controller_1 = require("./app.controller");
 var app_service_1 = require("./app.service");
+// Core Modules
 var database_module_1 = require("./database/database.module");
 var users_module_1 = require("./users/users.module");
 var auth_module_1 = require("./auth/auth.module");
+var email_module_1 = require("./email/email.module");
+// Feature Modules
 var bookings_module_1 = require("./bookings/bookings.module");
 var companions_module_1 = require("./companions/companions.module");
 var chat_module_1 = require("./chat/chat.module");
 var payments_module_1 = require("./payments/payments.module");
 var reviews_module_1 = require("./reviews/reviews.module");
 var notifications_module_1 = require("./notifications/notifications.module");
-var schedule_1 = require("@nestjs/schedule");
-var email_module_1 = require("./email/email.module");
-var destinations_module_1 = require("./destinations/destinations.module"); // Add this
+var destinations_module_1 = require("./destinations/destinations.module");
+// Tasks Module
+var tasks_module_1 = require("./tasks/tasks.module");
 var AppModule = /** @class */ (function () {
     function AppModule() {
     }
     AppModule = __decorate([
         common_1.Module({
             imports: [
-                config_1.ConfigModule.forRoot({
-                    isGlobal: true
+                // Config first for initialization
+                config_module_1.ConfigModule,
+                // eslint-disable-next-line prettier/prettier
+                // Rate limiting
+                throttler_1.ThrottlerModule.forRootAsync({
+                    inject: [config_1.ConfigService],
+                    useFactory: function (config) { return ({
+                        ttl: config.get('THROTTLE_TTL', 60),
+                        limit: config.get('THROTTLE_LIMIT', 10)
+                    }); }
                 }),
-                throttler_1.ThrottlerModule.forRoot({
-                    ttl: 60,
-                    limit: 10
-                }),
+                // Scheduled tasks
                 schedule_1.ScheduleModule.forRoot(),
+                // Static file serving (for uploaded content)
+                serve_static_1.ServeStaticModule.forRoot({
+                    rootPath: path_1.join(__dirname, '..', 'uploads'),
+                    serveRoot: '/uploads'
+                }),
+                // Core modules
                 database_module_1.DatabaseModule,
                 users_module_1.UsersModule,
                 auth_module_1.AuthModule,
+                email_module_1.EmailModule,
+                // Feature modules
                 bookings_module_1.BookingsModule,
                 companions_module_1.CompanionsModule,
                 chat_module_1.ChatModule,
                 payments_module_1.PaymentsModule,
                 reviews_module_1.ReviewsModule,
                 notifications_module_1.NotificationsModule,
-                email_module_1.EmailModule,
                 destinations_module_1.DestinationsModule,
+                // Tasks module
+                tasks_module_1.TasksModule,
             ],
             controllers: [app_controller_1.AppController],
             providers: [app_service_1.AppService]

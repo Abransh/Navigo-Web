@@ -1,10 +1,10 @@
-// src/email/email.module.ts
+// Backend/src/mail/mail.module.ts
 import { Module } from '@nestjs/common';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { join } from 'path';
-import { EmailService } from './email.service';
+import { MailService } from './mail.service';
 
 @Module({
   imports: [
@@ -34,7 +34,7 @@ import { EmailService } from './email.service';
       }),
     }),
   ],
-  providers: [EmailService],
-  exports: [EmailService],
+  providers: [MailService],
+  exports: [MailService],
 })
-export class EmailModule {}
+export class MailModule {}
