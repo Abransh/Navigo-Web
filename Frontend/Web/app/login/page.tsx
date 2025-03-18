@@ -1,4 +1,4 @@
-// app/login/page.tsx
+// Frontend/Web/app/login/page.tsx
 "use client";
 
 import { useState, useEffect } from "react";
@@ -7,12 +7,14 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { FaGoogle, FaApple, FaFacebook } from "react-icons/fa";
+import { toast } from "react-hot-toast";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [socialLoading, setSocialLoading] = useState<string | null>(null);
   const { login, isAuthenticated, loading } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -26,6 +28,13 @@ export default function LoginPage() {
       router.push(redirectTo);
     }
   }, [isAuthenticated, redirectTo, router, loading]);
+
+  // Save redirectTo to localStorage for social auth callback
+  useEffect(() => {
+    if (redirectTo) {
+      localStorage.setItem('redirectTo', redirectTo);
+    }
+  }, [redirectTo]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -41,6 +50,7 @@ export default function LoginPage() {
     try {
       console.log('Attempting login with:', { email });
       await login(email, password);
+      toast.success('Login successful!');
       console.log('Login successful, redirecting to:', redirectTo);
       router.push(redirectTo);
     } catch (err: any) {
@@ -52,14 +62,23 @@ export default function LoginPage() {
       } else {
         setError("Login failed. Please check your credentials and try again.");
       }
+      toast.error('Login failed. Please check your credentials.');
     } finally {
       setIsSubmitting(false);
     }
   };
 
   const handleSocialLogin = (provider: string) => {
-    // This would be implemented with your actual OAuth provider
-    alert(`Social login with ${provider} is not implemented yet.`);
+    setSocialLoading(provider);
+    
+    // Save redirectTo to localStorage for the callback
+    if (redirectTo) {
+      localStorage.setItem('redirectTo', redirectTo);
+    }
+    
+    // Redirect to backend auth endpoint
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+    window.location.href = `${apiUrl}/auth/${provider}`;
   };
 
   // Show loading state while auth state is being determined
@@ -121,27 +140,42 @@ export default function LoginPage() {
               <button 
                 type="button"
                 onClick={() => handleSocialLogin('google')}
-                className="w-full flex items-center justify-center gap-3 py-3 px-4 bg-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-50 transition-colors"
+                disabled={isSubmitting || !!socialLoading}
+                className="w-full flex items-center justify-center gap-3 py-3 px-4 bg-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-50 transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
               >
-                <FaGoogle className="text-red-500" />
+                {socialLoading === 'google' ? (
+                  <span className="mr-2 h-4 w-4 border-2 border-gray-500 border-t-transparent rounded-full animate-spin"></span>
+                ) : (
+                  <FaGoogle className="text-red-500" />
+                )}
                 <span>Continue with Google</span>
               </button>
               
               <button 
                 type="button"
                 onClick={() => handleSocialLogin('apple')}
-                className="w-full flex items-center justify-center gap-3 py-3 px-4 bg-black text-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-900 transition-colors"
+                disabled={isSubmitting || !!socialLoading}
+                className="w-full flex items-center justify-center gap-3 py-3 px-4 bg-black text-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-900 transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
               >
-                <FaApple />
+                {socialLoading === 'apple' ? (
+                  <span className="mr-2 h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                ) : (
+                  <FaApple />
+                )}
                 <span>Continue with Apple</span>
               </button>
               
               <button 
                 type="button"
                 onClick={() => handleSocialLogin('facebook')}
-                className="w-full flex items-center justify-center gap-3 py-3 px-4 bg-[#1877F2] text-white border border-gray-300 rounded-lg shadow-sm hover:bg-[#0e6ae4] transition-colors"
+                disabled={isSubmitting || !!socialLoading}
+                className="w-full flex items-center justify-center gap-3 py-3 px-4 bg-[#1877F2] text-white border border-gray-300 rounded-lg shadow-sm hover:bg-[#0e6ae4] transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
               >
-                <FaFacebook />
+                {socialLoading === 'facebook' ? (
+                  <span className="mr-2 h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                ) : (
+                  <FaFacebook />
+                )}
                 <span>Continue with Facebook</span>
               </button>
             </div>
@@ -164,13 +198,19 @@ export default function LoginPage() {
                   className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#F3A522] focus:border-transparent transition"
                   placeholder="your@email.com"
                   required
+                  disabled={isSubmitting || !!socialLoading}
                 />
               </div>
               
               <div>
                 <div className="flex justify-between items-center mb-1">
                   <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password</label>
-                  <Link href="/forgot-password" className="text-sm text-[#003366] hover:text-[#F3A522]">
+                  <Link 
+                    href="/forgot-password" 
+                    className="text-sm text-[#003366] hover:text-[#F3A522]"
+                    tabIndex={isSubmitting || !!socialLoading ? -1 : 0}
+                    aria-disabled={isSubmitting || !!socialLoading}
+                  >
                     Forgot password?
                   </Link>
                 </div>
@@ -182,14 +222,15 @@ export default function LoginPage() {
                   className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#F3A522] focus:border-transparent transition"
                   placeholder="••••••••"
                   required
+                  disabled={isSubmitting || !!socialLoading}
                 />
               </div>
               
               <button 
                 type="submit"
-                disabled={isSubmitting}
+                disabled={isSubmitting || !!socialLoading}
                 className={`w-full py-3 px-4 ${
-                  isSubmitting 
+                  isSubmitting || !!socialLoading
                     ? 'bg-gray-400 cursor-not-allowed' 
                     : 'bg-[#F3A522] hover:bg-[#003366]'
                 } text-white rounded-lg transition-colors font-medium flex items-center justify-center`}
@@ -208,7 +249,7 @@ export default function LoginPage() {
             <div className="mt-6 text-center">
               <p className="text-gray-600">
                 Don't have an account? 
-                <Link href="/register" className="text-[#003366] hover:text-[#F3A522] ml-1 font-medium">
+                <Link href={`/register${redirectTo ? `?redirectTo=${redirectTo}` : ''}`} className="text-[#003366] hover:text-[#F3A522] ml-1 font-medium">
                   Sign up
                 </Link>
               </p>
