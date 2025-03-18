@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
 import { UserRole } from '../enums/user-role.enum';
-import { Companion } from '../../companions/entities/companion.entity';
+import { Companion } from '../../companions/entities/compantion.entity';
 import { Booking } from '../../bookings/entities/booking.entity';
 
 @Entity('users')

@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
 import { User } from '../../users/entities/user.entity';
-import { Companion } from '../../companions/entities/companion.entity'; // Ensure this path is correct and the file exists
+import { Companion } from '../../companions/entities/compantion.entity'; // Ensure this path is correct and the file exists
 import { BookingStatus } from '../enums/booking-status.enum';
 import { Payment } from '../../payments/entities/payment.entity';
 

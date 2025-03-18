@@ -9,7 +9,7 @@ exports.__esModule = true;
 exports.Booking = void 0;
 var typeorm_1 = require("typeorm");
 var user_entity_1 = require("../../users/entities/user.entity");
-var companion_entity_1 = require("../../companions/entities/companion.entity"); // Ensure this path is correct and the file exists
+var compantion_entity_1 = require("../../companions/entities/compantion.entity"); // Ensure this path is correct and the file exists
 var booking_status_enum_1 = require("../enums/booking-status.enum");
 var payment_entity_1 = require("../../payments/entities/payment.entity");
 var Booking = /** @class */ (function () {
@@ -22,7 +22,7 @@ var Booking = /** @class */ (function () {
         typeorm_1.ManyToOne(function () { return user_entity_1.User; }, function (user) { return user.bookings; })
     ], Booking.prototype, "tourist");
     __decorate([
-        typeorm_1.ManyToOne(function () { return companion_entity_1.Companion; }, function (companion) { return companion.bookings; })
+        typeorm_1.ManyToOne(function () { return compantion_entity_1.Companion; }, function (companion) { return companion.bookings; })
     ], Booking.prototype, "companion");
     __decorate([
         typeorm_1.Column({ type: 'timestamp' })

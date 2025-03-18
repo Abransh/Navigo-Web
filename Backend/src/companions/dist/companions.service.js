@@ -48,7 +48,7 @@ exports.__esModule = true;
 exports.CompanionsService = void 0;
 var common_1 = require("@nestjs/common");
 var typeorm_1 = require("@nestjs/typeorm");
-var companion_entity_1 = require("./entities/companion.entity");
+var compantion_entity_1 = require("./entities/compantion.entity");
 var CompanionsService = /** @class */ (function () {
     function CompanionsService(companionsRepository) {
         this.companionsRepository = companionsRepository;
@@ -102,7 +102,7 @@ var CompanionsService = /** @class */ (function () {
     };
     CompanionsService = __decorate([
         common_1.Injectable(),
-        __param(0, typeorm_1.InjectRepository(companion_entity_1.Companion))
+        __param(0, typeorm_1.InjectRepository(compantion_entity_1.Companion))
     ], CompanionsService);
     return CompanionsService;
 }());
