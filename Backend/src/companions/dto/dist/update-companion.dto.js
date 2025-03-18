@@ -64,6 +64,19 @@ var UpdateCompanionDto = /** @class */ (function () {
         class_validator_1.IsOptional(),
         class_validator_1.IsBoolean()
     ], UpdateCompanionDto.prototype, "isAvailable");
+    __decorate([
+        swagger_1.ApiProperty({ required: false }),
+        class_validator_1.IsOptional(),
+        class_validator_1.IsNumber(),
+        class_validator_1.Min(0),
+        Max(5)
+    ], UpdateCompanionDto.prototype, "averageRating");
+    __decorate([
+        swagger_1.ApiProperty({ required: false }),
+        class_validator_1.IsOptional(),
+        class_validator_1.IsNumber(),
+        class_validator_1.Min(0)
+    ], UpdateCompanionDto.prototype, "totalReviews");
     return UpdateCompanionDto;
 }());
 exports.UpdateCompanionDto = UpdateCompanionDto;

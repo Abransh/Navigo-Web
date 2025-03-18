@@ -49,8 +49,12 @@ var stripe_1 = require("stripe");
 var StripeService = /** @class */ (function () {
     function StripeService(configService) {
         this.configService = configService;
-        this.stripe = new stripe_1["default"](configService.get('STRIPE_SECRET_KEY'), {
-            apiVersion: '2020-08-27'
+        var stripeSecretKey = configService.get('STRIPE_SECRET_KEY', '');
+        if (!stripeSecretKey) {
+            throw new Error('Stripe secret key is not configured');
+        }
+        this.stripe = new stripe_1["default"](stripeSecretKey, {
+            apiVersion: '2025-02-24.acacia'
         });
     }
     StripeService.prototype.createPaymentIntent = function (amount, currency) {

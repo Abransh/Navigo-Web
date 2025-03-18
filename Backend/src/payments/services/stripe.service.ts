@@ -8,8 +8,14 @@ export class StripeService {
   private stripe: Stripe;
 
   constructor(private configService: ConfigService) {
-    this.stripe = new Stripe(configService.get('STRIPE_SECRET_KEY'), {
-      apiVersion: '2020-08-27',
+    const stripeSecretKey = configService.get<string>('STRIPE_SECRET_KEY', '');
+    
+    if (!stripeSecretKey) {
+      throw new Error('Stripe secret key is not configured');
+    }
+    
+    this.stripe = new Stripe(stripeSecretKey, {
+      apiVersion: '2025-02-24.acacia',
     });
   }
 

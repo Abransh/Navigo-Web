@@ -1,5 +1,5 @@
 // Backend/src/destinations/destinations.service.ts
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Destination } from './entities/destination.entity';
@@ -16,6 +16,12 @@ export class DestinationsService {
   }
 
   async findBySlug(slug: string): Promise<Destination> {
-    return this.destinationsRepository.findOne({ where: { slug } });
+    const destination = await this.destinationsRepository.findOne({ where: { slug } });
+    
+    if (!destination) {
+      throw new NotFoundException(`Destination with slug ${slug} not found`);
+    }
+    
+    return destination;
   }
 }

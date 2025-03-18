@@ -5,9 +5,6 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var __param = (this && this.__param) || function (paramIndex, decorator) {
-    return function (target, key) { decorator(target, key, paramIndex); }
-};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -45,42 +42,66 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 exports.__esModule = true;
-exports.DestinationsService = void 0;
-// Backend/src/destinations/destinations.service.ts
+exports.ChatGateway = void 0;
+var websockets_1 = require("@nestjs/websockets");
 var common_1 = require("@nestjs/common");
-var typeorm_1 = require("@nestjs/typeorm");
-var destination_entity_1 = require("./entities/destination.entity");
-var DestinationsService = /** @class */ (function () {
-    function DestinationsService(destinationsRepository) {
-        this.destinationsRepository = destinationsRepository;
+var ws_jwt_guard_1 = require("../auth/guards/ws-jwt.guard");
+var ChatGateway = /** @class */ (function () {
+    function ChatGateway(chatService) {
+        this.chatService = chatService;
     }
-    DestinationsService.prototype.findAll = function () {
-        return __awaiter(this, void 0, Promise, function () {
+    ChatGateway.prototype.handleConnection = function (client) {
+        return __awaiter(this, void 0, void 0, function () {
+            var userId;
             return __generator(this, function (_a) {
-                return [2 /*return*/, this.destinationsRepository.find()];
+                userId = client.handshake.headers.authorization;
+                if (userId) {
+                    client.join(userId);
+                    console.log("Client connected: " + userId);
+                }
+                return [2 /*return*/];
             });
         });
     };
-    DestinationsService.prototype.findBySlug = function (slug) {
-        return __awaiter(this, void 0, Promise, function () {
-            var destination;
+    ChatGateway.prototype.handleDisconnect = function (client) {
+        console.log('Client disconnected');
+    };
+    ChatGateway.prototype.handleMessage = function (client, payload) {
+        return __awaiter(this, void 0, void 0, function () {
+            var senderId, savedMessage;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.destinationsRepository.findOne({ where: { slug: slug } })];
-                    case 1:
-                        destination = _a.sent();
-                        if (!destination) {
-                            throw new common_1.NotFoundException("Destination with slug " + slug + " not found");
+                    case 0:
+                        senderId = client.handshake.headers.authorization || '';
+                        if (!senderId) {
+                            throw new UnauthorizedException('No sender ID provided');
                         }
-                        return [2 /*return*/, destination];
+                        return [4 /*yield*/, this.chatService.saveMessage({
+                                senderId: senderId,
+                                recipientId: payload.recipientId,
+                                content: payload.content
+                            })];
+                    case 1:
+                        savedMessage = _a.sent();
+                        this.server.to(payload.recipientId).emit('newMessage', savedMessage);
+                        return [2 /*return*/, savedMessage];
                 }
             });
         });
     };
-    DestinationsService = __decorate([
-        common_1.Injectable(),
-        __param(0, typeorm_1.InjectRepository(destination_entity_1.Destination))
-    ], DestinationsService);
-    return DestinationsService;
+    __decorate([
+        websockets_1.WebSocketServer()
+    ], ChatGateway.prototype, "server");
+    __decorate([
+        common_1.UseGuards(ws_jwt_guard_1.WsJwtGuard)
+    ], ChatGateway.prototype, "handleConnection");
+    __decorate([
+        common_1.UseGuards(ws_jwt_guard_1.WsJwtGuard),
+        websockets_1.SubscribeMessage('sendMessage')
+    ], ChatGateway.prototype, "handleMessage");
+    ChatGateway = __decorate([
+        websockets_1.WebSocketGateway({ cors: true })
+    ], ChatGateway);
+    return ChatGateway;
 }());
-exports.DestinationsService = DestinationsService;
+exports.ChatGateway = ChatGateway;

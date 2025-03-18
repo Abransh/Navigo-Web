@@ -67,7 +67,7 @@ exports.__esModule = true;
 exports.AuthService = void 0;
 // Backend/src/auth/services/auth.service.ts
 var common_1 = require("@nestjs/common");
-var bcrypt = require("bcrypt");
+var bcrypt_1 = require("bcrypt");
 var uuid_1 = require("uuid");
 var user_role_enum_1 = require("../../users/enums/user-role.enum");
 /**
@@ -100,7 +100,7 @@ var AuthService = /** @class */ (function () {
                         user = _b.sent();
                         _a = user;
                         if (!_a) return [3 /*break*/, 3];
-                        return [4 /*yield*/, bcrypt.compare(password, user.password)];
+                        return [4 /*yield*/, bcrypt_1["default"].compare(password, user.password)];
                     case 2:
                         _a = (_b.sent());
                         _b.label = 3;
@@ -152,7 +152,7 @@ var AuthService = /** @class */ (function () {
             var hashedPassword, newUser, payload;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, bcrypt.hash(registerDto.password, 10)];
+                    case 0: return [4 /*yield*/, bcrypt_1["default"].hash(registerDto.password, 10)];
                     case 1:
                         hashedPassword = _a.sent();
                         return [4 /*yield*/, this.usersService.create(__assign(__assign({}, registerDto), { password: hashedPassword }))];
@@ -194,7 +194,7 @@ var AuthService = /** @class */ (function () {
                             lastName: socialUser.lastName,
                             profilePicture: socialUser.picture
                         };
-                        return [4 /*yield*/, bcrypt.hash(uuid_1.v4(), 10)];
+                        return [4 /*yield*/, bcrypt_1["default"].hash(uuid_1.v4(), 10)];
                     case 2: return [4 /*yield*/, _b.apply(_a, [(_c.password = _d.sent(),
                                 _c.role = user_role_enum_1.UserRole.TOURIST,
                                 _c)])];
@@ -272,7 +272,7 @@ var AuthService = /** @class */ (function () {
                             return [2 /*return*/];
                         }
                         token = uuid_1.v4();
-                        return [4 /*yield*/, bcrypt.hash(token, 10)];
+                        return [4 /*yield*/, bcrypt_1["default"].hash(token, 10)];
                     case 2:
                         hashedToken = _a.sent();
                         expires = new Date();
@@ -320,7 +320,7 @@ var AuthService = /** @class */ (function () {
                     case 2:
                         if (!(_i < resetRecords_1.length)) return [3 /*break*/, 5];
                         record = resetRecords_1[_i];
-                        return [4 /*yield*/, bcrypt.compare(token, record.token)];
+                        return [4 /*yield*/, bcrypt_1["default"].compare(token, record.token)];
                     case 3:
                         isMatch = _a.sent();
                         if (isMatch) {
@@ -343,25 +343,23 @@ var AuthService = /** @class */ (function () {
      */
     AuthService.prototype.resetPassword = function (token, newPassword) {
         return __awaiter(this, void 0, Promise, function () {
-            var resetRecords, matchedRecord, _i, resetRecords_2, record, isMatch, user, hashedPassword;
+            var now, resetRecords, matchedRecord, _i, resetRecords_2, record, isMatch, user;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.passwordResetRepository.find({
-                            where: { expires: { $gt: new Date() } }
-                        })];
+                    case 0:
+                        now = new Date();
+                        return [4 /*yield*/, this.passwordResetRepository.find({
+                                where: { expires: { $gt: now } }
+                            })];
                     case 1:
                         resetRecords = _a.sent();
-                        // No need to continue if no records found
-                        if (!resetRecords || resetRecords.length === 0) {
-                            throw new common_1.BadRequestException('Invalid or expired token');
-                        }
                         matchedRecord = null;
                         _i = 0, resetRecords_2 = resetRecords;
                         _a.label = 2;
                     case 2:
                         if (!(_i < resetRecords_2.length)) return [3 /*break*/, 5];
                         record = resetRecords_2[_i];
-                        return [4 /*yield*/, bcrypt.compare(token, record.token)];
+                        return [4 /*yield*/, bcrypt_1["default"].compare(token, record.token)];
                     case 3:
                         isMatch = _a.sent();
                         if (isMatch) {
@@ -373,31 +371,13 @@ var AuthService = /** @class */ (function () {
                         _i++;
                         return [3 /*break*/, 2];
                     case 5:
-                        // If no match found, token is invalid
+                        // Null check before accessing email
                         if (!matchedRecord) {
                             throw new common_1.BadRequestException('Invalid or expired token');
                         }
                         return [4 /*yield*/, this.usersService.findByEmail(matchedRecord.email)];
                     case 6:
                         user = _a.sent();
-                        return [4 /*yield*/, bcrypt.hash(newPassword, 10)];
-                    case 7:
-                        hashedPassword = _a.sent();
-                        // Update user password
-                        return [4 /*yield*/, this.usersService.update(user.id, { password: hashedPassword })];
-                    case 8:
-                        // Update user password
-                        _a.sent();
-                        // Delete all reset records for this user (for security)
-                        return [4 /*yield*/, this.passwordResetRepository["delete"]({ email: user.email })];
-                    case 9:
-                        // Delete all reset records for this user (for security)
-                        _a.sent();
-                        // Send confirmation email
-                        return [4 /*yield*/, this.mailService.sendPasswordResetConfirmationEmail(user.email, user.firstName)];
-                    case 10:
-                        // Send confirmation email
-                        _a.sent();
                         return [2 /*return*/];
                 }
             });

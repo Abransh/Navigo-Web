@@ -33,18 +33,21 @@ import {
   
     @UseGuards(WsJwtGuard)
     @SubscribeMessage('sendMessage')
-    async handleMessage(client: Socket, payload: SendMessageDto) {
-      const senderId = client.handshake.headers.authorization;
-      
-      const savedMessage = await this.chatService.saveMessage({
-        senderId,
-        recipientId: payload.recipientId,
-        content: payload.content,
-      });
+async handleMessage(client: Socket, payload: SendMessageDto) {
+  const senderId = client.handshake.headers.authorization || '';
   
-      // Emit to the recipient's room
-      this.server.to(payload.recipientId).emit('newMessage', savedMessage);
-      
-      return savedMessage;
-    }
+  if (!senderId) {
+    throw new UnauthorizedException('No sender ID provided');
+  }
+  
+  const savedMessage = await this.chatService.saveMessage({
+    senderId,
+    recipientId: payload.recipientId,
+    content: payload.content,
+  });
+
+  this.server.to(payload.recipientId).emit('newMessage', savedMessage);
+  
+  return savedMessage;
+}
   }

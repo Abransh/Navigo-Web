@@ -36,7 +36,8 @@ export class UsersService {
     // Remove password from response
     delete savedUser.password;
     
-    return savedUser;
+    const { password: _, ...userWithoutPassword } = savedUser;
+    return userWithoutPassword as User;
   }
 
   async findAll(): Promise<User[]> {
