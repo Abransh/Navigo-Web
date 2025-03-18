@@ -52,6 +52,11 @@ var UpdateUserDto = /** @class */ (function () {
         class_validator_1.IsString(),
         class_validator_1.MaxLength(100)
     ], UpdateUserDto.prototype, "nationality");
+    __decorate([
+        swagger_1.ApiPropertyOptional(),
+        class_validator_1.IsOptional(),
+        class_validator_1.IsString()
+    ], UpdateUserDto.prototype, "password");
     return UpdateUserDto;
 }());
 exports.UpdateUserDto = UpdateUserDto;

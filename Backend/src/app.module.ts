@@ -25,9 +25,12 @@ import { PaymentsModule } from './payments/payments.module';
 import { ReviewsModule } from './reviews/reviews.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { DestinationsModule } from './destinations/destinations.module';
+import { ThrottlerModule, ThrottlerModuleOptions } from '@nestjs/throttler';
 
 // Tasks Module
 import { TasksModule } from './tasks/tasks.module';
+
+
 
 @Module({
   imports: [
