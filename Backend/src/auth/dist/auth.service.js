@@ -16,6 +16,42 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __generator = (this && this.__generator) || function (thisArg, body) {
+    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+    function verb(n) { return function (v) { return step([n, v]); }; }
+    function step(op) {
+        if (f) throw new TypeError("Generator is already executing.");
+        while (_) try {
+            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [op[0] & 2, t.value];
+            switch (op[0]) {
+                case 0: case 1: t = op; break;
+                case 4: _.label++; return { value: op[1], done: false };
+                case 5: _.label++; y = op[1]; op = [0]; continue;
+                case 7: op = _.ops.pop(); _.trys.pop(); continue;
+                default:
+                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
+                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
+                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
+                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
+                    if (t[2]) _.ops.pop();
+                    _.trys.pop(); continue;
+            }
+            op = body.call(thisArg, _);
+        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
+        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
+    }
+};
 var __rest = (this && this.__rest) || function (s, e) {
     var t = {};
     for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
@@ -39,132 +75,198 @@ var AuthService = /** @class */ (function () {
         this.mailService = mailService;
         this.passwordResetRepository = passwordResetRepository;
     }
+    AuthService.prototype.validateUser = function (email, password) {
+        return __awaiter(this, void 0, Promise, function () {
+            var user, _a, password_1, result;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0: return [4 /*yield*/, this.usersService.findByEmail(email)];
+                    case 1:
+                        user = _b.sent();
+                        _a = user;
+                        if (!_a) return [3 /*break*/, 3];
+                        return [4 /*yield*/, bcrypt.compare(password, user.password)];
+                    case 2:
+                        _a = (_b.sent());
+                        _b.label = 3;
+                    case 3:
+                        if (_a) {
+                            password_1 = user.password, result = __rest(user, ["password"]);
+                            return [2 /*return*/, result];
+                        }
+                        return [2 /*return*/, null];
+                }
+            });
+        });
+    };
+    AuthService.prototype.login = function (loginDto) {
+        return __awaiter(this, void 0, void 0, function () {
+            var user, payload;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, this.validateUser(loginDto.email, loginDto.password)];
+                    case 1:
+                        user = _a.sent();
+                        if (!user) {
+                            throw new common_1.UnauthorizedException('Invalid credentials');
+                        }
+                        payload = { email: user.email, sub: user.id, role: user.role };
+                        return [2 /*return*/, {
+                                access_token: this.jwtService.sign(payload),
+                                user: user
+                            }];
+                }
+            });
+        });
+    };
+    AuthService.prototype.register = function (registerDto) {
+        return __awaiter(this, void 0, void 0, function () {
+            var hashedPassword, newUser, _a, _b, _c, _d, _i, resetRecords_1, record, isMatch;
+            return __generator(this, function (_e) {
+                switch (_e.label) {
+                    case 0: return [4 /*yield*/, bcrypt.hash(registerDto.password, 10)];
+                    case 1:
+                        hashedPassword = _e.sent();
+                        return [4 /*yield*/, this.usersService.create(__assign(__assign({}, registerDto), { password: hashedPassword }))];
+                    case 2:
+                        newUser = _e.sent();
+                        async;
+                        requestPasswordReset(email, string);
+                        _a = Promise < void ;
+                        _b = {};
+                        return [4 /*yield*/, this.usersService.findByEmail(email)["catch"](function () { return null; })];
+                    case 3:
+                        // Check if user exists
+                        _b["const"] = user = _e.sent(),
+                            // Even if user doesn't exist, don't reveal that for security
+                            _b["if"] = function (, user) {
+                                return;
+                            },
+                            // Generate unique token
+                            _b["const"] = token = uuid_1.v4();
+                        return [4 /*yield*/, bcrypt.hash(token, 10)];
+                    case 4:
+                        _a > 
+                        // Hash token for storage
+                        _b["const"] = hashedToken = _e.sent(),
+                            // Set expiration to 1 hour from now
+                            _b["const"] = expires = new Date(),
+                            _b.expires = expires,
+                            _b. = .setHours(expires.getHours() + 1),
+                            // Save token
+                            _b.await = this.passwordResetRepository.save({
+                                email: user.email,
+                                token: hashedToken,
+                                expires: expires
+                            }),
+                            // Send email with reset link
+                            _b["const"] = resetLink = (process.env.FRONTEND_URL || 'http://localhost:3000') + "/reset-password/" + token,
+                            _b.await = this.mailService.sendPasswordResetEmail(user.email, user.firstName, resetLink),
+                            _b;
+                        async;
+                        verifyResetToken(token, string);
+                        _c = Promise < boolean;
+                        _d = {};
+                        return [4 /*yield*/, this.passwordResetRepository.find({
+                                where: { expires: { $gt: new Date() } }
+                            })];
+                    case 5:
+                        _c > 
+                        // Find all reset records for comparison
+                        _d["const"] = resetRecords = _e.sent(),
+                            // No need to continue if no records found
+                            _d["if"] = function (, resetRecords) { },
+                            _d || resetRecords.length === 0;
+                        {
+                            throw new common_1.BadRequestException('Invalid or expired token');
+                        }
+                        _i = 0, resetRecords_1 = resetRecords;
+                        _e.label = 6;
+                    case 6:
+                        if (!(_i < resetRecords_1.length)) return [3 /*break*/, 9];
+                        record = resetRecords_1[_i];
+                        return [4 /*yield*/, bcrypt.compare(token, record.token)];
+                    case 7:
+                        isMatch = _e.sent();
+                        if (isMatch) {
+                            return [2 /*return*/, true];
+                        }
+                        _e.label = 8;
+                    case 8:
+                        _i++;
+                        return [3 /*break*/, 6];
+                    case 9: throw new common_1.BadRequestException('Invalid or expired token');
+                }
+            });
+        });
+    };
+    AuthService.prototype.resetPassword = function (token, newPassword) {
+        return __awaiter(this, void 0, Promise, function () {
+            var resetRecords, matchedRecord, _i, resetRecords_2, record, isMatch, user, hashedPassword;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, this.passwordResetRepository.find({
+                            where: { expires: { $gt: new Date() } }
+                        })];
+                    case 1:
+                        resetRecords = _a.sent();
+                        // No need to continue if no records found
+                        if (!resetRecords || resetRecords.length === 0) {
+                            throw new common_1.BadRequestException('Invalid or expired token');
+                        }
+                        matchedRecord = null;
+                        _i = 0, resetRecords_2 = resetRecords;
+                        _a.label = 2;
+                    case 2:
+                        if (!(_i < resetRecords_2.length)) return [3 /*break*/, 5];
+                        record = resetRecords_2[_i];
+                        return [4 /*yield*/, bcrypt.compare(token, record.token)];
+                    case 3:
+                        isMatch = _a.sent();
+                        if (isMatch) {
+                            matchedRecord = record;
+                            return [3 /*break*/, 5];
+                        }
+                        _a.label = 4;
+                    case 4:
+                        _i++;
+                        return [3 /*break*/, 2];
+                    case 5:
+                        if (!matchedRecord) {
+                            throw new common_1.BadRequestException('Invalid or expired token');
+                        }
+                        return [4 /*yield*/, this.usersService.findByEmail(matchedRecord.email)];
+                    case 6:
+                        user = _a.sent();
+                        return [4 /*yield*/, bcrypt.hash(newPassword, 10)];
+                    case 7:
+                        hashedPassword = _a.sent();
+                        // Update user password
+                        return [4 /*yield*/, this.usersService.update(user.id, { password: hashedPassword })];
+                    case 8:
+                        // Update user password
+                        _a.sent();
+                        // Delete all reset records for this user
+                        return [4 /*yield*/, this.passwordResetRepository["delete"]({ email: user.email })];
+                    case 9:
+                        // Delete all reset records for this user
+                        _a.sent();
+                        // Send confirmation email
+                        return [4 /*yield*/, this.mailService.sendPasswordResetConfirmationEmail(user.email, user.firstName)];
+                    case 10:
+                        // Send confirmation email
+                        _a.sent();
+                        return [2 /*return*/];
+                }
+            });
+        });
+    };
     AuthService = __decorate([
         common_1.Injectable()
     ], AuthService);
     return AuthService;
 }());
 exports.AuthService = AuthService;
-async;
-validateUser(email, string, password, string);
-Promise < any > {
-    "const": user = await this.usersService.findByEmail(email),
-    "if": function (user) { }
-} && await bcrypt.compare(password, user.password);
-{
-    var password = user.password, result = __rest(user, ["password"]);
-    return result;
-}
-return null;
-async;
-login(loginDto, LoginDto);
-{
-    var user_1 = await this.validateUser(loginDto.email, loginDto.password);
-    if (!user_1) {
-        throw new common_1.UnauthorizedException('Invalid credentials');
-    }
-    var payload_1 = { email: user_1.email, sub: user_1.id, role: user_1.role };
-    return {
-        access_token: this.jwtService.sign(payload_1),
-        user: user_1
-    };
-}
-async;
-register(registerDto, RegisterDto);
-{
-    // Hash the password
-    var hashedPassword_1 = await bcrypt.hash(registerDto.password, 10);
-    // Create the user
-    var newUser = await this.usersService.create(__assign(__assign({}, registerDto), { password: hashedPassword_1 }));
-    async;
-    requestPasswordReset(email, string);
-    Promise < void  > {
-        // Check if user exists
-        "const": user = await this.usersService.findByEmail(email)["catch"](function () { return null; }),
-        // Even if user doesn't exist, don't reveal that for security
-        "if": function (, user) {
-            return;
-        }
-        // Generate unique token
-        ,
-        // Generate unique token
-        "const": token = uuid_1.v4(),
-        // Hash token for storage
-        "const": hashedToken = await bcrypt.hash(token, 10),
-        // Set expiration to 1 hour from now
-        "const": expires = new Date(),
-        expires: expires,
-        : .setHours(expires.getHours() + 1),
-        // Save token
-        await: await, "this": .passwordResetRepository.save({
-            email: user.email,
-            token: hashedToken,
-            expires: expires
-        }),
-        // Send email with reset link
-        "const": resetLink = (process.env.FRONTEND_URL || 'http://localhost:3000') + "/reset-password/" + token,
-        await: await,
-        "this": .mailService.sendPasswordResetEmail(user.email, user.firstName, resetLink)
-    };
-    async;
-    verifyResetToken(token, string);
-    Promise < boolean > {
-        // Find all reset records for comparison
-        "const": resetRecords = await this.passwordResetRepository.find({
-            where: { expires: { $gt: new Date() } }
-        }),
-        // No need to continue if no records found
-        "if": function (, resetRecords) { }
-    } || resetRecords.length === 0;
-    {
-        throw new common_1.BadRequestException('Invalid or expired token');
-    }
-    // Check if token matches any of the hashed tokens
-    for (var _i = 0, resetRecords_1 = resetRecords; _i < resetRecords_1.length; _i++) {
-        var record = resetRecords_1[_i];
-        var isMatch = await bcrypt.compare(token, record.token);
-        if (isMatch) {
-            return true;
-        }
-    }
-    throw new common_1.BadRequestException('Invalid or expired token');
-}
-async;
-resetPassword(token, string, newPassword, string);
-Promise < void  > {
-    // Find all reset records for comparison
-    "const": resetRecords = await this.passwordResetRepository.find({
-        where: { expires: { $gt: new Date() } }
-    }),
-    // No need to continue if no records found
-    "if": function (, resetRecords) { }
-} || resetRecords.length === 0;
-{
-    throw new common_1.BadRequestException('Invalid or expired token');
-}
-// Find matching record
-var matchedRecord = null;
-for (var _a = 0, resetRecords_2 = resetRecords; _a < resetRecords_2.length; _a++) {
-    var record = resetRecords_2[_a];
-    var isMatch = await bcrypt.compare(token, record.token);
-    if (isMatch) {
-        matchedRecord = record;
-        break;
-    }
-}
-if (!matchedRecord) {
-    throw new common_1.BadRequestException('Invalid or expired token');
-}
-// Get user by email
-var user = await this.usersService.findByEmail(matchedRecord.email);
-// Hash new password
-var hashedPassword = await bcrypt.hash(newPassword, 10);
-// Update user password
-await this.usersService.update(user.id, { password: hashedPassword });
-// Delete all reset records for this user
-await this.passwordResetRepository["delete"]({ email: user.email });
-// Send confirmation email
-await this.mailService.sendPasswordResetConfirmationEmail(user.email, user.firstName);
 // Generate JWT token
 var payload = { email: newUser.email, sub: newUser.id, role: newUser.role };
 return {
@@ -176,10 +278,10 @@ validateSocialLogin(socialUser, SocialUser);
 {
     try {
         // Check if user exists by email
-        var user_2 = await this.usersService.findByEmail(socialUser.email)["catch"](function () { return null; });
+        var user = await this.usersService.findByEmail(socialUser.email)["catch"](function () { return null; });
         // If user doesn't exist, create a new one
-        if (!user_2) {
-            user_2 = await this.usersService.create({
+        if (!user) {
+            user = await this.usersService.create({
                 email: socialUser.email,
                 firstName: socialUser.firstName,
                 lastName: socialUser.lastName,
@@ -192,17 +294,17 @@ validateSocialLogin(socialUser, SocialUser);
                 provider: socialUser.provider,
                 providerId: socialUser.email,
                 accessToken: socialUser.accessToken,
-                userId: user_2.id
+                userId: user.id
             });
             // Send welcome email to new user
-            await this.mailService.sendWelcomeEmail(user_2.email, user_2.firstName);
+            await this.mailService.sendWelcomeEmail(user.email, user.firstName);
         }
         else {
             // Check if social profile exists
             var socialProfile = await this.socialProfileRepository.findOne({
                 where: {
                     provider: socialUser.provider,
-                    userId: user_2.id
+                    userId: user.id
                 }
             })["catch"](function () { return null; });
             // If not, create it
@@ -211,7 +313,7 @@ validateSocialLogin(socialUser, SocialUser);
                     provider: socialUser.provider,
                     providerId: socialUser.email,
                     accessToken: socialUser.accessToken,
-                    userId: user_2.id
+                    userId: user.id
                 });
             }
             else {
@@ -219,27 +321,27 @@ validateSocialLogin(socialUser, SocialUser);
                 await this.socialProfileRepository.update({ id: socialProfile.id }, { accessToken: socialUser.accessToken });
             }
             // Update profile pic if not set
-            if (!user_2.profilePicture && socialUser.picture) {
-                await this.usersService.update(user_2.id, {
+            if (!user.profilePicture && socialUser.picture) {
+                await this.usersService.update(user.id, {
                     profilePicture: socialUser.picture
                 });
             }
         }
         // Generate JWT token
-        var payload_2 = {
-            sub: user_2.id,
-            email: user_2.email,
-            role: user_2.role
+        var payload_1 = {
+            sub: user.id,
+            email: user.email,
+            role: user.role
         };
         return {
-            access_token: this.jwtService.sign(payload_2),
+            access_token: this.jwtService.sign(payload_1),
             user: {
-                id: user_2.id,
-                email: user_2.email,
-                firstName: user_2.firstName,
-                lastName: user_2.lastName,
-                role: user_2.role,
-                profilePicture: user_2.profilePicture
+                id: user.id,
+                email: user.email,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                role: user.role,
+                profilePicture: user.profilePicture
             }
         };
     }

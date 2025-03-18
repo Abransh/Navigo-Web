@@ -7,6 +7,22 @@ import { PasswordReset } from './entities/password-reset.entity';
 import * as bcrypt from 'bcrypt';
 import { v4 as uuidv4 } from 'uuid';
 
+interface SocialUser {
+  email: string;
+  firstName: string;
+  lastName: string;
+  picture?: string;
+  accessToken: string;
+  provider: 'google' | 'facebook' | 'apple';
+}
+
+interface SocialProfile {
+  provider: string;
+  providerId: string;
+  accessToken: string;
+  userId: string;
+}
+
 @Injectable()
 export class AuthService {
   constructor(
@@ -15,22 +31,6 @@ export class AuthService {
     private mailService: MailService,
     private passwordResetRepository: PasswordResetRepository,
   ) {}
-
-  interface SocialUser {
-    email: string;
-    firstName: string;
-    lastName: string;
-    picture?: string;
-    accessToken: string;
-    provider: 'google' | 'facebook' | 'apple';
-  }
-  
-  interface SocialProfile {
-    provider: string;
-    providerId: string;
-    accessToken: string;
-    userId: string;
-  }
 
   async validateUser(email: string, password: string): Promise<any> {
     const user = await this.usersService.findByEmail(email);
