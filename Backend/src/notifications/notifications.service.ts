@@ -55,25 +55,13 @@ export class NotificationsService {
       'NEW_MESSAGE',
     );
   }
-}
 
-// src/notifications/processors/notifications.processor.ts
-import { Processor, Process } from '@nestjs/bull';
-import { Logger } from '@nestjs/common';
-import { Job } from 'bull';
-
-@Processor('notifications')
-export class NotificationsProcessor {
-  private readonly logger = new Logger(NotificationsProcessor.name);
-
-  @Process('push-notification')
-  async handlePushNotification(job: Job) {
-    this.logger.debug(`Processing notification: ${JSON.stringify(job.data)}`);
-    // In a real application, you would:
-    // 1. Save the notification to the database
-    // 2. Send push notification using Firebase Cloud Messaging or similar service
-    // 3. Emit event via WebSockets for real-time notification
-    
-    return job.data;
+  async sendBookingReminder(userId: string, bookingId: string) {
+    await this.sendNotification(
+      userId,
+      'Booking Reminder',
+      `Your booking #${bookingId} is scheduled for tomorrow.`,
+      'BOOKING_REMINDER',
+    );
   }
 }

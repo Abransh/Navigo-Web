@@ -1,17 +1,4 @@
 "use strict";
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -55,45 +42,44 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 exports.__esModule = true;
-exports.GoogleStrategy = void 0;
-// src/auth/strategies/google.strategy.ts
-var passport_1 = require("@nestjs/passport");
-var passport_google_oauth20_1 = require("passport-google-oauth20");
+exports.NotificationsProcessor = void 0;
+// src/notifications/processors/notifications.processor.ts
+var bull_1 = require("@nestjs/bull");
 var common_1 = require("@nestjs/common");
-var GoogleStrategy = /** @class */ (function (_super) {
-    __extends(GoogleStrategy, _super);
-    function GoogleStrategy(configService, authService) {
-        var _this = _super.call(this, {
-            clientID: configService.get('GOOGLE_CLIENT_ID') || '',
-            clientSecret: configService.get('GOOGLE_CLIENT_SECRET') || '',
-            callbackURL: configService.get('GOOGLE_CALLBACK_URL') || '',
-            scope: ['email', 'profile'],
-            passReqToCallback: false
-        }) || this;
-        _this.configService = configService;
-        _this.authService = authService;
-        return _this;
+var NotificationsProcessor = /** @class */ (function () {
+    function NotificationsProcessor() {
+        this.logger = new common_1.Logger(NotificationsProcessor_1.name);
     }
-    GoogleStrategy.prototype.validate = function (accessToken, refreshToken, profile, done) {
-        return __awaiter(this, void 0, Promise, function () {
-            var name, emails, photos, user;
+    NotificationsProcessor_1 = NotificationsProcessor;
+    NotificationsProcessor.prototype.handlePushNotification = function (job) {
+        return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
-                name = profile.name, emails = profile.emails, photos = profile.photos;
-                user = {
-                    email: emails[0].value,
-                    firstName: name.givenName,
-                    lastName: name.familyName,
-                    picture: photos && photos[0] ? photos[0].value : undefined,
-                    accessToken: accessToken,
-                    provider: 'google'
-                };
-                return [2 /*return*/, this.authService.validateSocialLogin(user)];
+                switch (_a.label) {
+                    case 0:
+                        this.logger.debug("Processing notification: " + JSON.stringify(job.data));
+                        // In a real application, you would:
+                        // 1. Save the notification to the database
+                        // 2. Send push notification using Firebase Cloud Messaging or similar service
+                        // 3. Emit event via WebSockets for real-time notification
+                        return [4 /*yield*/, new Promise(function (resolve) { return setTimeout(resolve, 1000); })];
+                    case 1:
+                        // In a real application, you would:
+                        // 1. Save the notification to the database
+                        // 2. Send push notification using Firebase Cloud Messaging or similar service
+                        // 3. Emit event via WebSockets for real-time notification
+                        _a.sent(); // Simulate async operation
+                        return [2 /*return*/, job.data.message];
+                }
             });
         });
     };
-    GoogleStrategy = __decorate([
-        common_1.Injectable()
-    ], GoogleStrategy);
-    return GoogleStrategy;
-}(passport_1.PassportStrategy(passport_google_oauth20_1.Strategy, 'google')));
-exports.GoogleStrategy = GoogleStrategy;
+    var NotificationsProcessor_1;
+    __decorate([
+        bull_1.Process('push-notification')
+    ], NotificationsProcessor.prototype, "handlePushNotification");
+    NotificationsProcessor = NotificationsProcessor_1 = __decorate([
+        bull_1.Processor('notifications')
+    ], NotificationsProcessor);
+    return NotificationsProcessor;
+}());
+exports.NotificationsProcessor = NotificationsProcessor;
