@@ -5,8 +5,15 @@ import { MailerService } from '@nestjs-modules/mailer';
 
 interface BookingDetails {
   id: string;
-  date: string;
-  location: string;
+  date?: string;
+  startDate?: Date;
+  endDate?: Date;
+  location?: string;
+  companion?: {
+    name: string;
+    profilePicture?: string;
+  };
+  totalAmount?: number;
   [key: string]: any;
 }
 
@@ -71,7 +78,8 @@ export class EmailService {
       {
         firstName,
         resetLink,
-      });
+      }
+    );
   }
 
   async sendPasswordResetConfirmationEmail(
@@ -90,24 +98,24 @@ export class EmailService {
   async sendBookingConfirmation(
     email: string,
     firstName: string,
-    bookingDetails: any,
+    bookingDetails: BookingDetails,
   ): Promise<void> {
     await this.sendMail(
       email,
       `${this.getAppName()} - Booking Confirmation`,
       'booking-confirmation',
       {
-  async sendBookingCancellation(
-    email: string,
-    firstName: string,
-    bookingDetails: BookingDetails,
-  ): Promise<void> {
+        firstName,
+        booking: bookingDetails,
+        myBookingsUrl: `${this.getAppUrl()}/bookings`,
+      }
+    );
   }
 
   async sendBookingCancellation(
     email: string,
     firstName: string,
-    bookingDetails: any,
+    bookingDetails: BookingDetails,
   ): Promise<void> {
     await this.sendMail(
       email,

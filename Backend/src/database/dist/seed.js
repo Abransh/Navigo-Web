@@ -205,9 +205,8 @@ function seedDestinations(destinationRepository) {
                         {
                             name: 'JAIPUR',
                             slug: 'jaipur',
-                            description: 'Jaipur is the capital of the Indian state of Rajasthan, known as the "Pink City" due to the distinctive color of its buildings. It',
-                            s: s, part: part, of: of, the: the, popular: popular, Golden: Golden, Triangle: Triangle, tourist: tourist, circuit: circuit,
-                            : ., ',: image, '/images/Jaipur.jpg': ,
+                            description: 'Jaipur is the capital of the Indian state of Rajasthan, known as the "Pink City" due to the distinctive color of its buildings. It is part of the popular Golden Triangle tourist circuit.',
+                            image: '/images/Jaipur.jpg',
                             highlights: [
                                 'Explore the magnificent Amber Fort',
                                 'Visit the City Palace complex',

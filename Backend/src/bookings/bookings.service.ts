@@ -306,3 +306,59 @@ async calculatePrice(
   
   return { totalAmount };
 }
+
+// Add this method to the BookingsService
+async cancel(id: string, userId: string, reason?: string): Promise<Booking> {
+  const booking = await this.findOne(id);
+  
+  // Verify the user is the tourist who made the booking
+  if (booking.tourist.id !== userId) {
+    throw new ForbiddenException('You are not authorized to cancel this booking');
+  }
+  
+  // Verify booking can be cancelled
+  if (
+    booking.status === BookingStatus.COMPLETED ||
+    booking.status === BookingStatus.CANCELLED
+  ) {
+    throw new BadRequestException(`Cannot cancel a ${booking.status.toLowerCase()} booking`);
+  }
+  
+  // Add reason to notes if provided
+  if (reason) {
+    booking.notes = booking.notes 
+      ? `${booking.notes}\n\nCancellation reason: ${reason}`
+      : `Cancellation reason: ${reason}`;
+  }
+  
+  // Update booking status
+  booking.status = BookingStatus.CANCELLED;
+  
+  const cancelledBooking = await this.bookingsRepository.save(booking);
+  
+  // Notify companion about cancellation
+  try {
+    await this.notificationsService.sendBookingCancellation(
+      booking.companion.user.id,
+      booking.id
+    );
+    
+    // Send cancellation email to companion
+    const companionUser = await this.usersService.findById(booking.companion.user.id);
+    await this.emailService.sendBookingCancellation(
+      companionUser.email,
+      companionUser.firstName,
+      {
+        id: booking.id,
+        startDate: booking.startDate,
+        endDate: booking.endDate,
+        location: booking.location,
+        reason: reason || 'No reason provided',
+      }
+    );
+  } catch (error) {
+    console.error('Failed to send cancellation notification:', error);
+  }
+  
+  return cancelledBooking;
+}

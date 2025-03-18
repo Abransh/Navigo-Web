@@ -145,7 +145,7 @@ async function seedDestinations(destinationRepository: Repository<Destination>) 
     {
       name: 'JAIPUR',
       slug: 'jaipur',
-      description: 'Jaipur is the capital of the Indian state of Rajasthan, known as the "Pink City" due to the distinctive color of its buildings. It's part of the popular Golden Triangle tourist circuit.',
+      description: 'Jaipur is the capital of the Indian state of Rajasthan, known as the "Pink City" due to the distinctive color of its buildings. It is part of the popular Golden Triangle tourist circuit.',
       image: '/images/Jaipur.jpg',
       highlights: [
         'Explore the magnificent Amber Fort',

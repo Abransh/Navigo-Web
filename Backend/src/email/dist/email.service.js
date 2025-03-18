@@ -133,29 +133,25 @@ var EmailService = /** @class */ (function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, this.sendMail(email, this.getAppName() + " - Booking Confirmation", 'booking-confirmation', {
-                            sendBookingCancellation: function (email, firstName, bookingDetails) {
-                                return __awaiter(this, void 0, Promise, function () {
-                                    return __generator(this, function (_a) {
-                                        return [2 /*return*/];
-                                    });
-                                });
-                            },
-                            sendBookingCancellation: function (email, firstName, bookingDetails) {
-                                return __awaiter(this, void 0, Promise, function () {
-                                    return __generator(this, function (_a) {
-                                        switch (_a.label) {
-                                            case 0: return [4 /*yield*/, this.sendMail(email, this.getAppName() + " - Booking Cancelled", 'booking-cancellation', {
-                                                    firstName: firstName,
-                                                    booking: bookingDetails,
-                                                    myBookingsUrl: this.getAppUrl() + "/bookings"
-                                                })];
-                                            case 1:
-                                                _a.sent();
-                                                return [2 /*return*/];
-                                        }
-                                    });
-                                });
-                            }
+                            firstName: firstName,
+                            booking: bookingDetails,
+                            myBookingsUrl: this.getAppUrl() + "/bookings"
+                        })];
+                    case 1:
+                        _a.sent();
+                        return [2 /*return*/];
+                }
+            });
+        });
+    };
+    EmailService.prototype.sendBookingCancellation = function (email, firstName, bookingDetails) {
+        return __awaiter(this, void 0, Promise, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, this.sendMail(email, this.getAppName() + " - Booking Cancelled", 'booking-cancellation', {
+                            firstName: firstName,
+                            booking: bookingDetails,
+                            myBookingsUrl: this.getAppUrl() + "/bookings"
                         })];
                     case 1:
                         _a.sent();

@@ -328,6 +328,63 @@ var BookingsService = /** @class */ (function () {
             });
         });
     };
+    // Add this method to the BookingsService
+    BookingsService.prototype.cancel = function (id, userId, reason) {
+        return __awaiter(this, void 0, Promise, function () {
+            var booking, cancelledBooking, companionUser, error_4;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, this.findOne(id)];
+                    case 1:
+                        booking = _a.sent();
+                        // Verify the user is the tourist who made the booking
+                        if (booking.tourist.id !== userId) {
+                            throw new common_1.ForbiddenException('You are not authorized to cancel this booking');
+                        }
+                        // Verify booking can be cancelled
+                        if (booking.status === booking_status_enum_1.BookingStatus.COMPLETED ||
+                            booking.status === booking_status_enum_1.BookingStatus.CANCELLED) {
+                            throw new common_1.BadRequestException("Cannot cancel a " + booking.status.toLowerCase() + " booking");
+                        }
+                        // Add reason to notes if provided
+                        if (reason) {
+                            booking.notes = booking.notes
+                                ? booking.notes + "\n\nCancellation reason: " + reason
+                                : "Cancellation reason: " + reason;
+                        }
+                        // Update booking status
+                        booking.status = booking_status_enum_1.BookingStatus.CANCELLED;
+                        return [4 /*yield*/, this.bookingsRepository.save(booking)];
+                    case 2:
+                        cancelledBooking = _a.sent();
+                        _a.label = 3;
+                    case 3:
+                        _a.trys.push([3, 7, , 8]);
+                        return [4 /*yield*/, this.notificationsService.sendBookingCancellation(booking.companion.user.id, booking.id)];
+                    case 4:
+                        _a.sent();
+                        return [4 /*yield*/, this.usersService.findById(booking.companion.user.id)];
+                    case 5:
+                        companionUser = _a.sent();
+                        return [4 /*yield*/, this.emailService.sendBookingCancellation(companionUser.email, companionUser.firstName, {
+                                id: booking.id,
+                                startDate: booking.startDate,
+                                endDate: booking.endDate,
+                                location: booking.location,
+                                reason: reason || 'No reason provided'
+                            })];
+                    case 6:
+                        _a.sent();
+                        return [3 /*break*/, 8];
+                    case 7:
+                        error_4 = _a.sent();
+                        console.error('Failed to send cancellation notification:', error_4);
+                        return [3 /*break*/, 8];
+                    case 8: return [2 /*return*/, cancelledBooking];
+                }
+            });
+        });
+    };
     BookingsService = __decorate([
         common_1.Injectable(),
         __param(0, typeorm_1.InjectRepository(booking_entity_1.Booking))
