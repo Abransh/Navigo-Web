@@ -1,4 +1,6 @@
 // contexts/auth-context.tsx
+"use client"; 
+
 import React, { createContext, useState, useContext, useEffect, ReactNode } from 'react';
 import authService, { AuthResponse } from '@/services/auth-service';
 
