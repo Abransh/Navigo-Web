@@ -66,7 +66,13 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const register = async (data: any) => {
     setLoading(true);
     try {
-      const response = await authService.register(data);
+      // Ensure role is set to tourist if not specified
+      const registerData = {
+        ...data,
+        role: data.role || 'tourist'
+      };
+      
+      const response = await authService.register(registerData);
       setUser(response.user);
       setIsAuthenticated(true);
     } catch (error) {

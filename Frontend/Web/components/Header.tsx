@@ -5,15 +5,16 @@ import Link from 'next/link';
 import React, { useEffect, useState, useRef } from 'react';
 import { useMobile } from '@/hooks/use-mobile';
 import { useAuth } from '@/contexts/auth-context';
-import PlanTripButton from './PlanTripButton';
+import { useRouter } from 'next/navigation';
 
 const Header: React.FC = () => {
   const { isAuthenticated, user, logout } = useAuth();
-  const isMobile = useMobile(768); // Use your custom hook
+  const isMobile = useMobile(768);
   const [visible, setVisible] = useState(true);
   const [prevScrollPos, setPrevScrollPos] = useState(0);
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
   
   // Handle scroll behavior
   useEffect(() => {
@@ -67,6 +68,16 @@ const Header: React.FC = () => {
     setMenuOpen(false);
   };
 
+  // Handle plan trip button click
+  const handlePlanTripClick = () => {
+    if (isAuthenticated) {
+      router.push('/planyourtrip');
+    } else {
+      router.push('/login?redirectTo=/planyourtrip');
+    }
+    setMenuOpen(false);
+  };
+
   return (
     <div className={`fixed top-4 left-0 right-0 z-50 transition-transform duration-300 px-2 ${
       visible ? 'translate-y-0' : '-translate-y-full'
@@ -105,26 +116,12 @@ const Header: React.FC = () => {
                 </button>
               </div>
             ) : (
-              <div className="flex items-center justify-between w-full">
-                <Link
-                  href="/login"
-                  className="text-sm group-hover:text-white transition-colors duration-300"
-                >
-                  Login
-                </Link>
-                <PlanTripButton className="text-sm group-hover:text-white transition-colors duration-300 flex items-center">
-                  <span>Plan Trip</span>
-                  <svg
-                    className="w-4 h-4 transform group-hover:rotate-45 transition-transform duration-300 ml-2"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                  </svg>
-                </PlanTripButton>
-              </div>
+              <button
+                onClick={handlePlanTripClick}
+                className="w-full text-center text-sm group-hover:text-white transition-colors duration-300"
+              >
+                Plan Your Trip
+              </button>
             )}
           </div>
         )}
@@ -209,40 +206,22 @@ const Header: React.FC = () => {
                       </button>
                     </>
                   ) : (
-                    <>
-                      <Link 
-                        href="/login" 
-                        className="hover:text-[#F3A522] text-sm py-2 px-3 rounded-md hover:bg-gray-100"
-                        onClick={() => setMenuOpen(false)}
-                      >
-                        Login
-                      </Link>
-                      <Link 
-                        href="/register" 
-                        className="hover:text-[#F3A522] text-sm py-2 px-3 rounded-md hover:bg-gray-100"
-                        onClick={() => setMenuOpen(false)}
-                      >
-                        Register
-                      </Link>
-                    </>
-                  )}
-                  
-                  <div className="border-t border-gray-200 my-1"></div>
-                  
-                  <PlanTripButton 
-                    className="flex justify-between items-center text-sm py-2 px-3 rounded-md bg-[#6babea] text-white"
-                  >
-                    <span>Plan Your Trip</span>
-                    <svg
-                      className="w-4 h-4"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                      xmlns="http://www.w3.org/2000/svg"
+                    <button 
+                      onClick={handlePlanTripClick}
+                      className="flex justify-between items-center text-sm py-2 px-3 rounded-md bg-[#6babea] text-white w-full"
                     >
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                    </svg>
-                  </PlanTripButton>
+                      <span>Plan Your Trip</span>
+                      <svg
+                        className="w-4 h-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                      </svg>
+                    </button>
+                  )}
                 </nav>
               </div>
             )}
