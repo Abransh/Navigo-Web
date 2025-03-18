@@ -5,6 +5,9 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -42,52 +45,68 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 exports.__esModule = true;
-exports.StripeService = void 0;
-// src/payments/services/stripe.service.ts
+exports.ChatService = void 0;
 var common_1 = require("@nestjs/common");
-var stripe_1 = require("stripe");
-var StripeService = /** @class */ (function () {
-    function StripeService(configService) {
-        this.configService = configService;
-        this.stripe = new stripe_1["default"](configService.get('STRIPE_SECRET_KEY'), {
-            apiVersion: '2020-08-27'
-        });
+var typeorm_1 = require("@nestjs/typeorm");
+var message_entity_1 = require("./entities/message.entity");
+var user_entity_1 = require("../users/entities/user.entity");
+var ChatService = /** @class */ (function () {
+    function ChatService(messageRepository, userRepository) {
+        this.messageRepository = messageRepository;
+        this.userRepository = userRepository;
     }
-    StripeService.prototype.createPaymentIntent = function (amount, currency) {
-        if (currency === void 0) { currency = 'inr'; }
+    ChatService.prototype.saveMessage = function (messageData) {
         return __awaiter(this, void 0, Promise, function () {
+            var sender, recipient, message;
             return __generator(this, function (_a) {
-                return [2 /*return*/, this.stripe.paymentIntents.create({
-                        amount: Math.round(amount * 100),
-                        currency: currency
-                    })];
-            });
-        });
-    };
-    StripeService.prototype.confirmPayment = function (paymentIntentId) {
-        return __awaiter(this, void 0, Promise, function () {
-            return __generator(this, function (_a) {
-                return [2 /*return*/, this.stripe.paymentIntents.confirm(paymentIntentId)];
-            });
-        });
-    };
-    StripeService.prototype.createRefund = function (paymentIntentId, amount) {
-        return __awaiter(this, void 0, Promise, function () {
-            var refundParams;
-            return __generator(this, function (_a) {
-                refundParams = {
-                    payment_intent: paymentIntentId
-                };
-                if (amount) {
-                    refundParams.amount = Math.round(amount * 100);
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, this.userRepository.findOne({ where: { id: messageData.senderId } })];
+                    case 1:
+                        sender = _a.sent();
+                        return [4 /*yield*/, this.userRepository.findOne({ where: { id: messageData.recipientId } })];
+                    case 2:
+                        recipient = _a.sent();
+                        message = this.messageRepository.create({
+                            sender: sender,
+                            recipient: recipient,
+                            content: messageData.content
+                        });
+                        return [2 /*return*/, this.messageRepository.save(message)];
                 }
-                return [2 /*return*/, this.stripe.refunds.create(refundParams)];
             });
         });
     };
-    StripeService = __decorate([
-        common_1.Injectable()
-    ], StripeService);
-    return StripeService;
+    ChatService.prototype.getConversation = function (user1Id, user2Id) {
+        return __awaiter(this, void 0, Promise, function () {
+            return __generator(this, function (_a) {
+                return [2 /*return*/, this.messageRepository
+                        .createQueryBuilder('message')
+                        .leftJoinAndSelect('message.sender', 'sender')
+                        .leftJoinAndSelect('message.recipient', 'recipient')
+                        .where('(message.sender.id = :user1Id AND message.recipient.id = :user2Id) OR ' +
+                        '(message.sender.id = :user2Id AND message.recipient.id = :user1Id)', { user1Id: user1Id, user2Id: user2Id })
+                        .orderBy('message.sentAt', 'ASC')
+                        .getMany()];
+            });
+        });
+    };
+    ChatService.prototype.markAsRead = function (messageId) {
+        return __awaiter(this, void 0, Promise, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, this.messageRepository.update(messageId, { isRead: true })];
+                    case 1:
+                        _a.sent();
+                        return [2 /*return*/];
+                }
+            });
+        });
+    };
+    ChatService = __decorate([
+        common_1.Injectable(),
+        __param(0, typeorm_1.InjectRepository(message_entity_1.Message)),
+        __param(1, typeorm_1.InjectRepository(user_entity_1.User))
+    ], ChatService);
+    return ChatService;
 }());
-exports.StripeService = StripeService;
+exports.ChatService = ChatService;
