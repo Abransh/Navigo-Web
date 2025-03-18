@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Companion } from './entities/compantion.entity';
+import { Companion } from './entities/companion.entity';
 import { SearchCompanionsDto } from './dto/search-companions.dto';
 
 @Injectable()

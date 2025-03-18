@@ -7,7 +7,7 @@ export class Companion {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => User, user => user.companionProfiles)
+  @ManyToOne(() => User, (user) => user.companionProfiles)
   user: User;
 
   @Column()
@@ -40,6 +40,6 @@ export class Companion {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @OneToMany(() => Booking, booking => booking.companion)
+  @OneToMany(() => Booking, (booking) => booking.companion)
   bookings: Booking[];
 }

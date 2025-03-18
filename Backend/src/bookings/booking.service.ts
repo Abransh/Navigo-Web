@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Booking } from './entities/booking.entity';
@@ -17,13 +21,18 @@ export class BookingsService {
     private companionsService: CompanionsService,
   ) {}
 
-  async create(createBookingDto: CreateBookingDto, touristId: string): Promise<Booking> {
+  async create(
+    createBookingDto: CreateBookingDto,
+    touristId: string,
+  ): Promise<Booking> {
     const tourist = await this.usersService.findOne(touristId);
     if (!tourist) {
       throw new NotFoundException('Tourist not found');
     }
 
-    const companion = await this.companionsService.findOne(createBookingDto.companionId);
+    const companion = await this.companionsService.findOne(
+      createBookingDto.companionId
+    );
     if (!companion) {
       throw new NotFoundException('Companion not found');
     }
@@ -71,11 +80,20 @@ export class BookingsService {
   async findOne(id: string): Promise<Booking> {
     return this.bookingsRepository.findOne({
       where: { id },
-      relations: ['tourist', 'companion', 'companion.user', 'payments', 'reviews'],
+      relations: [
+        'tourist',
+        'companion',
+        'companion.user',
+        'payments',
+        'reviews',
+      ],
     });
   }
 
-  async update(id: string, updateBookingDto: UpdateBookingDto): Promise<Booking> {
+  async update(
+    id: string,
+    updateBookingDto: UpdateBookingDto,
+  ): Promise<Booking> {
     const booking = await this.findOne(id);
     if (!booking) {
       throw new NotFoundException('Booking not found');
