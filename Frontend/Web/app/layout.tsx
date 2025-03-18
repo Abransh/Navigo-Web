@@ -6,6 +6,7 @@ import Footer from "@/components/footer";
 import Header from "@/components/Header";
 import { Analytics } from "@vercel/analytics/react"
 import { SpeedInsights } from "@vercel/speed-insights/next"
+import { AuthProvider } from '@/contexts/auth-context';
 
 const poppins = Poppins({
   subsets: ['latin'],
@@ -26,10 +27,11 @@ export default function RootLayout({
   return (
     <html lang="en" className={poppins.variable}>
       <body className="font-sans">
-        <Header />
-        {children} 
-        
-        <Footer />
+        <AuthProvider>
+          <Header />
+          {children}
+          <Footer />
+        </AuthProvider>
       </body>
     </html>
   );

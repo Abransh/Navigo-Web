@@ -116,17 +116,26 @@ var BookingsService = /** @class */ (function () {
     };
     BookingsService.prototype.findOne = function (id) {
         return __awaiter(this, void 0, Promise, function () {
+            var booking;
             return __generator(this, function (_a) {
-                return [2 /*return*/, this.bookingsRepository.findOne({
-                        where: { id: id },
-                        relations: [
-                            'tourist',
-                            'companion',
-                            'companion.user',
-                            'payments',
-                            'reviews',
-                        ]
-                    })];
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, this.bookingsRepository.findOne({
+                            where: { id: id },
+                            relations: [
+                                'tourist',
+                                'companion',
+                                'companion.user',
+                                'payments',
+                                'reviews',
+                            ]
+                        })];
+                    case 1:
+                        booking = _a.sent();
+                        if (!booking) {
+                            throw new common_1.NotFoundException('Booking not found');
+                        }
+                        return [2 /*return*/, booking];
+                }
             });
         });
     };
