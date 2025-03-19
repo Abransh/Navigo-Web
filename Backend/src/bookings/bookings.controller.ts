@@ -29,7 +29,7 @@ import { Roles } from '../auth/decorators/roles.decorator';
 import { CreateBookingDto } from './dto/create-booking.dto';
 import { UpdateBookingDto } from './dto/update-booking.dto';
 import { CancelBookingDto } from './dto/cancel-booking.dto';
-import { CalculatePriceDto } from './dto/calculate-price.dto';
+import { CalculatePriceDto } from './dto/cancel-booking.dto';
 import { BookingStatus } from './enums/booking-status.enum';
 import { UserRole } from '../users/enums/user-role.enum';
   

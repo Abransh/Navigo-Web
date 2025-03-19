@@ -55,7 +55,7 @@ var roles_decorator_1 = require("../auth/decorators/roles.decorator");
 var create_booking_dto_1 = require("./dto/create-booking.dto");
 var update_booking_dto_1 = require("./dto/update-booking.dto");
 var cancel_booking_dto_1 = require("./dto/cancel-booking.dto");
-var calculate_price_dto_1 = require("./dto/calculate-price.dto");
+var cancel_booking_dto_2 = require("./dto/cancel-booking.dto");
 var booking_status_enum_1 = require("./enums/booking-status.enum");
 var user_role_enum_1 = require("../users/enums/user-role.enum");
 var BookingsController = /** @class */ (function () {
@@ -173,7 +173,7 @@ var BookingsController = /** @class */ (function () {
         swagger_1.ApiResponse({ status: 200, description: 'Returns calculated price' }),
         swagger_1.ApiResponse({ status: 400, description: 'Invalid input' }),
         swagger_1.ApiResponse({ status: 404, description: 'Companion not found' }),
-        swagger_1.ApiBody({ type: calculate_price_dto_1.CalculatePriceDto }),
+        swagger_1.ApiBody({ type: cancel_booking_dto_2.CalculatePriceDto }),
         __param(0, common_1.Body())
     ], BookingsController.prototype, "calculatePrice");
     BookingsController = __decorate([
