@@ -16,6 +16,7 @@ var typeorm_1 = require("@nestjs/typeorm");
 // Controllers
 var auth_controller_1 = require("./auth.controller");
 var social_auth_controller_1 = require("./controllers/social-auth.controller");
+var routes_debug_controller_1 = require("./controllers/routes-debug.controller");
 // Services
 var auth_service_1 = require("./auth.service");
 // Strategies
@@ -39,7 +40,7 @@ var AuthModule = /** @class */ (function () {
             imports: [
                 users_module_1.UsersModule,
                 email_module_1.EmailModule,
-                passport_1.PassportModule,
+                passport_1.PassportModule.register({ defaultStrategy: 'jwt' }),
                 typeorm_1.TypeOrmModule.forFeature([password_reset_entity_1.PasswordReset, social_profile_entity_1.SocialProfile]),
                 jwt_1.JwtModule.registerAsync({
                     imports: [config_1.ConfigModule],
@@ -52,7 +53,7 @@ var AuthModule = /** @class */ (function () {
                     }); }
                 }),
             ],
-            controllers: [auth_controller_1.AuthController, social_auth_controller_1.SocialAuthController],
+            controllers: [auth_controller_1.AuthController, social_auth_controller_1.SocialAuthController, routes_debug_controller_1.RoutesDebugController],
             providers: [
                 auth_service_1.AuthService,
                 jwt_strategy_1.JwtStrategy,
@@ -64,6 +65,7 @@ var AuthModule = /** @class */ (function () {
             exports: [auth_service_1.AuthService,
                 password_reset_repository_1.PasswordResetRepository,
                 jwt_1.JwtModule,
+                passport_1.PassportModule,
             ]
         })
     ], AuthModule);

@@ -8,6 +8,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 // Controllers
 import { AuthController } from './auth.controller';
 import { SocialAuthController } from './controllers/social-auth.controller';
+import { RoutesDebugController } from './controllers/routes-debug.controller';
 
 // Services
 import { AuthService } from './auth.service';
@@ -33,7 +34,7 @@ import { EmailModule } from '../email/email.module';
   imports: [
     UsersModule,
     EmailModule,
-    PassportModule,
+    PassportModule.register({ defaultStrategy: 'jwt' }), // Explicitly set default strategy
     TypeOrmModule.forFeature([PasswordReset, SocialProfile]),
     JwtModule.registerAsync({
       imports: [ConfigModule],
@@ -46,7 +47,7 @@ import { EmailModule } from '../email/email.module';
       }),
     }),
   ],
-  controllers: [AuthController, SocialAuthController],
+  controllers: [AuthController, SocialAuthController, RoutesDebugController],
   providers: [
     AuthService,
     JwtStrategy,
@@ -58,6 +59,7 @@ import { EmailModule } from '../email/email.module';
   exports: [AuthService, 
     PasswordResetRepository,
     JwtModule,
+    PassportModule,
   ],
 })
 export class AuthModule {}

@@ -15,7 +15,13 @@ async function bootstrap() {
   const configService = app.get(ConfigService);
   
   // Security settings
-  app.use(helmet()); // Security headers
+  app.use(
+    helmet({
+      // Allow OAuth redirects by not blocking iframe loading
+      contentSecurityPolicy: false,
+      crossOriginEmbedderPolicy: false,
+    })
+  );
   app.use(compression()); // Response compression
 
   // Configure CORS
@@ -23,15 +29,25 @@ async function bootstrap() {
   
 
   // Set global prefix
+
+  const frontendUrl = configService.get('FRONTEND_URL', 'http://localhost:3000');
+
+  const corsOriginsStr = configService.get('CORS_ORIGINS', frontendUrl);
+  const corsOrigins = corsOriginsStr.split(',').map(origin => origin.trim());
+  
+  logger.log(`Configuring CORS for origins: ${corsOrigins.join(', ')}`);
+
+  app.enableCors({
+    origin: corsOrigins,
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    credentials: true,
+    preflightContinue: false,
+    optionsSuccessStatus: 204,
+  });
+
   const apiPrefix = configService.get<string>('API_PREFIX', 'api');
   app.setGlobalPrefix(apiPrefix);
   logger.log(`API prefix set to: /${apiPrefix}`);
-
-  app.enableCors({
-    origin: 'http://localhost:3000',
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE, OPTIONS',
-    credentials: true,
-  });
 
   // Set up global validation pipe
   app.useGlobalPipes(
@@ -63,5 +79,10 @@ async function bootstrap() {
   await app.listen(port);
   logger.log(`Application is running on: http://localhost:${port}`);
   logger.log(`Environment: ${configService.get<string>('NODE_ENV', 'development')}`);
+  
+  // Log important information for OAuth debugging
+  logger.log(`API URL with prefix: http://localhost:${port}/${apiPrefix}`);
+  logger.log(`Google Auth URL: http://localhost:${port}/${apiPrefix}/auth/google`);
+  logger.log(`Google Callback URL: ${configService.get('GOOGLE_CALLBACK_URL')}`);
 }
 bootstrap();

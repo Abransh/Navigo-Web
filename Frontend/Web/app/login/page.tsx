@@ -1,4 +1,4 @@
-// Frontend/Web/app/login/page.tsx
+// app/login/page.tsx
 "use client";
 
 import { useState, useEffect } from "react";
@@ -6,20 +6,27 @@ import { useAuth } from "@/contexts/auth-context";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { FaGoogle, FaApple, FaFacebook } from "react-icons/fa";
-import  { toast } from "react-hot-toast"; 
+import { toast } from "react-hot-toast"; 
+import SocialLoginButtons from "@/components/auth/SocialLoginButtons";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [socialLoading, setSocialLoading] = useState<string | null>(null);
   const { login, isAuthenticated, loading } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirectTo = searchParams.get('redirectTo') || '/';
   const fromPlanTrip = redirectTo === '/planyourtrip';
+
+  // Check for any error in the URL (from a failed social login)
+  useEffect(() => {
+    const errorParam = searchParams.get('error');
+    if (errorParam) {
+      setError(decodeURIComponent(errorParam));
+    }
+  }, [searchParams]);
 
   // Redirect if already logged in
   useEffect(() => {
@@ -28,13 +35,6 @@ export default function LoginPage() {
       router.push(redirectTo);
     }
   }, [isAuthenticated, redirectTo, router, loading]);
-
-  // Save redirectTo to localStorage for social auth callback
-  useEffect(() => {
-    if (redirectTo) {
-      localStorage.setItem('redirectTo', redirectTo);
-    }
-  }, [redirectTo]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -66,19 +66,6 @@ export default function LoginPage() {
     } finally {
       setIsSubmitting(false);
     }
-  };
-
-  const handleSocialLogin = (provider: string) => {
-    setSocialLoading(provider);
-    
-    // Save redirectTo to localStorage for the callback
-    if (redirectTo) {
-      localStorage.setItem('redirectTo', redirectTo);
-    }
-    
-    // Redirect to backend auth endpoint
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
-    window.location.href = `${apiUrl}/auth/${provider}`;
   };
 
   // Show loading state while auth state is being determined
@@ -136,49 +123,7 @@ export default function LoginPage() {
             )}
             
             {/* Social Login Buttons */}
-            <div className="space-y-3 mb-6">
-              <button 
-                type="button"
-                onClick={() => handleSocialLogin('google')}
-                disabled={isSubmitting || !!socialLoading}
-                className="w-full flex items-center justify-center gap-3 py-3 px-4 bg-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-50 transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
-              >
-                {socialLoading === 'google' ? (
-                  <span className="mr-2 h-4 w-4 border-2 border-gray-500 border-t-transparent rounded-full animate-spin"></span>
-                ) : (
-                  <FaGoogle className="text-red-500" />
-                )}
-                <span>Continue with Google</span>
-              </button>
-              
-              <button 
-                type="button"
-                onClick={() => handleSocialLogin('apple')}
-                disabled={isSubmitting || !!socialLoading}
-                className="w-full flex items-center justify-center gap-3 py-3 px-4 bg-black text-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-900 transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
-              >
-                {socialLoading === 'apple' ? (
-                  <span className="mr-2 h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
-                ) : (
-                  <FaApple />
-                )}
-                <span>Continue with Apple</span>
-              </button>
-              
-              <button 
-                type="button"
-                onClick={() => handleSocialLogin('facebook')}
-                disabled={isSubmitting || !!socialLoading}
-                className="w-full flex items-center justify-center gap-3 py-3 px-4 bg-[#1877F2] text-white border border-gray-300 rounded-lg shadow-sm hover:bg-[#0e6ae4] transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
-              >
-                {socialLoading === 'facebook' ? (
-                  <span className="mr-2 h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
-                ) : (
-                  <FaFacebook />
-                )}
-                <span>Continue with Facebook</span>
-              </button>
-            </div>
+            <SocialLoginButtons mode="login" />
             
             {/* Or divider */}
             <div className="relative flex items-center justify-center mb-6">
@@ -198,7 +143,7 @@ export default function LoginPage() {
                   className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#F3A522] focus:border-transparent transition"
                   placeholder="your@email.com"
                   required
-                  disabled={isSubmitting || !!socialLoading}
+                  disabled={isSubmitting}
                 />
               </div>
               
@@ -208,8 +153,8 @@ export default function LoginPage() {
                   <Link 
                     href="/forgot-password" 
                     className="text-sm text-[#003366] hover:text-[#F3A522]"
-                    tabIndex={isSubmitting || !!socialLoading ? -1 : 0}
-                    aria-disabled={isSubmitting || !!socialLoading}
+                    tabIndex={isSubmitting ? -1 : 0}
+                    aria-disabled={isSubmitting}
                   >
                     Forgot password?
                   </Link>
@@ -222,15 +167,15 @@ export default function LoginPage() {
                   className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#F3A522] focus:border-transparent transition"
                   placeholder="••••••••"
                   required
-                  disabled={isSubmitting || !!socialLoading}
+                  disabled={isSubmitting}
                 />
               </div>
               
               <button 
                 type="submit"
-                disabled={isSubmitting || !!socialLoading}
+                disabled={isSubmitting}
                 className={`w-full py-3 px-4 ${
-                  isSubmitting || !!socialLoading
+                  isSubmitting
                     ? 'bg-gray-400 cursor-not-allowed' 
                     : 'bg-[#F3A522] hover:bg-[#003366]'
                 } text-white rounded-lg transition-colors font-medium flex items-center justify-center`}

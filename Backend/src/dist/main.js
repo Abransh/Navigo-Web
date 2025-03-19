@@ -47,7 +47,7 @@ var config_1 = require("@nestjs/config");
 var common_2 = require("@nestjs/common");
 function bootstrap() {
     return __awaiter(this, void 0, void 0, function () {
-        var logger, app, configService, apiPrefix, swaggerConfig, document, port;
+        var logger, app, configService, frontendUrl, corsOriginsStr, corsOrigins, apiPrefix, swaggerConfig, document, port;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -57,16 +57,26 @@ function bootstrap() {
                     app = _a.sent();
                     configService = app.get(config_1.ConfigService);
                     // Security settings
-                    app.use(helmet_1["default"]()); // Security headers
+                    app.use(helmet_1["default"]({
+                        // Allow OAuth redirects by not blocking iframe loading
+                        contentSecurityPolicy: false,
+                        crossOriginEmbedderPolicy: false
+                    }));
                     app.use(compression()); // Response compression
+                    frontendUrl = configService.get('FRONTEND_URL', 'http://localhost:3000');
+                    corsOriginsStr = configService.get('CORS_ORIGINS', frontendUrl);
+                    corsOrigins = corsOriginsStr.split(',').map(function (origin) { return origin.trim(); });
+                    logger.log("Configuring CORS for origins: " + corsOrigins.join(', '));
+                    app.enableCors({
+                        origin: corsOrigins,
+                        methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+                        credentials: true,
+                        preflightContinue: false,
+                        optionsSuccessStatus: 204
+                    });
                     apiPrefix = configService.get('API_PREFIX', 'api');
                     app.setGlobalPrefix(apiPrefix);
                     logger.log("API prefix set to: /" + apiPrefix);
-                    app.enableCors({
-                        origin: 'http://localhost:3000',
-                        methods: 'GET,HEAD,PUT,PATCH,POST,DELETE, OPTIONS',
-                        credentials: true
-                    });
                     // Set up global validation pipe
                     app.useGlobalPipes(new common_1.ValidationPipe({
                         whitelist: true,
@@ -94,6 +104,10 @@ function bootstrap() {
                     _a.sent();
                     logger.log("Application is running on: http://localhost:" + port);
                     logger.log("Environment: " + configService.get('NODE_ENV', 'development'));
+                    // Log important information for OAuth debugging
+                    logger.log("API URL with prefix: http://localhost:" + port + "/" + apiPrefix);
+                    logger.log("Google Auth URL: http://localhost:" + port + "/" + apiPrefix + "/auth/google");
+                    logger.log("Google Callback URL: " + configService.get('GOOGLE_CALLBACK_URL'));
                     return [2 /*return*/];
             }
         });

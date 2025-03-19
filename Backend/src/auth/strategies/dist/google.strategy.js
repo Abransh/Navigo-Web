@@ -56,42 +56,76 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 exports.__esModule = true;
 exports.GoogleStrategy = void 0;
-// src/auth/strategies/google.strategy.ts
+// src/auth/strategies/google.strategy.ts - Updated version with better error handling
 var passport_1 = require("@nestjs/passport");
 var passport_google_oauth20_1 = require("passport-google-oauth20");
 var common_1 = require("@nestjs/common");
 var GoogleStrategy = /** @class */ (function (_super) {
     __extends(GoogleStrategy, _super);
     function GoogleStrategy(configService, authService) {
-        var _this = _super.call(this, {
-            clientID: configService.get('GOOGLE_CLIENT_ID') || '',
-            clientSecret: configService.get('GOOGLE_CLIENT_SECRET') || '',
-            callbackURL: configService.get('GOOGLE_CALLBACK_URL') || '',
+        var _this = this;
+        // Log strategy initialization for troubleshooting
+        var clientID = configService.get('GOOGLE_CLIENT_ID');
+        var clientSecret = configService.get('GOOGLE_CLIENT_SECRET');
+        var callbackURL = configService.get('GOOGLE_CALLBACK_URL');
+        _this = _super.call(this, {
+            clientID: clientID,
+            clientSecret: clientSecret,
+            callbackURL: callbackURL,
             scope: ['email', 'profile'],
-            passReqToCallback: false
+            passReqToCallback: true
         }) || this;
         _this.configService = configService;
         _this.authService = authService;
+        _this.logger = new common_1.Logger(GoogleStrategy_1.name);
+        if (!clientID || !clientSecret || !callbackURL) {
+            var missingConfigs = [];
+            if (!clientID)
+                missingConfigs.push('GOOGLE_CLIENT_ID');
+            if (!clientSecret)
+                missingConfigs.push('GOOGLE_CLIENT_SECRET');
+            if (!callbackURL)
+                missingConfigs.push('GOOGLE_CALLBACK_URL');
+            var errorMsg = "Missing required Google OAuth configuration: " + missingConfigs.join(', ');
+            _this.logger.error(errorMsg);
+            throw new Error(errorMsg);
+        }
+        _this.logger.log("Initializing Google Strategy with callback URL: " + callbackURL);
         return _this;
     }
-    GoogleStrategy.prototype.validate = function (accessToken, refreshToken, profile, done) {
+    GoogleStrategy_1 = GoogleStrategy;
+    GoogleStrategy.prototype.validate = function (req, accessToken, refreshToken, profile, done) {
+        var _a;
         return __awaiter(this, void 0, Promise, function () {
             var name, emails, photos, user;
-            return __generator(this, function (_a) {
-                name = profile.name, emails = profile.emails, photos = profile.photos;
-                user = {
-                    email: emails[0].value,
-                    firstName: name.givenName,
-                    lastName: name.familyName,
-                    picture: photos && photos[0] ? photos[0].value : undefined,
-                    accessToken: accessToken,
-                    provider: 'google'
-                };
-                return [2 /*return*/, this.authService.validateSocialLogin(user)];
+            return __generator(this, function (_b) {
+                try {
+                    this.logger.log("Validating Google profile for user: " + ((_a = profile.emails[0]) === null || _a === void 0 ? void 0 : _a.value));
+                    name = profile.name, emails = profile.emails, photos = profile.photos;
+                    if (!emails || emails.length === 0) {
+                        this.logger.error('No email provided in Google profile');
+                        throw new Error('No email provided from Google');
+                    }
+                    user = {
+                        email: emails[0].value,
+                        firstName: name.givenName,
+                        lastName: name.familyName,
+                        picture: photos && photos[0] ? photos[0].value : undefined,
+                        accessToken: accessToken,
+                        provider: 'google'
+                    };
+                    return [2 /*return*/, this.authService.validateSocialLogin(user)];
+                }
+                catch (error) {
+                    this.logger.error("Google authentication error: " + error.message, error.stack);
+                    throw error;
+                }
+                return [2 /*return*/];
             });
         });
     };
-    GoogleStrategy = __decorate([
+    var GoogleStrategy_1;
+    GoogleStrategy = GoogleStrategy_1 = __decorate([
         common_1.Injectable()
     ], GoogleStrategy);
     return GoogleStrategy;

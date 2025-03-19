@@ -1,4 +1,4 @@
-// Frontend/Web/app/auth/callback/page.tsx
+// app/auth/callback/page.tsx
 "use client";
 
 import { useEffect, useState } from 'react';
@@ -12,10 +12,25 @@ export default function AuthCallbackPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const token = searchParams.get('token');
+  const errorParam = searchParams.get('error');
   const { isAuthenticated } = useAuth();
 
   useEffect(() => {
     async function handleCallback() {
+      // Check for error from the backend
+      if (errorParam) {
+        const errorMessages: Record<string, string> = {
+          'authentication_failed': 'Authentication failed. Please try again.',
+          'token_missing': 'Authentication token was not provided.',
+          'server_error': 'Server error occurred during authentication.',
+        };
+        
+        setError(errorMessages[errorParam] || 'Authentication failed. Please try again.');
+        setIsProcessing(false);
+        return;
+      }
+      
+      // Check if token exists
       if (!token) {
         setError('Authentication failed. No token received.');
         setIsProcessing(false);
@@ -23,21 +38,26 @@ export default function AuthCallbackPage() {
       }
 
       try {
+        console.log('Processing authentication with token');
+        
         // Store token in localStorage
         localStorage.setItem('token', token);
         
-        // Get user info
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/me`, {
+        // Get user info from the server
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+        const response = await fetch(`${apiUrl}/auth/me`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
         });
         
         if (!response.ok) {
+          console.error('Error fetching user data:', await response.text());
           throw new Error('Failed to get user information');
         }
         
         const userData = await response.json();
+        console.log('User data received:', { ...userData, password: '[REDACTED]' });
         
         // Store user data
         localStorage.setItem('user', JSON.stringify(userData));
@@ -48,6 +68,8 @@ export default function AuthCallbackPage() {
         // Redirect - check if there's a redirectTo in localStorage
         const redirectTo = localStorage.getItem('redirectTo') || '/';
         localStorage.removeItem('redirectTo'); // Clear the redirect after use
+        
+        console.log('Redirecting to:', redirectTo);
         
         setTimeout(() => {
           router.push(redirectTo);
@@ -67,7 +89,7 @@ export default function AuthCallbackPage() {
       // Already authenticated, redirect to home
       router.push('/');
     }
-  }, [token, router, isAuthenticated]);
+  }, [token, router, isAuthenticated, errorParam]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
