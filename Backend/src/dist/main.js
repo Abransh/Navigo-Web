@@ -71,6 +71,11 @@ function bootstrap() {
                     apiPrefix = configService.get('API_PREFIX', 'api');
                     app.setGlobalPrefix(apiPrefix);
                     logger.log("API prefix set to: /" + apiPrefix);
+                    app.enableCors({
+                        origin: 'http://localhost:3000',
+                        methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+                        credentials: true
+                    });
                     // Set up global validation pipe
                     app.useGlobalPipes(new common_1.ValidationPipe({
                         whitelist: true,

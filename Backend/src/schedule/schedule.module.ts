@@ -8,7 +8,7 @@ import { NotificationsModule } from '../notifications/notifications.module';
 
 @Module({
   imports: [
-    NestScheduleModule.forRoot(),
+    NestScheduleModule.forRoot(), // This may be duplicated in app.module.ts
     BookingsModule,
     EmailModule,
     NotificationsModule,
