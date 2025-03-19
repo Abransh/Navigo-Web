@@ -4,22 +4,26 @@
 import React, { createContext, useState, useContext, useEffect, ReactNode } from 'react';
 import authService, { LoginCredentials, RegisterData, AuthResponse } from '@/services/auth-service';
 import apiClient from '@/services/api-client';
+import { toast } from 'react-hot-toast';
 
-interface User {
+export interface User {
   id: string;
   email: string;
   firstName: string;
   lastName: string;
   role: string;
+  profilePicture?: string;
 }
 
 interface AuthContextType {
   user: User | null;
   loading: boolean;
-  login: (email: string, password: string) => Promise<void>;
-  register: (data: RegisterData) => Promise<void>;
+  login: (email: string, password: string) => Promise<AuthResponse>;
+  register: (data: RegisterData) => Promise<AuthResponse>;
   logout: () => void;
   isAuthenticated: boolean;
+  processSocialAuthToken: (token: string) => Promise<void>;
+  refreshUserProfile: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -47,8 +51,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           setIsAuthenticated(true);
           
           // Optionally verify token with a backend call
-          // const verifiedUser = await userService.verifyToken();
-          // setUser(verifiedUser);
+          await refreshUserProfile();
         } catch (error) {
           console.error('Failed to restore authentication state:', error);
           // Clear invalid auth data
@@ -65,7 +68,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     checkAuth();
   }, []);
 
-  const login = async (email: string, password: string) => {
+  const login = async (email: string, password: string): Promise<AuthResponse> => {
     setLoading(true);
     try {
       const credentials: LoginCredentials = { email, password };
@@ -78,10 +81,11 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       // Save user to localStorage for persistence
       localStorage.setItem('user', JSON.stringify(response.user));
       
+      // Save token to localStorage
+      localStorage.setItem('token', response.access_token);
+      
       // Set token in apiClient for future requests
-      if (response.access_token) {
-        apiClient.defaults.headers.common['Authorization'] = `Bearer ${response.access_token}`;
-      }
+      apiClient.defaults.headers.common['Authorization'] = `Bearer ${response.access_token}`;
       
       console.log('Login successful:', response);
       return response;
@@ -93,7 +97,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   };
 
-  const register = async (data: RegisterData) => {
+  const register = async (data: RegisterData): Promise<AuthResponse> => {
     setLoading(true);
     try {
       // Ensure role is set to tourist if not specified
@@ -111,10 +115,11 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       // Save user to localStorage for persistence
       localStorage.setItem('user', JSON.stringify(response.user));
       
+      // Save token to localStorage
+      localStorage.setItem('token', response.access_token);
+      
       // Set token in apiClient for future requests
-      if (response.access_token) {
-        apiClient.defaults.headers.common['Authorization'] = `Bearer ${response.access_token}`;
-      }
+      apiClient.defaults.headers.common['Authorization'] = `Bearer ${response.access_token}`;
       
       console.log('Registration successful:', response);
       return response;
@@ -123,6 +128,47 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       throw error;
     } finally {
       setLoading(false);
+    }
+  };
+
+  const processSocialAuthToken = async (token: string): Promise<void> => {
+    try {
+      setLoading(true);
+      
+      // Store token in localStorage
+      localStorage.setItem('token', token);
+      
+      // Set token in API client
+      apiClient.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+      
+      // Fetch user profile
+      await refreshUserProfile();
+      
+      toast.success('Successfully signed in!');
+    } catch (error) {
+      console.error('Failed to process social auth token:', error);
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const refreshUserProfile = async (): Promise<void> => {
+    try {
+      // Get current user data from the API
+      const userData = await authService.getCurrentUser();
+      
+      // Update state
+      setUser(userData);
+      setIsAuthenticated(true);
+      
+      // Update localStorage
+      localStorage.setItem('user', JSON.stringify(userData));
+      
+      console.log('User profile refreshed');
+    } catch (error) {
+      console.error('Failed to refresh user profile:', error);
+      throw error;
     }
   };
 
@@ -142,7 +188,16 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, logout, isAuthenticated }}>
+    <AuthContext.Provider value={{ 
+      user, 
+      loading, 
+      login, 
+      register, 
+      logout, 
+      isAuthenticated,
+      processSocialAuthToken,
+      refreshUserProfile
+    }}>
       {children}
     </AuthContext.Provider>
   );

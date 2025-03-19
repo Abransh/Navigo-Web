@@ -1,5 +1,6 @@
 // services/auth-service.ts
 import apiClient from './api-client';
+import { User } from '@/contexts/auth-context';
 
 export interface LoginCredentials {
   email: string;
@@ -16,24 +17,24 @@ export interface RegisterData {
 
 export interface AuthResponse {
   access_token: string;
-  user: {
-    id: string;
-    email: string;
-    firstName: string;
-    lastName: string;
-    role: string;
-  };
+  user: User;
 }
 
+export interface PasswordResetRequest {
+  email: string;
+}
+
+export interface ResetPasswordRequest {
+  token: string;
+  password: string;
+}
+
+/**
+ * Login with email and password
+ */
 const login = async (credentials: LoginCredentials): Promise<AuthResponse> => {
   try {
     const response = await apiClient.post<AuthResponse>('/auth/login', credentials);
-    
-    // Store token in localStorage
-    if (response.data && response.data.access_token) {
-      localStorage.setItem('token', response.data.access_token);
-    }
-    
     return response.data;
   } catch (error) {
     console.error('Login API error:', error);
@@ -41,15 +42,12 @@ const login = async (credentials: LoginCredentials): Promise<AuthResponse> => {
   }
 };
 
+/**
+ * Register a new user
+ */
 const register = async (data: RegisterData): Promise<AuthResponse> => {
   try {
     const response = await apiClient.post<AuthResponse>('/auth/register', data);
-    
-    // Store token in localStorage
-    if (response.data && response.data.access_token) {
-      localStorage.setItem('token', response.data.access_token);
-    }
-    
     return response.data;
   } catch (error) {
     console.error('Registration API error:', error);
@@ -57,23 +55,101 @@ const register = async (data: RegisterData): Promise<AuthResponse> => {
   }
 };
 
+/**
+ * Get the current user profile
+ */
+const getCurrentUser = async (): Promise<User> => {
+  try {
+    const response = await apiClient.get<User>('/auth/me');
+    return response.data;
+  } catch (error) {
+    console.error('Get current user API error:', error);
+    throw error;
+  }
+};
+
+/**
+ * Log the user out
+ */
 const logout = (): void => {
   localStorage.removeItem('token');
   localStorage.removeItem('user');
 };
 
+/**
+ * Check if the user is authenticated
+ */
 const isAuthenticated = (): boolean => {
   return !!localStorage.getItem('token');
 };
 
+/**
+ * Get the authentication token
+ */
 const getToken = (): string | null => {
   return localStorage.getItem('token');
+};
+
+/**
+ * Request a password reset
+ */
+const requestPasswordReset = async (email: string): Promise<void> => {
+  try {
+    await apiClient.post('/auth/forgot-password', { email });
+  } catch (error) {
+    console.error('Request password reset API error:', error);
+    throw error;
+  }
+};
+
+/**
+ * Verify a password reset token
+ */
+const verifyResetToken = async (token: string): Promise<boolean> => {
+  try {
+    const response = await apiClient.get(`/auth/reset-password/verify/${token}`);
+    return response.data.valid;
+  } catch (error) {
+    console.error('Verify reset token API error:', error);
+    throw error;
+  }
+};
+
+/**
+ * Reset password with token
+ */
+const resetPassword = async (token: string, password: string): Promise<void> => {
+  try {
+    await apiClient.post('/auth/reset-password', { token, password });
+  } catch (error) {
+    console.error('Reset password API error:', error);
+    throw error;
+  }
+};
+
+/**
+ * Initiate OAuth login
+ */
+const initiateOAuthLogin = (provider: string, redirectUrl?: string): void => {
+  // Get the API URL from environment variable
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+  
+  // Construct the full OAuth URL
+  const oauthUrl = `${apiUrl}/auth/${provider}`;
+  
+  // Navigate to the OAuth provider login page
+  window.location.href = oauthUrl;
 };
 
 export default {
   login,
   register,
+  getCurrentUser,
   logout,
   isAuthenticated,
   getToken,
+  requestPasswordReset,
+  verifyResetToken,
+  resetPassword,
+  initiateOAuthLogin,
 };
