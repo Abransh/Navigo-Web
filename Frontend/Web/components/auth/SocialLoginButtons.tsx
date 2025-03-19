@@ -40,8 +40,8 @@ export default function SocialLoginButtons({ mode }: SocialLoginButtonsProps) {
       // Get the API URL from environment variable
       const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
       
-      // Include the API prefix (typically 'api') in the URL
-      // This is necessary because your NestJS backend likely has a global prefix
+      // Use the direct auth route without the API prefix
+      // This will work with our new RootAuthController
       window.location.href = `${apiUrl}/api/auth/${provider}`;
     } catch (error) {
       console.error(`Error initiating ${provider} login:`, error);

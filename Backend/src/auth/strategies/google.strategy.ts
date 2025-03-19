@@ -13,10 +13,19 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     private configService: ConfigService,
     private authService: AuthService,
   ) {
-    // Log strategy initialization for troubleshooting
     const clientID = configService.get<string>('GOOGLE_CLIENT_ID');
     const clientSecret = configService.get<string>('GOOGLE_CLIENT_SECRET');
     const callbackURL = configService.get<string>('GOOGLE_CALLBACK_URL');
+    
+    const missingConfigs: string[] = [];
+    if (!clientID) missingConfigs.push('GOOGLE_CLIENT_ID');
+    if (!clientSecret) missingConfigs.push('GOOGLE_CLIENT_SECRET');
+    if (!callbackURL) missingConfigs.push('GOOGLE_CALLBACK_URL');
+    
+    if (missingConfigs.length > 0) {
+      const errorMsg = `Missing required Google OAuth configuration: ${missingConfigs.join(', ')}`;
+      throw new Error(errorMsg);
+    }
 
     super({
       clientID: clientID as string,
@@ -26,18 +35,11 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
       passReqToCallback: true,
     });
 
-    if (!clientID || !clientSecret || !callbackURL) {
-      const missingConfigs: string[] = [];
-      if (!clientID) missingConfigs.push('GOOGLE_CLIENT_ID');
-      if (!clientSecret) missingConfigs.push('GOOGLE_CLIENT_SECRET');
-      if (!callbackURL) missingConfigs.push('GOOGLE_CALLBACK_URL');
-      
-      const errorMsg = `Missing required Google OAuth configuration: ${missingConfigs.join(', ')}`;
-      this.logger.error(errorMsg);
-      throw new Error(errorMsg);
+    if (missingConfigs.length > 0) {
+      this.logger.error(`Missing required Google OAuth configuration: ${missingConfigs.join(', ')}`);
+    } else {
+      this.logger.log(`Initializing Google Strategy with callback URL: ${callbackURL}`);
     }
-
-    this.logger.log(`Initializing Google Strategy with callback URL: ${callbackURL}`);
   }
 
   async validate(

@@ -64,10 +64,20 @@ var GoogleStrategy = /** @class */ (function (_super) {
     __extends(GoogleStrategy, _super);
     function GoogleStrategy(configService, authService) {
         var _this = this;
-        // Log strategy initialization for troubleshooting
         var clientID = configService.get('GOOGLE_CLIENT_ID');
         var clientSecret = configService.get('GOOGLE_CLIENT_SECRET');
         var callbackURL = configService.get('GOOGLE_CALLBACK_URL');
+        var missingConfigs = [];
+        if (!clientID)
+            missingConfigs.push('GOOGLE_CLIENT_ID');
+        if (!clientSecret)
+            missingConfigs.push('GOOGLE_CLIENT_SECRET');
+        if (!callbackURL)
+            missingConfigs.push('GOOGLE_CALLBACK_URL');
+        if (missingConfigs.length > 0) {
+            var errorMsg = "Missing required Google OAuth configuration: " + missingConfigs.join(', ');
+            throw new Error(errorMsg);
+        }
         _this = _super.call(this, {
             clientID: clientID,
             clientSecret: clientSecret,
@@ -78,19 +88,12 @@ var GoogleStrategy = /** @class */ (function (_super) {
         _this.configService = configService;
         _this.authService = authService;
         _this.logger = new common_1.Logger(GoogleStrategy_1.name);
-        if (!clientID || !clientSecret || !callbackURL) {
-            var missingConfigs = [];
-            if (!clientID)
-                missingConfigs.push('GOOGLE_CLIENT_ID');
-            if (!clientSecret)
-                missingConfigs.push('GOOGLE_CLIENT_SECRET');
-            if (!callbackURL)
-                missingConfigs.push('GOOGLE_CALLBACK_URL');
-            var errorMsg = "Missing required Google OAuth configuration: " + missingConfigs.join(', ');
-            _this.logger.error(errorMsg);
-            throw new Error(errorMsg);
+        if (missingConfigs.length > 0) {
+            _this.logger.error("Missing required Google OAuth configuration: " + missingConfigs.join(', '));
         }
-        _this.logger.log("Initializing Google Strategy with callback URL: " + callbackURL);
+        else {
+            _this.logger.log("Initializing Google Strategy with callback URL: " + callbackURL);
+        }
         return _this;
     }
     GoogleStrategy_1 = GoogleStrategy;
