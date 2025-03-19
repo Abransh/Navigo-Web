@@ -61,7 +61,10 @@ var AuthModule = /** @class */ (function () {
                 apple_strategy_1.AppleStrategy,
                 password_reset_repository_1.PasswordResetRepository,
             ],
-            exports: [auth_service_1.AuthService]
+            exports: [auth_service_1.AuthService,
+                password_reset_repository_1.PasswordResetRepository,
+                jwt_1.JwtModule,
+            ]
         })
     ], AuthModule);
     return AuthModule;
