@@ -133,4 +133,6 @@ export class UsersService {
     // Update password
     await this.usersRepository.update(id, { password: hashedPassword });
   }
+
+  
 }

@@ -1,274 +1,175 @@
-// app/admin/page.tsx
 "use client";
 
 import { useState, useEffect } from 'react';
-import { useAuth } from '@/contexts/auth-context';
-import { useRouter } from 'next/navigation';
-import AdminSidebar from '@/components/admin/AdminSidebar';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
+import { 
+  BarChart, 
+  Bar, 
+  XAxis, 
+  YAxis, 
+  Tooltip, 
+  ResponsiveContainer 
+} from 'recharts';
+
+import { 
+  Card, 
+  CardContent, 
+  CardHeader, 
+  CardTitle 
 } from '@/components/ui/card';
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from '@/components/ui/tabs';
-import { UserRole } from '@/types/user';
 import { 
   Users, 
-  CalendarDays, 
+  BookOpen, 
   CreditCard, 
-  DollarSign, 
-  HelpCircle, 
-  Star,
-  ArrowUpRight,
-  TrendingUp,
-  TrendingDown,
-  Calendar
+  Activity 
 } from 'lucide-react';
+import adminService from '@/services/admin-service';
+import { toast } from 'react-hot-toast';
 
 export default function AdminDashboard() {
-  const { user, isAuthenticated, loading } = useAuth();
-  const router = useRouter();
   const [stats, setStats] = useState({
     totalUsers: 0,
-    totalTourists: 0,
-    totalCompanions: 0,
     totalBookings: 0,
     totalRevenue: 0,
-    pendingVerifications: 0,
-    activeBookings: 0,
-    companionApplications: 0,
-    recentReviews: [],
-    recentPayments: [],
-    recentRegistrations: []
+    recentActivity: []
   });
 
+  const [monthlyData, setMonthlyData] = useState([
+    { month: 'Jan', users: 0, bookings: 0, revenue: 0 },
+    { month: 'Feb', users: 0, bookings: 0, revenue: 0 },
+    { month: 'Mar', users: 0, bookings: 0, revenue: 0 },
+    { month: 'Apr', users: 0, bookings: 0, revenue: 0 },
+    { month: 'May', users: 0, bookings: 0, revenue: 0 },
+    { month: 'Jun', users: 0, bookings: 0, revenue: 0 },
+  ]);
+
   useEffect(() => {
-    // Redirect if not admin
-    if (!loading && isAuthenticated && user?.role !== UserRole.ADMIN) {
-      router.push('/');
-    }
-    
-    // Fetch admin stats
-    const fetchStats = async () => {
+    const fetchDashboardData = async () => {
       try {
-        const response = await fetch('/api/admin/stats');
-        const data = await response.json();
-        setStats(data);
+        const statsData = await adminService.getDashboardStats();
+        setStats({
+          totalUsers: statsData.totalUsers,
+          totalBookings: statsData.totalBookings,
+          totalRevenue: statsData.totalRevenue,
+          recentActivity: [] // Fetch recent activity separately
+        });
+
+        // Mock monthly data - in a real app, fetch this from backend
+        const mockMonthlyData = [
+          { month: 'Jan', users: 50, bookings: 20, revenue: 5000 },
+          { month: 'Feb', users: 75, bookings: 35, revenue: 7500 },
+          { month: 'Mar', users: 100, bookings: 45, revenue: 10000 },
+          { month: 'Apr', users: 120, bookings: 55, revenue: 12000 },
+          { month: 'May', users: 150, bookings: 70, revenue: 15000 },
+          { month: 'Jun', users: 200, bookings: 90, revenue: 20000 },
+        ];
+        setMonthlyData(mockMonthlyData);
       } catch (error) {
-        console.error('Failed to fetch admin stats:', error);
+        toast.error('Failed to fetch dashboard statistics');
       }
     };
-    
-    if (isAuthenticated && user?.role === UserRole.ADMIN) {
-      fetchStats();
-    }
-  }, [loading, isAuthenticated, user, router]);
 
-  if (loading) {
-    return (
-      <div className="flex h-screen items-center justify-center">
-        <div className="h-16 w-16 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
-      </div>
-    );
-  }
+    fetchDashboardData();
+  }, []);
 
-  if (!isAuthenticated || user?.role !== UserRole.ADMIN) {
-    return null; // Will redirect in useEffect
-  }
+  const StatCard = ({ 
+    title, 
+    value, 
+    icon: Icon, 
+    color 
+  }: { 
+    title: string, 
+    value: number, 
+    icon: React.ElementType, 
+    color: string 
+  }) => (
+    <Card>
+      <CardHeader className="flex flex-row items-center justify-between pb-2">
+        <CardTitle className="text-sm font-medium">{title}</CardTitle>
+        <Icon className={`h-4 w-4 ${color}`} />
+      </CardHeader>
+      <CardContent>
+        <div className="text-2xl font-bold">
+          {title.includes('Revenue') ? `₹${value.toLocaleString()}` : value}
+        </div>
+      </CardContent>
+    </Card>
+  );
 
   return (
-    <div className="flex min-h-screen bg-gray-100">
-      <AdminSidebar />
-      
-      <div className="flex-1 p-8">
-        <h1 className="mb-6 text-3xl font-bold">Admin Dashboard</h1>
-        
-        {/* Stats overview cards */}
-        <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium">Total Users</CardTitle>
-              <Users className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{stats.totalUsers}</div>
-              <p className="text-xs text-muted-foreground">
-                {stats.totalTourists} tourists, {stats.totalCompanions} companions
-              </p>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium">Bookings</CardTitle>
-              <CalendarDays className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{stats.totalBookings}</div>
-              <div className="flex items-center pt-1 text-xs text-muted-foreground">
-                <TrendingUp className="mr-1 h-3 w-3 text-green-500" />
-                <span className="text-green-500">+12.5%</span>
-                <span className="ml-1">from last month</span>
-              </div>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium">Revenue</CardTitle>
-              <DollarSign className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">₹{stats.totalRevenue.toLocaleString()}</div>
-              <div className="flex items-center pt-1 text-xs text-muted-foreground">
-                <TrendingUp className="mr-1 h-3 w-3 text-green-500" />
-                <span className="text-green-500">+8.2%</span>
-                <span className="ml-1">from last month</span>
-              </div>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium">Pending Actions</CardTitle>
-              <HelpCircle className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{stats.pendingVerifications + stats.companionApplications}</div>
-              <p className="text-xs text-muted-foreground">
-                {stats.pendingVerifications} verifications, {stats.companionApplications} applications
-              </p>
-            </CardContent>
-          </Card>
-        </div>
-        
-        {/* Tabs for different views */}
-        <Tabs defaultValue="overview" className="w-full">
-          <TabsList className="mb-6 grid w-full grid-cols-4">
-            <TabsTrigger value="overview">Overview</TabsTrigger>
-            <TabsTrigger value="bookings">Bookings</TabsTrigger>
-            <TabsTrigger value="users">Users</TabsTrigger>
-            <TabsTrigger value="payments">Payments</TabsTrigger>
-          </TabsList>
-          
-          <TabsContent value="overview" className="space-y-6">
-            {/* Recent activity */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Recent Activity</CardTitle>
-                <CardDescription>
-                  Overview of the latest platform activity
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                {/* Activity feed would go here */}
-              </CardContent>
-            </Card>
-            
-            {/* Quick actions */}
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium">Companion Verifications</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">{stats.pendingVerifications}</div>
-                  <p className="mb-2 text-xs text-muted-foreground">
-                    Pending verifications
-                  </p>
-                  <button className="flex items-center text-sm text-primary">
-                    Review Now
-                    <ArrowUpRight className="ml-1 h-3 w-3" />
-                  </button>
-                </CardContent>
-              </Card>
-              
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium">Active Bookings</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">{stats.activeBookings}</div>
-                  <p className="mb-2 text-xs text-muted-foreground">
-                    Currently in progress
-                  </p>
-                  <button className="flex items-center text-sm text-primary">
-                    View Active Bookings
-                    <ArrowUpRight className="ml-1 h-3 w-3" />
-                  </button>
-                </CardContent>
-              </Card>
-              
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium">Recent Reviews</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">
-                    <Star className="inline h-5 w-5 fill-yellow-400 text-yellow-400" />
-                    <span>4.7</span>
+    <div className="space-y-6">
+      <h1 className="text-3xl font-bold">Dashboard</h1>
+
+      {/* Key Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <StatCard 
+          title="Total Users" 
+          value={stats.totalUsers} 
+          icon={Users} 
+          color="text-blue-500" 
+        />
+        <StatCard 
+          title="Total Bookings" 
+          value={stats.totalBookings} 
+          icon={BookOpen} 
+          color="text-green-500" 
+        />
+        <StatCard 
+          title="Total Revenue" 
+          value={stats.totalRevenue} 
+          icon={CreditCard} 
+          color="text-purple-500" 
+        />
+      </div>
+
+      {/* Charts and Activity */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Monthly Performance Chart */}
+        <Card className="lg:col-span-2">
+          <CardHeader>
+            <CardTitle>Monthly Performance</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={monthlyData}>
+                <XAxis dataKey="month" />
+                <YAxis />
+                <Tooltip />
+                <Bar dataKey="users" fill="#8884d8" name="Users" />
+                <Bar dataKey="bookings" fill="#82ca9d" name="Bookings" />
+                <Bar dataKey="revenue" fill="#ffc658" name="Revenue" />
+              </BarChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+
+        {/* Recent Activity */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Recent Activity</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {[1, 2, 3, 4].map((_, index) => (
+                <div 
+                  key={index} 
+                  className="flex items-center justify-between"
+                >
+                  <div className="flex items-center space-x-3">
+                    <Activity className="h-5 w-5 text-muted-foreground" />
+                    <div>
+                      <p className="text-sm font-medium">
+                        New Booking Created
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        {new Date().toLocaleString()}
+                      </p>
+                    </div>
                   </div>
-                  <p className="mb-2 text-xs text-muted-foreground">
-                    Average rating (last 30 days)
-                  </p>
-                  <button className="flex items-center text-sm text-primary">
-                    View All Reviews
-                    <ArrowUpRight className="ml-1 h-3 w-3" />
-                  </button>
-                </CardContent>
-              </Card>
+                </div>
+              ))}
             </div>
-          </TabsContent>
-          
-          <TabsContent value="bookings">
-            <Card>
-              <CardHeader>
-                <CardTitle>Booking Management</CardTitle>
-                <CardDescription>
-                  View and manage all bookings on the platform
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                {/* Booking table would go here */}
-              </CardContent>
-            </Card>
-          </TabsContent>
-          
-          <TabsContent value="users">
-            <Card>
-              <CardHeader>
-                <CardTitle>User Management</CardTitle>
-                <CardDescription>
-                  View and manage all users on the platform
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                {/* User table would go here */}
-              </CardContent>
-            </Card>
-          </TabsContent>
-          
-          <TabsContent value="payments">
-            <Card>
-              <CardHeader>
-                <CardTitle>Payment History</CardTitle>
-                <CardDescription>
-                  View all payment transactions on the platform
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                {/* Payment table would go here */}
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
