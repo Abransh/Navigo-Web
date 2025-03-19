@@ -9,7 +9,7 @@ exports.__esModule = true;
 exports.TasksModule = void 0;
 // src/tasks/tasks.module.ts
 var common_1 = require("@nestjs/common");
-var schedule_1 = require("@nestjs/schedule");
+//import { ScheduleModule } from '@nestjs/schedule';
 var auth_module_1 = require("../auth/auth.module");
 var cleanup_tokens_task_1 = require("./cleanup-tokens.task");
 var TasksModule = /** @class */ (function () {
@@ -18,7 +18,7 @@ var TasksModule = /** @class */ (function () {
     TasksModule = __decorate([
         common_1.Module({
             imports: [
-                schedule_1.ScheduleModule.forRoot(),
+                // ScheduleModule.forRoot(),
                 auth_module_1.AuthModule,
             ],
             providers: [cleanup_tokens_task_1.CleanupTokensTask]

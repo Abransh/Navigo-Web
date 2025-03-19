@@ -41,14 +41,13 @@ var core_1 = require("@nestjs/core");
 var app_module_1 = require("./app.module");
 var common_1 = require("@nestjs/common");
 var swagger_1 = require("@nestjs/swagger");
-var cors = require("cors");
 var helmet_1 = require("helmet");
-var compression_1 = require("compression");
+var compression = require("compression");
 var config_1 = require("@nestjs/config");
 var common_2 = require("@nestjs/common");
 function bootstrap() {
     return __awaiter(this, void 0, void 0, function () {
-        var logger, app, configService, corsOrigins, corsOptions, apiPrefix, swaggerConfig, document, port;
+        var logger, app, configService, apiPrefix, swaggerConfig, document, port;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -59,21 +58,13 @@ function bootstrap() {
                     configService = app.get(config_1.ConfigService);
                     // Security settings
                     app.use(helmet_1["default"]()); // Security headers
-                    app.use(compression_1["default"]()); // Response compression
-                    corsOrigins = configService.get('CORS_ORIGINS', '');
-                    corsOptions = {
-                        origin: corsOrigins ? corsOrigins.split(',') : 'http://localhost:3000',
-                        methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS', 'HEAD'],
-                        credentials: true
-                    };
-                    app.use(cors(corsOptions));
-                    logger.log("CORS configured for origins: " + corsOptions.origin);
+                    app.use(compression()); // Response compression
                     apiPrefix = configService.get('API_PREFIX', 'api');
                     app.setGlobalPrefix(apiPrefix);
                     logger.log("API prefix set to: /" + apiPrefix);
                     app.enableCors({
                         origin: 'http://localhost:3000',
-                        methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+                        methods: 'GET,HEAD,PUT,PATCH,POST,DELETE, OPTIONS',
                         credentials: true
                     });
                     // Set up global validation pipe

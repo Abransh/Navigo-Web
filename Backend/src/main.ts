@@ -5,7 +5,7 @@ import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as cors from 'cors';
 import helmet from 'helmet';
-import compression from 'compression';
+import * as compression from 'compression';
 import { ConfigService } from '@nestjs/config';
 import { Logger } from '@nestjs/common';
 
@@ -13,20 +13,14 @@ async function bootstrap() {
   const logger = new Logger('Bootstrap');
   const app = await NestFactory.create(AppModule);
   const configService = app.get(ConfigService);
-
+  
   // Security settings
   app.use(helmet()); // Security headers
   app.use(compression()); // Response compression
 
   // Configure CORS
-  const corsOrigins = configService.get<string>('CORS_ORIGINS', '');
-  const corsOptions = {
-    origin: corsOrigins ? corsOrigins.split(',') : 'http://localhost:3000',
-    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS', 'HEAD'],
-    credentials: true,
-  };
-  app.use(cors(corsOptions));
-  logger.log(`CORS configured for origins: ${corsOptions.origin}`);
+  
+  
 
   // Set global prefix
   const apiPrefix = configService.get<string>('API_PREFIX', 'api');
@@ -35,7 +29,7 @@ async function bootstrap() {
 
   app.enableCors({
     origin: 'http://localhost:3000',
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE, OPTIONS',
     credentials: true,
   });
 

@@ -14,7 +14,7 @@ var passport_1 = require("@nestjs/passport");
 var config_1 = require("@nestjs/config");
 var typeorm_1 = require("@nestjs/typeorm");
 // Controllers
-var auth_controller_1 = require("./controllers/auth.controller");
+var auth_controller_1 = require("./auth.controller");
 var social_auth_controller_1 = require("./controllers/social-auth.controller");
 // Services
 var auth_service_1 = require("./auth.service");

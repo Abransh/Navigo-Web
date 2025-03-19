@@ -6,7 +6,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 // Controllers
-import { AuthController } from './controllers/auth.controller';
+import { AuthController } from './auth.controller';
 import { SocialAuthController } from './controllers/social-auth.controller';
 
 // Services
