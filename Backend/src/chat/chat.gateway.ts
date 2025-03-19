@@ -10,6 +10,8 @@ import {
   import { WsJwtGuard } from '../auth/guards/ws-jwt.guard';
   import { ChatService } from './chat.service';
   import { SendMessageDto } from './dto/send-message.dto';
+
+  
   
   @WebSocketGateway({ cors: true })
   export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {

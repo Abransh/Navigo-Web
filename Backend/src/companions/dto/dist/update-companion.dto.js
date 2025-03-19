@@ -10,6 +10,7 @@ exports.UpdateCompanionDto = void 0;
 // src/companions/dto/update-companion.dto.ts
 var swagger_1 = require("@nestjs/swagger");
 var class_validator_1 = require("class-validator");
+var class_validator_2 = require("class-validator"); // Added Max import
 var UpdateCompanionDto = /** @class */ (function () {
     function UpdateCompanionDto() {
     }
@@ -69,7 +70,7 @@ var UpdateCompanionDto = /** @class */ (function () {
         class_validator_1.IsOptional(),
         class_validator_1.IsNumber(),
         class_validator_1.Min(0),
-        Max(5)
+        class_validator_2.Max(5)
     ], UpdateCompanionDto.prototype, "averageRating");
     __decorate([
         swagger_1.ApiProperty({ required: false }),

@@ -362,3 +362,4 @@ async cancel(id: string, userId: string, reason?: string): Promise<Booking> {
   
   return cancelledBooking;
 }
+}

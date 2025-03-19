@@ -10,7 +10,7 @@ import {
     ParseUUIDPipe,
   } from '@nestjs/common';
   import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
-  import { PaymentsService } from './payments.service';
+  import { PaymentsService } from './payments.services';  // Note the plural
   import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
   import { RolesGuard } from '../auth/guards/roles.guard';
   import { Roles } from '../auth/decorators/roles.decorator';

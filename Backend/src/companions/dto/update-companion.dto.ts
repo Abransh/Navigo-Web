@@ -1,6 +1,7 @@
 // src/companions/dto/update-companion.dto.ts
 import { ApiProperty } from '@nestjs/swagger';
 import { IsArray, IsBoolean, IsNumber, IsOptional, IsString, Min, MinLength } from 'class-validator';
+import { IsNumber, Max, Min } from 'class-validator';  // Added Max import
 
 export class UpdateCompanionDto {
   @ApiProperty({
