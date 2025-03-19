@@ -182,7 +182,14 @@ var UsersService = /** @class */ (function () {
                         return [4 /*yield*/, this.usersRepository.findOne({ where: { id: id } })];
                     case 5:
                         updatedUser = _a.sent();
-                        delete updatedUser.password;
+                        if (!updatedUser) {
+                            throw new common_1.NotFoundException("User with ID " + id + " not found");
+                        }
+                        if (updatedUser.password) {
+                            if (updatedUser.password) {
+                                delete updatedUser.password;
+                            }
+                        }
                         return [2 /*return*/, updatedUser];
                 }
             });

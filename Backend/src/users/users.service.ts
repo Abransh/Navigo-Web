@@ -93,8 +93,14 @@ export class UsersService {
     
     // Get and return updated user
     const updatedUser = await this.usersRepository.findOne({ where: { id } });
-    delete updatedUser.password;
-    
+    if (!updatedUser) {
+      throw new NotFoundException(`User with ID ${id} not found`);
+    }
+    if (updatedUser.password) {
+      if (updatedUser.password) {
+        delete updatedUser.password;
+      }
+    }
     return updatedUser;
   }
 

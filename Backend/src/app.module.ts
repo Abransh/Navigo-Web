@@ -29,8 +29,12 @@ import { DestinationsModule } from './destinations/destinations.module';
 // Tasks Module
 import { TasksModule } from './tasks/tasks.module';
 
+import { TypeOrmModule } from '@nestjs/typeorm';
+
 @Module({
   imports: [
+
+    
     // Config first for initialization
     ConfigModule,
     

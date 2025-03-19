@@ -15,7 +15,10 @@ export class WsJwtGuard implements CanActivate {
     const authToken = client.handshake.headers.authorization;
     
     try {
-      const payload = this.jwtService.verify(authToken);
+      if (!authToken) {
+        return false;
+      }
+      const payload = this.jwtService.verify<{ sub: string }>(authToken);
       client.handshake.headers.authorization = payload.sub; // Set userId in headers
       return true;
     } catch (error) {

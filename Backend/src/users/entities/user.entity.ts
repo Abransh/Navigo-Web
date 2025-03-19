@@ -29,7 +29,7 @@ export class User {
   email: string;
 
   @Column({ select: false })
-  password: string;
+  password?: string;
 
   @Column({ nullable: true })
   phoneNumber: string;

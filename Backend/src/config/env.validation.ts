@@ -1,112 +1,77 @@
-// src/config/env.validation.ts
 import { plainToClass } from 'class-transformer';
-import { IsEnum, IsNumber, IsString, IsBoolean, IsOptional, validateSync } from 'class-validator';
+import { 
+  IsEnum, 
+  IsNumber, 
+  IsString, 
+  IsBoolean, 
+  IsOptional, 
+  validateSync 
+} from 'class-validator';
 
-enum Environment {
+export enum Environment {
   Development = 'development',
   Production = 'production',
   Test = 'test',
 }
 
 class EnvironmentVariables {
-  @IsEnum(Environment) 
-  NODE_ENV: Environment;
+  @IsEnum(Environment)
+  @IsOptional()
+  NODE_ENV: Environment = Environment.Development;
 
   @IsNumber()
   @IsOptional()
-  PORT?: number;
+  PORT: number = 3001;
 
   @IsString()
   @IsOptional()
-  API_PREFIX?: string;
-
-  @IsBoolean()
-  @IsOptional()
-  SWAGGER_ENABLED?: boolean;
-
-  @IsString()
-  JWT_SECRET: string;
+  API_PREFIX: string = 'api';
 
   @IsString()
   @IsOptional()
-  JWT_EXPIRES_IN?: string;
-
-  @IsString()
-  DB_HOST: string;
-
-  @IsNumber()
-  DB_PORT: number;
-
-  @IsString()
-  DB_USERNAME: string;
-
-  @IsString()
-  DB_PASSWORD: string;
-
-  @IsString()
-  DB_DATABASE: string;
-
-  @IsBoolean()
-  @IsOptional()
-  DB_SYNC?: boolean;
-
-  @IsBoolean()
-  @IsOptional()
-  DB_LOGGING?: boolean;
-
-  @IsString()
-  @IsOptional()
-  CORS_ORIGINS?: string;
-
-  @IsString()
-  FRONTEND_URL: string;
-
-  @IsString()
-  @IsOptional()
-  APP_NAME?: string;
-
-  @IsString()
-  @IsOptional()
-  SUPPORT_EMAIL?: string;
-
-  // Email config
-  @IsString()
-  @IsOptional()
-  MAIL_HOST?: string;
+  CORS_ORIGINS: string = 'http://localhost:3000,http://localhost:3001';
 
   @IsNumber()
   @IsOptional()
-  MAIL_PORT?: number;
+  THROTTLE_TTL: number = 60;
+
+  @IsNumber()
+  @IsOptional()
+  THROTTLE_LIMIT: number = 10;
 
   @IsBoolean()
   @IsOptional()
-  MAIL_SECURE?: boolean;
+  SWAGGER_ENABLED: boolean = true;
+
+  // Database configurations
+  @IsString()
+  DB_HOST: string = 'localhost';
+
+  @IsNumber()
+  DB_PORT: number = 5432;
 
   @IsString()
-  @IsOptional()
-  MAIL_USER?: string;
+  DB_USERNAME: string = 'postgres';
 
   @IsString()
-  @IsOptional()
-  MAIL_PASSWORD?: string;
+  DB_PASSWORD: string = 'postgres';
 
   @IsString()
-  @IsOptional()
-  MAIL_FROM?: string;
+  DB_DATABASE: string = 'navigo';
 }
 
 export function validate(config: Record<string, unknown>) {
   const validatedConfig = plainToClass(EnvironmentVariables, config, {
     enableImplicitConversion: true,
-  });
-  
+  }) as EnvironmentVariables;
+
   const errors = validateSync(validatedConfig, {
     skipMissingProperties: false,
   });
 
   if (errors.length > 0) {
-    throw new Error(`Environment validation failed: ${errors.toString()}`);
+    throw new Error(`Configuration validation failed: ${errors.toString()}`);
   }
-  
-  return validatedConfig as EnvironmentVariables;
+
+  return validatedConfig;
 }

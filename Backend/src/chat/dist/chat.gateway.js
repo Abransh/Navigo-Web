@@ -74,7 +74,7 @@ var ChatGateway = /** @class */ (function () {
                     case 0:
                         senderId = client.handshake.headers.authorization || '';
                         if (!senderId) {
-                            throw new UnauthorizedException('No sender ID provided');
+                            throw new common_1.UnauthorizedException('No sender ID provided');
                         }
                         return [4 /*yield*/, this.chatService.saveMessage({
                                 senderId: senderId,

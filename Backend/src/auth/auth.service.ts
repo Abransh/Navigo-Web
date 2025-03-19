@@ -246,7 +246,7 @@ export class AuthService {
     }
     
     // Find matching record
-    let matchedRecord = null;
+    let matchedRecord: { email: string; token: string; expires: Date } | null = null;
     
     // Compare token with each record
     for (const record of resetRecords) {
@@ -265,7 +265,7 @@ export class AuthService {
     // Get user by email
     let user;
     try {
-      user = await this.usersService.findByEmail(matchedRecord.email);
+      user = await this.usersService.findByEmail(matchedRecord!.email);
     } catch (error) {
       throw new BadRequestException('Invalid or expired token');
     }

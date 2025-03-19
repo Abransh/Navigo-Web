@@ -21,7 +21,7 @@ import {
   } from '@nestjs/swagger';
 
   
-  import { AuthService } from '../services/auth.service';
+  import { AuthService } from '../services/auth.services';
   import { UsersService } from '../../users/users.service';
   import { JwtAuthGuard } from '../guards/jwt-auth.guard';
   
