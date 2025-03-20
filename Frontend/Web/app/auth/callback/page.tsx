@@ -23,20 +23,27 @@ export default function AuthCallbackPage() {
           'authentication_failed': 'Authentication failed. Please try again.',
           'token_missing': 'Authentication token was not provided.',
           'server_error': 'Server error occurred during authentication.',
+          'access_denied': 'Access was denied or cancelled by the user.',
+          'invalid_request': 'Invalid authentication request.',
         };
         
-        setError(errorMessages[errorParam] || 'Authentication failed. Please try again.');
+        // Log error for debugging
+        console.error(`Authentication error: ${errorParam}`);
+        
+        // Set user-friendly error message
+        setError(errorMessages[errorParam] || `Authentication failed: ${errorParam}`);
         setIsProcessing(false);
         return;
       }
       
       // Check if token exists
       if (!token) {
-        setError('Authentication failed. No token received.');
+        console.error('No token received in callback');
+        setError('Authentication failed. No authentication token was received.');
         setIsProcessing(false);
         return;
       }
-
+  
       try {
         console.log('Processing authentication with token');
         
@@ -52,8 +59,9 @@ export default function AuthCallbackPage() {
         });
         
         if (!response.ok) {
-          console.error('Error fetching user data:', await response.text());
-          throw new Error('Failed to get user information');
+          const responseText = await response.text();
+          console.error('Error fetching user data:', responseText);
+          throw new Error(`Failed to get user information: ${response.status} ${responseText}`);
         }
         
         const userData = await response.json();
@@ -61,6 +69,16 @@ export default function AuthCallbackPage() {
         
         // Store user data
         localStorage.setItem('user', JSON.stringify(userData));
+        
+        // Process token with auth context if available
+        if (typeof processSocialAuthToken === 'function') {
+          try {
+            await processSocialAuthToken(token);
+          } catch (err) {
+            console.warn('Error in processSocialAuthToken:', err);
+            // Continue with normal flow even if this fails
+          }
+        }
         
         // Success message
         toast.success('Successfully signed in!');
@@ -71,25 +89,28 @@ export default function AuthCallbackPage() {
         
         console.log('Redirecting to:', redirectTo);
         
+        // Short delay to allow toast to show
         setTimeout(() => {
           router.push(redirectTo);
         }, 1000);
-      } catch (err) {
+      } catch (err: any) {
         console.error('Error processing authentication callback:', err);
-        setError('Failed to process authentication. Please try again.');
+        setError(err.message || 'Failed to process authentication. Please try again.');
         localStorage.removeItem('token');
       } finally {
         setIsProcessing(false);
       }
     }
-
+  
+    // Only process if not already authenticated
     if (!isAuthenticated) {
       handleCallback();
     } else {
       // Already authenticated, redirect to home
+      console.log('Already authenticated, redirecting to home');
       router.push('/');
     }
-  }, [token, router, isAuthenticated, errorParam]);
+  }, [token, router, isAuthenticated, errorParam, processSocialAuthToken]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">

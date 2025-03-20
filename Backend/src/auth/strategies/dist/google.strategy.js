@@ -56,7 +56,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 exports.__esModule = true;
 exports.GoogleStrategy = void 0;
-// src/auth/strategies/google.strategy.ts - Updated version with better error handling
+// src/auth/strategies/google.strategy.ts
 var passport_1 = require("@nestjs/passport");
 var passport_google_oauth20_1 = require("passport-google-oauth20");
 var common_1 = require("@nestjs/common");
@@ -67,6 +67,9 @@ var GoogleStrategy = /** @class */ (function (_super) {
         var clientID = configService.get('GOOGLE_CLIENT_ID');
         var clientSecret = configService.get('GOOGLE_CLIENT_SECRET');
         var callbackURL = configService.get('GOOGLE_CALLBACK_URL');
+        // Log configuration (without secrets)
+        _this.logger.log("Google Strategy Configuration: Client ID exists: " + !!clientID + ", Callback URL: " + callbackURL);
+        // Validate required configurations
         var missingConfigs = [];
         if (!clientID)
             missingConfigs.push('GOOGLE_CLIENT_ID');
@@ -79,6 +82,7 @@ var GoogleStrategy = /** @class */ (function (_super) {
             _this.logger.error(errorMsg);
             throw new Error(errorMsg);
         }
+        // Initialize the strategy with the configuration
         _this = _super.call(this, {
             clientID: clientID,
             clientSecret: clientSecret,
@@ -89,37 +93,48 @@ var GoogleStrategy = /** @class */ (function (_super) {
         _this.configService = configService;
         _this.authService = authService;
         _this.logger = new common_1.Logger(GoogleStrategy_1.name);
-        _this.logger.log("Initializing Google Strategy with callback URL: " + callbackURL);
+        _this.logger.log("Google Strategy initialized with callback URL: " + callbackURL);
         return _this;
     }
     GoogleStrategy_1 = GoogleStrategy;
+    /**
+     * Validate the Google profile and create/retrieve the user
+     * This method is called by Passport after successful Google authentication
+     */
     GoogleStrategy.prototype.validate = function (req, accessToken, refreshToken, profile, done) {
-        var _a;
+        var _a, _b, _c;
         return __awaiter(this, void 0, Promise, function () {
-            var name, emails, photos, user;
-            return __generator(this, function (_b) {
-                try {
-                    this.logger.log("Validating Google profile for user: " + ((_a = profile.emails[0]) === null || _a === void 0 ? void 0 : _a.value));
-                    name = profile.name, emails = profile.emails, photos = profile.photos;
-                    if (!emails || emails.length === 0) {
-                        this.logger.error('No email provided in Google profile');
-                        throw new Error('No email provided from Google');
-                    }
-                    user = {
-                        email: emails[0].value,
-                        firstName: name.givenName,
-                        lastName: name.familyName,
-                        picture: photos && photos[0] ? photos[0].value : undefined,
-                        accessToken: accessToken,
-                        provider: 'google'
-                    };
-                    return [2 /*return*/, this.authService.validateSocialLogin(user)];
+            var name, emails, photos, user, result, error_1;
+            return __generator(this, function (_d) {
+                switch (_d.label) {
+                    case 0:
+                        _d.trys.push([0, 2, , 3]);
+                        this.logger.log("Validating Google profile for user: " + (((_b = (_a = profile.emails) === null || _a === void 0 ? void 0 : _a[0]) === null || _b === void 0 ? void 0 : _b.value) || 'unknown'));
+                        name = profile.name, emails = profile.emails, photos = profile.photos;
+                        // Ensure we have an email (required for authentication)
+                        if (!emails || emails.length === 0) {
+                            this.logger.error('No email provided in Google profile');
+                            throw new Error('Email is required for authentication. Please ensure your Google account has a verified email.');
+                        }
+                        user = {
+                            email: emails[0].value,
+                            firstName: (name === null || name === void 0 ? void 0 : name.givenName) || 'Google',
+                            lastName: (name === null || name === void 0 ? void 0 : name.familyName) || 'User',
+                            picture: (_c = photos === null || photos === void 0 ? void 0 : photos[0]) === null || _c === void 0 ? void 0 : _c.value,
+                            accessToken: accessToken,
+                            provider: 'google'
+                        };
+                        return [4 /*yield*/, this.authService.validateSocialLogin(user)];
+                    case 1:
+                        result = _d.sent();
+                        this.logger.log("Successfully authenticated user: " + user.email);
+                        return [2 /*return*/, result];
+                    case 2:
+                        error_1 = _d.sent();
+                        this.logger.error("Google authentication error: " + error_1.message, error_1.stack);
+                        throw error_1;
+                    case 3: return [2 /*return*/];
                 }
-                catch (error) {
-                    this.logger.error("Google authentication error: " + error.message, error.stack);
-                    throw error;
-                }
-                return [2 /*return*/];
             });
         });
     };

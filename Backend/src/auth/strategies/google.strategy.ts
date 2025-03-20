@@ -1,4 +1,4 @@
-// src/auth/strategies/google.strategy.ts - Updated version with better error handling
+// src/auth/strategies/google.strategy.ts
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-google-oauth20';
 import { Injectable, Logger } from '@nestjs/common';
@@ -17,6 +17,10 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     const clientSecret = configService.get<string>('GOOGLE_CLIENT_SECRET');
     const callbackURL = configService.get<string>('GOOGLE_CALLBACK_URL');
     
+    // Log configuration (without secrets)
+    this.logger.log(`Google Strategy Configuration: Client ID exists: ${!!clientID}, Callback URL: ${callbackURL}`);
+    
+    // Validate required configurations
     const missingConfigs: string[] = [];
     if (!clientID) missingConfigs.push('GOOGLE_CLIENT_ID');
     if (!clientSecret) missingConfigs.push('GOOGLE_CLIENT_SECRET');
@@ -28,17 +32,22 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
       throw new Error(errorMsg);
     }
 
+    // Initialize the strategy with the configuration
     super({
-      clientID: clientID as string,
-      clientSecret: clientSecret as string,
-      callbackURL: callbackURL as string,
+      clientID,
+      clientSecret,
+      callbackURL,
       scope: ['email', 'profile'],
       passReqToCallback: true,
     });
 
-    this.logger.log(`Initializing Google Strategy with callback URL: ${callbackURL}`);
+    this.logger.log(`Google Strategy initialized with callback URL: ${callbackURL}`);
   }
 
+  /**
+   * Validate the Google profile and create/retrieve the user
+   * This method is called by Passport after successful Google authentication
+   */
   async validate(
     req: any,
     accessToken: string,
@@ -53,28 +62,34 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
       emails: { value: string }[];
       photos: { value: string }[];
     },
-    done: any,
+    done: Function,
   ): Promise<any> {
     try {
-      this.logger.log(`Validating Google profile for user: ${profile.emails[0]?.value}`);
+      this.logger.log(`Validating Google profile for user: ${profile.emails?.[0]?.value || 'unknown'}`);
       
       const { name, emails, photos } = profile;
       
+      // Ensure we have an email (required for authentication)
       if (!emails || emails.length === 0) {
         this.logger.error('No email provided in Google profile');
-        throw new Error('No email provided from Google');
+        throw new Error('Email is required for authentication. Please ensure your Google account has a verified email.');
       }
 
+      // Map Google profile to a user object for our system
       const user = {
         email: emails[0].value,
-        firstName: name.givenName,
-        lastName: name.familyName,
-        picture: photos && photos[0] ? photos[0].value : undefined,
+        firstName: name?.givenName || 'Google',
+        lastName: name?.familyName || 'User',
+        picture: photos?.[0]?.value,
         accessToken,
         provider: 'google' as 'google' | 'facebook' | 'apple',
       };
       
-      return this.authService.validateSocialLogin(user);
+      // Call the auth service to validate/create the user
+      const result = await this.authService.validateSocialLogin(user);
+      this.logger.log(`Successfully authenticated user: ${user.email}`);
+      
+      return result;
     } catch (error) {
       this.logger.error(`Google authentication error: ${error.message}`, error.stack);
       throw error;
