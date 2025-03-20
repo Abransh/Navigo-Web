@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import React from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { CreditCard, Calendar, ArrowRight, CheckCircle } from 'lucide-react';
@@ -102,7 +101,7 @@ const PaymentOption = ({ title, description, icon, benefits, onClick, selected, 
       </CardContent>
       <CardFooter className="flex justify-between items-center border-t pt-4">
         <div>
-          <p className="text-2xl font-bold">${price.toFixed(2)}</p>
+          <p className="text-2xl font-bold">₹{price.toFixed(2)}</p>
           <p className="text-xs text-gray-500">Total price</p>
         </div>
         <Button 
