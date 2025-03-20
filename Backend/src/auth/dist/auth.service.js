@@ -122,11 +122,12 @@ var AuthService = /** @class */ (function () {
                         if (!user) {
                             throw new common_1.UnauthorizedException('Invalid credentials');
                         }
-                        payload = { email: user.email, sub: user.id, role: user.role };
-                        return [2 /*return*/, {
-                                access_token: this.jwtService.sign(payload),
-                                user: user
-                            }];
+                        payload = {
+                            email: user.email,
+                            sub: user.id,
+                            role: user.role
+                        };
+                        return [2 /*return*/];
                 }
             });
         });

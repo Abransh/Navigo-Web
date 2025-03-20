@@ -13,6 +13,8 @@ var jwt_1 = require("@nestjs/jwt");
 var passport_1 = require("@nestjs/passport");
 var config_1 = require("@nestjs/config");
 var typeorm_1 = require("@nestjs/typeorm");
+var throttler_1 = require("@nestjs/throttler");
+var core_1 = require("@nestjs/core");
 // Controllers
 var auth_controller_1 = require("./auth.controller");
 var social_auth_controller_1 = require("./controllers/social-auth.controller");
@@ -42,6 +44,14 @@ var AuthModule = /** @class */ (function () {
                 email_module_1.EmailModule,
                 passport_1.PassportModule.register({ defaultStrategy: 'jwt' }),
                 typeorm_1.TypeOrmModule.forFeature([password_reset_entity_1.PasswordReset, social_profile_entity_1.SocialProfile]),
+                throttler_1.ThrottlerModule.forRootAsync({
+                    imports: [config_1.ConfigModule],
+                    inject: [config_1.ConfigService],
+                    useFactory: function (configService) { return ({
+                        ttl: configService.get('THROTTLE_TTL', 60),
+                        limit: configService.get('THROTTLE_LIMIT', 10)
+                    }); }
+                }),
                 jwt_1.JwtModule.registerAsync({
                     imports: [config_1.ConfigModule],
                     inject: [config_1.ConfigService],
@@ -61,6 +71,10 @@ var AuthModule = /** @class */ (function () {
                 facebook_strategy_1.FacebookStrategy,
                 apple_strategy_1.AppleStrategy,
                 password_reset_repository_1.PasswordResetRepository,
+                {
+                    provide: core_1.APP_GUARD,
+                    useClass: throttler_1.ThrottlerGuard
+                },
             ],
             exports: [auth_service_1.AuthService,
                 password_reset_repository_1.PasswordResetRepository,

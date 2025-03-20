@@ -26,17 +26,17 @@ async function bootstrap() {
 
   // Configure CORS
   const frontendUrl = configService.get('FRONTEND_URL', 'http://localhost:3000');
-  const corsOriginsStr = configService.get('CORS_ORIGINS', frontendUrl);
-  const corsOrigins = corsOriginsStr.split(',').map(origin => origin.trim());
+  const corsOriginsStr = configService.get('CORS_ORIGINS', 'http://localhost:3000');
+const corsOrigins = corsOriginsStr.split(',').map(origin => origin.trim());
   
   logger.log(`Configuring CORS for origins: ${corsOrigins.join(', ')}`);
 
   app.enableCors({
     origin: corsOrigins,
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     credentials: true,
-    preflightContinue: false,
-    optionsSuccessStatus: 204,
+    allowedHeaders: ['Authorization', 'Content-Type'],
+    maxAge: 86400, // 24 hours
   });
 
   // IMPORTANT: We're changing how the API prefix is handled for auth routes

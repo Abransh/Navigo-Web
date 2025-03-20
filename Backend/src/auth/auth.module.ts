@@ -4,6 +4,8 @@ import { JwtModule, JwtService } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
+import { APP_GUARD } from '@nestjs/core';
 
 // Controllers
 import { AuthController } from './auth.controller';
@@ -36,6 +38,14 @@ import { EmailModule } from '../email/email.module';
     EmailModule,
     PassportModule.register({ defaultStrategy: 'jwt' }), // Explicitly set default strategy
     TypeOrmModule.forFeature([PasswordReset, SocialProfile]),
+    ThrottlerModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        ttl: configService.get('THROTTLE_TTL', 60),
+        limit: configService.get('THROTTLE_LIMIT', 10),
+      }),
+    }),
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -55,6 +65,10 @@ import { EmailModule } from '../email/email.module';
     FacebookStrategy,
     AppleStrategy,
     PasswordResetRepository,
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
   ],
   exports: [AuthService, 
     PasswordResetRepository,

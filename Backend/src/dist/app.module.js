@@ -9,13 +9,13 @@ exports.__esModule = true;
 exports.AppModule = void 0;
 // src/app.module.ts
 var common_1 = require("@nestjs/common");
-var config_module_1 = require("./config/config.module");
-var throttler_1 = require("@nestjs/throttler");
 var config_1 = require("@nestjs/config");
-//import { ScheduleModule } from '@nestjs/schedule';
+var throttler_1 = require("@nestjs/throttler");
+var core_1 = require("@nestjs/core");
+var schedule_1 = require("@nestjs/schedule");
 var serve_static_1 = require("@nestjs/serve-static");
+var throttler_2 = require("@nestjs/throttler");
 var path_1 = require("path");
-//import { Reflector } from '@nestjs/core';
 // Controllers & Services
 var app_controller_1 = require("./app.controller");
 var app_service_1 = require("./app.service");
@@ -32,8 +32,9 @@ var payments_module_1 = require("./payments/payments.module");
 var reviews_module_1 = require("./reviews/reviews.module");
 var notifications_module_1 = require("./notifications/notifications.module");
 var destinations_module_1 = require("./destinations/destinations.module");
-// Tasks Module
+// Task and Schedule Modules
 var tasks_module_1 = require("./tasks/tasks.module");
+var schedule_module_1 = require("./schedule/schedule.module");
 var AppModule = /** @class */ (function () {
     function AppModule() {
     }
@@ -41,10 +42,13 @@ var AppModule = /** @class */ (function () {
         common_1.Module({
             imports: [
                 // Config first for initialization
-                config_module_1.ConfigModule,
+                config_1.ConfigModule.forRoot({
+                    isGlobal: true,
+                    envFilePath: [".env." + (process.env.NODE_ENV || 'development'), '.env']
+                }),
                 // Rate limiting
                 throttler_1.ThrottlerModule.forRootAsync({
-                    imports: [config_module_1.ConfigModule],
+                    imports: [config_1.ConfigModule],
                     inject: [config_1.ConfigService],
                     useFactory: function (configService) { return ({
                         throttlers: [
@@ -55,8 +59,8 @@ var AppModule = /** @class */ (function () {
                         ]
                     }); }
                 }),
-                // Scheduled tasks - ONLY ONE INSTANCE HERE
-                // ScheduleModule.forRoot(),
+                // Scheduled tasks - registered once at app level
+                schedule_1.ScheduleModule.forRoot(),
                 // Static file serving (for uploaded content)
                 serve_static_1.ServeStaticModule.forRoot({
                     rootPath: path_1.join(__dirname, '..', 'uploads'),
@@ -77,37 +81,20 @@ var AppModule = /** @class */ (function () {
                 destinations_module_1.DestinationsModule,
                 // Tasks module
                 tasks_module_1.TasksModule,
+                // Schedule module (our custom implementation)
+                schedule_module_1.ScheduleModule,
             ],
             controllers: [app_controller_1.AppController],
             providers: [
-                app_service_1.AppService
+                app_service_1.AppService,
+                // Apply rate limiting globally
+                {
+                    provide: core_1.APP_GUARD,
+                    useClass: throttler_2.ThrottlerGuard
+                },
             ]
         })
     ], AppModule);
     return AppModule;
 }());
 exports.AppModule = AppModule;
-// // src/app.module.ts - SIMPLIFIED VERSION
-// import { Module } from '@nestjs/common';
-// import { ConfigModule } from '@nestjs/config';
-// import { TypeOrmModule } from '@nestjs/typeorm';
-// import { dataSourceOptions } from './config/typeorm.config';
-// // Core controllers and services
-// import { AppController } from './app.controller';
-// import { AppService } from './app.service';
-// // Core modules - only keep essential ones
-// import { UsersModule } from './users/users.module';
-// import { AuthModule } from './auth/auth.module';
-// @Module({
-//   imports: [
-//     ConfigModule.forRoot({
-//       isGlobal: true,
-//     }),
-//     TypeOrmModule.forRoot(dataSourceOptions),
-//     UsersModule,
-//     AuthModule,
-//   ],
-//   controllers: [AppController],
-//   providers: [AppService],
-// })
-// export class AppModule {}

@@ -9,7 +9,6 @@ exports.__esModule = true;
 exports.ScheduleModule = void 0;
 // src/schedule/schedule.module.ts
 var common_1 = require("@nestjs/common");
-var schedule_1 = require("@nestjs/schedule");
 var schedule_service_1 = require("./schedule.service");
 var bookings_module_1 = require("../bookings/bookings.module");
 var email_module_1 = require("../email/email.module");
@@ -20,7 +19,6 @@ var ScheduleModule = /** @class */ (function () {
     ScheduleModule = __decorate([
         common_1.Module({
             imports: [
-                schedule_1.ScheduleModule.forRoot(),
                 bookings_module_1.BookingsModule,
                 email_module_1.EmailModule,
                 notifications_module_1.NotificationsModule,

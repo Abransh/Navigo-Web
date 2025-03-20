@@ -75,15 +75,13 @@ var UsersController = /** @class */ (function () {
             });
         });
     };
-    // @Get('profile')
-    // @UseGuards(JwtAuthGuard)
-    // @ApiBearerAuth()
-    // @ApiOperation({ summary: 'Get current user profile' })
-    // @ApiResponse({ status: 200, description: 'Profile retrieved successfully' })
-    // @ApiResponse({ status: 401, description: 'Unauthorized' })
-    // async getProfile(@Req() req) {
-    //   return this.usersService.findById(req.user.userId);
-    // }
+    UsersController.prototype.getProfile = function (req) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                return [2 /*return*/, this.usersService.findById(req.user.userId)];
+            });
+        });
+    };
     UsersController.prototype.updateProfile = function (req, updateUserDto) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
@@ -123,6 +121,15 @@ var UsersController = /** @class */ (function () {
         swagger_1.ApiBearerAuth(),
         swagger_1.ApiOperation({ summary: 'Get current user profile (alternative endpoint)' }),
         swagger_1.ApiResponse({ status: 200, description: 'Returns user profile' }),
+        swagger_1.ApiResponse({ status: 401, description: 'Unauthorized' }),
+        __param(0, common_1.Req())
+    ], UsersController.prototype, "getProfile");
+    __decorate([
+        common_1.Get('profile'),
+        common_1.UseGuards(jwt_auth_guard_1.JwtAuthGuard),
+        swagger_1.ApiBearerAuth(),
+        swagger_1.ApiOperation({ summary: 'Get current user profile' }),
+        swagger_1.ApiResponse({ status: 200, description: 'Profile retrieved successfully' }),
         swagger_1.ApiResponse({ status: 401, description: 'Unauthorized' }),
         __param(0, common_1.Req())
     ], UsersController.prototype, "getProfile");

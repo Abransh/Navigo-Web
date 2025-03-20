@@ -63,10 +63,16 @@ var passport_jwt_1 = require("passport-jwt");
 var JwtStrategy = /** @class */ (function (_super) {
     __extends(JwtStrategy, _super);
     function JwtStrategy(configService) {
-        var _this = _super.call(this, {
+        var _this = this;
+        var secret = configService.get('JWT_SECRET');
+        // Validate that a proper secret is provided
+        if (!secret || secret.length < 32) {
+            common_1.Logger.warn('JWT_SECRET is missing or too short. This is a serious security risk!');
+        }
+        _this = _super.call(this, {
             jwtFromRequest: passport_jwt_1.ExtractJwt.fromAuthHeaderAsBearerToken(),
             ignoreExpiration: false,
-            secretOrKey: configService.get('JWT_SECRET') || 'default-secret-key-replace-me'
+            secretOrKey: secret
         }) || this;
         _this.configService = configService;
         return _this;
@@ -74,7 +80,12 @@ var JwtStrategy = /** @class */ (function (_super) {
     JwtStrategy.prototype.validate = function (payload) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
-                return [2 /*return*/, { id: payload.sub, email: payload.email, role: payload.role }];
+                // Standardize to always return userId, not id or sub
+                return [2 /*return*/, {
+                        userId: payload.sub,
+                        email: payload.email,
+                        role: payload.role
+                    }];
             });
         });
     };

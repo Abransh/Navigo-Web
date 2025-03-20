@@ -1,3 +1,4 @@
+// src/config/typeorm.config.ts
 import { DataSource, DataSourceOptions } from 'typeorm';
 import * as dotenv from 'dotenv';
 import * as path from 'path';
@@ -13,19 +14,13 @@ export const dataSourceOptions: DataSourceOptions = {
   password: process.env.DB_PASSWORD || 'postgres',
   database: process.env.DB_DATABASE || 'navigo',
   
-  // Automatically load entities from all directories
-  entities: [
-    path.join(__dirname, '..', '**', 'entities', '*.entity{.ts,.js}')
-  ],
+  // Entities and migrations
+  entities: [path.join(__dirname, '..', '**', 'entities', '*.entity{.ts,.js}')],
+  migrations: [path.join(__dirname, '..', 'migrations', '*{.ts,.js}')],
   
-  // Migrations configuration
-  migrations: [
-    path.join(__dirname, '..', 'migrations', '*{.ts,.js}')
-  ],
-  
-  // Synchronize should be false in production
-  synchronize: process.env.NODE_ENV !== 'production',
-  logging: process.env.NODE_ENV !== 'production',
+  // Environment-dependent settings
+  synchronize: process.env.NODE_ENV !== 'production' && process.env.DB_SYNC === 'true',
+  logging: process.env.NODE_ENV !== 'production' && process.env.DB_LOGGING === 'true',
 };
 
 const dataSource = new DataSource(dataSourceOptions);

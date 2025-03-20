@@ -58,11 +58,12 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
     
-    const payload = { email: user.email, sub: user.id, role: user.role };
-    return {
-      access_token: this.jwtService.sign(payload),
-      user,
-    };
+    // In auth.service.ts (login method)
+    const payload = { 
+    email: user.email, 
+    sub: user.id,  // Keep the JWT standard of using 'sub' for the subject
+    role: user.role 
+};
   }
 
   async register(registerDto: RegisterDto) {

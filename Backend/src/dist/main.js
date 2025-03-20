@@ -64,15 +64,15 @@ function bootstrap() {
                     }));
                     app.use(compression()); // Response compression
                     frontendUrl = configService.get('FRONTEND_URL', 'http://localhost:3000');
-                    corsOriginsStr = configService.get('CORS_ORIGINS', frontendUrl);
+                    corsOriginsStr = configService.get('CORS_ORIGINS', 'http://localhost:3000');
                     corsOrigins = corsOriginsStr.split(',').map(function (origin) { return origin.trim(); });
                     logger.log("Configuring CORS for origins: " + corsOrigins.join(', '));
                     app.enableCors({
                         origin: corsOrigins,
-                        methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+                        methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
                         credentials: true,
-                        preflightContinue: false,
-                        optionsSuccessStatus: 204
+                        allowedHeaders: ['Authorization', 'Content-Type'],
+                        maxAge: 86400
                     });
                     apiPrefix = configService.get('API_PREFIX', 'api');
                     // Apply global prefix but DO NOT exclude the auth routes

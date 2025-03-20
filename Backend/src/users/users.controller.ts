@@ -57,15 +57,15 @@ export class UsersController {
     return this.usersService.findById(userId);
   }
 
-  // @Get('profile')
-  // @UseGuards(JwtAuthGuard)
-  // @ApiBearerAuth()
-  // @ApiOperation({ summary: 'Get current user profile' })
-  // @ApiResponse({ status: 200, description: 'Profile retrieved successfully' })
-  // @ApiResponse({ status: 401, description: 'Unauthorized' })
-  // async getProfile(@Req() req) {
-  //   return this.usersService.findById(req.user.userId);
-  // }
+  @Get('profile')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get current user profile' })
+  @ApiResponse({ status: 200, description: 'Profile retrieved successfully' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  async getProfile(@Req() req) {
+    return this.usersService.findById(req.user.userId);
+  }
 
   @Patch('profile')
   @UseGuards(JwtAuthGuard)

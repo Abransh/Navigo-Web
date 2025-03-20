@@ -1,17 +1,16 @@
 // src/app.module.ts
 import { Module } from '@nestjs/common';
-import { ConfigModule } from './config/config.module';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ThrottlerModule } from '@nestjs/throttler';
-import { ConfigService } from '@nestjs/config';
-//import { ScheduleModule } from '@nestjs/schedule';
+import { APP_GUARD } from '@nestjs/core';
+import { ScheduleModule } from '@nestjs/schedule';
 import { ServeStaticModule } from '@nestjs/serve-static';
+import { ThrottlerGuard } from '@nestjs/throttler';
 import { join } from 'path';
-//import { Reflector } from '@nestjs/core';
 
 // Controllers & Services
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-
 
 // Core Modules
 import { DatabaseModule } from './database/database.module';
@@ -28,13 +27,18 @@ import { ReviewsModule } from './reviews/reviews.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { DestinationsModule } from './destinations/destinations.module';
 
-// Tasks Module
+// Task and Schedule Modules
 import { TasksModule } from './tasks/tasks.module';
+import { ScheduleService } from './schedule/schedule.service';
+import { ScheduleModule as AppScheduleModule } from './schedule/schedule.module';
 
 @Module({
   imports: [
     // Config first for initialization
-    ConfigModule,
+    ConfigModule.forRoot({
+      isGlobal: true, // Make ConfigModule global
+      envFilePath: [`.env.${process.env.NODE_ENV || 'development'}`, '.env'],
+    }),
     
     // Rate limiting
     ThrottlerModule.forRootAsync({
@@ -50,8 +54,8 @@ import { TasksModule } from './tasks/tasks.module';
       }),
     }),
     
-    // Scheduled tasks - ONLY ONE INSTANCE HERE
-    // ScheduleModule.forRoot(),
+    // Scheduled tasks - registered once at app level
+    ScheduleModule.forRoot(),
     
     // Static file serving (for uploaded content)
     ServeStaticModule.forRoot({
@@ -76,37 +80,18 @@ import { TasksModule } from './tasks/tasks.module';
    
     // Tasks module
     TasksModule,
+    
+    // Schedule module (our custom implementation)
+    AppScheduleModule,
   ],
   controllers: [AppController],
   providers: [
-    AppService],
+    AppService,
+    // Apply rate limiting globally
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
+  ],
 })
 export class AppModule {}
-
-// // src/app.module.ts - SIMPLIFIED VERSION
-// import { Module } from '@nestjs/common';
-// import { ConfigModule } from '@nestjs/config';
-// import { TypeOrmModule } from '@nestjs/typeorm';
-// import { dataSourceOptions } from './config/typeorm.config';
-
-// // Core controllers and services
-// import { AppController } from './app.controller';
-// import { AppService } from './app.service';
-
-// // Core modules - only keep essential ones
-// import { UsersModule } from './users/users.module';
-// import { AuthModule } from './auth/auth.module';
-
-// @Module({
-//   imports: [
-//     ConfigModule.forRoot({
-//       isGlobal: true,
-//     }),
-//     TypeOrmModule.forRoot(dataSourceOptions),
-//     UsersModule,
-//     AuthModule,
-//   ],
-//   controllers: [AppController],
-//   providers: [AppService],
-// })
-// export class AppModule {}
