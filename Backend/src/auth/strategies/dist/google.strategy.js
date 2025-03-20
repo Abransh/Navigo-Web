@@ -76,6 +76,7 @@ var GoogleStrategy = /** @class */ (function (_super) {
             missingConfigs.push('GOOGLE_CALLBACK_URL');
         if (missingConfigs.length > 0) {
             var errorMsg = "Missing required Google OAuth configuration: " + missingConfigs.join(', ');
+            _this.logger.error(errorMsg);
             throw new Error(errorMsg);
         }
         _this = _super.call(this, {
@@ -88,12 +89,7 @@ var GoogleStrategy = /** @class */ (function (_super) {
         _this.configService = configService;
         _this.authService = authService;
         _this.logger = new common_1.Logger(GoogleStrategy_1.name);
-        if (missingConfigs.length > 0) {
-            _this.logger.error("Missing required Google OAuth configuration: " + missingConfigs.join(', '));
-        }
-        else {
-            _this.logger.log("Initializing Google Strategy with callback URL: " + callbackURL);
-        }
+        _this.logger.log("Initializing Google Strategy with callback URL: " + callbackURL);
         return _this;
     }
     GoogleStrategy_1 = GoogleStrategy;

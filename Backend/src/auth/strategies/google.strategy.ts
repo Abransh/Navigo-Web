@@ -24,6 +24,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     
     if (missingConfigs.length > 0) {
       const errorMsg = `Missing required Google OAuth configuration: ${missingConfigs.join(', ')}`;
+      this.logger.error(errorMsg);
       throw new Error(errorMsg);
     }
 
@@ -35,11 +36,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
       passReqToCallback: true,
     });
 
-    if (missingConfigs.length > 0) {
-      this.logger.error(`Missing required Google OAuth configuration: ${missingConfigs.join(', ')}`);
-    } else {
-      this.logger.log(`Initializing Google Strategy with callback URL: ${callbackURL}`);
-    }
+    this.logger.log(`Initializing Google Strategy with callback URL: ${callbackURL}`);
   }
 
   async validate(

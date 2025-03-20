@@ -34,15 +34,17 @@ export default function SocialLoginButtons({ mode }: SocialLoginButtonsProps) {
         localStorage.setItem('redirectTo', redirectTo);
       }
       
-      // Track the start of social login for analytics or debugging
-      console.log(`Initiating ${provider} authentication. Redirect URL: ${redirectTo}`);
-      
       // Get the API URL from environment variable
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+    
+    // Construct the correct OAuth URL - remove the duplicated /api prefix
+    const authUrl = `${apiUrl}/auth/${provider}`;
+    
+    console.log(`Initiating ${provider} authentication. Redirecting to: ${authUrl}`);
       
       // Use the direct auth route without the API prefix
       // This will work with our new RootAuthController
-      window.location.href = `${apiUrl}/api/auth/${provider}`;
+      window.location.href = authUrl;
     } catch (error) {
       console.error(`Error initiating ${provider} login:`, error);
       toast.error(`Failed to connect to ${provider}. Please try again.`);
