@@ -1,176 +1,162 @@
+// app/admin/page.tsx
 "use client";
 
 import { useState, useEffect } from 'react';
-import { 
-  BarChart, 
-  Bar, 
-  XAxis, 
-  YAxis, 
-  Tooltip, 
-  ResponsiveContainer 
-} from 'recharts';
-
 import { 
   Card, 
   CardContent, 
   CardHeader, 
   CardTitle 
 } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { AdminUserManagement } from '@/components/admin/AdminUserManagement';
+import { AdminBookingManagement } from '@/components/admin/AdminBookingManagement';
+import { AdminCompanionApplications } from '@/components/admin/AdminCompanionApplications';
+import adminService from '@/services/admin-service';
+import { toast } from 'react-hot-toast';
 import { 
   Users, 
   BookOpen, 
   CreditCard, 
-  Activity 
+  UserPlus, 
+  Loader2
 } from 'lucide-react';
-import adminService from '@/services/admin-service';
-import { toast } from 'react-hot-toast';
 
 export default function AdminDashboard() {
   const [stats, setStats] = useState({
     totalUsers: 0,
     totalBookings: 0,
     totalRevenue: 0,
-    recentActivity: []
+    pendingVerifications: 0,
+    companionApplications: 0,
   });
-
-  const [monthlyData, setMonthlyData] = useState([
-    { month: 'Jan', users: 0, bookings: 0, revenue: 0 },
-    { month: 'Feb', users: 0, bookings: 0, revenue: 0 },
-    { month: 'Mar', users: 0, bookings: 0, revenue: 0 },
-    { month: 'Apr', users: 0, bookings: 0, revenue: 0 },
-    { month: 'May', users: 0, bookings: 0, revenue: 0 },
-    { month: 'Jun', users: 0, bookings: 0, revenue: 0 },
-  ]);
+  const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState('dashboard');
 
   useEffect(() => {
-    const fetchDashboardData = async () => {
+    const fetchStats = async () => {
       try {
-        const statsData = await adminService.getDashboardStats();
-        setStats({
-          totalUsers: statsData.totalUsers,
-          totalBookings: statsData.totalBookings,
-          totalRevenue: statsData.totalRevenue,
-          recentActivity: [] // Fetch recent activity separately
-        });
-
-        // Mock monthly data - in a real app, fetch this from backend
-        const mockMonthlyData = [
-          { month: 'Jan', users: 50, bookings: 20, revenue: 5000 },
-          { month: 'Feb', users: 75, bookings: 35, revenue: 7500 },
-          { month: 'Mar', users: 100, bookings: 45, revenue: 10000 },
-          { month: 'Apr', users: 120, bookings: 55, revenue: 12000 },
-          { month: 'May', users: 150, bookings: 70, revenue: 15000 },
-          { month: 'Jun', users: 200, bookings: 90, revenue: 20000 },
-        ];
-        setMonthlyData(mockMonthlyData);
+        setLoading(true);
+        const data = await adminService.getDashboardStats();
+        setStats(data);
       } catch (error) {
-        toast.error('Failed to fetch dashboard statistics');
+        console.error('Failed to fetch dashboard stats:', error);
+        toast.error('Failed to load admin dashboard');
+      } finally {
+        setLoading(false);
       }
     };
 
-    fetchDashboardData();
+    fetchStats();
   }, []);
 
-  const StatCard = ({ 
-    title, 
-    value, 
-    icon: Icon, 
-    color 
-  }: { 
-    title: string, 
-    value: number, 
-    icon: React.ElementType, 
-    color: string 
-  }) => (
+  const StatCard = ({ title, value, icon: Icon, color }) => (
     <Card>
-      <CardHeader className="flex flex-row items-center justify-between pb-2">
-        <CardTitle className="text-sm font-medium">{title}</CardTitle>
-        <Icon className={`h-4 w-4 ${color}`} />
-      </CardHeader>
-      <CardContent>
-        <div className="text-2xl font-bold">
-          {title.includes('Revenue') ? `₹${value.toLocaleString()}` : value}
+      <CardContent className="p-6">
+        <div className="flex items-center justify-between mb-2">
+          <h3 className="text-lg font-medium">{title}</h3>
+          <Icon className={`h-8 w-8 ${color}`} />
+        </div>
+        <div className="text-3xl font-bold">
+          {title.includes('Revenue') ? `₹${value.toLocaleString()}` : value.toLocaleString()}
         </div>
       </CardContent>
     </Card>
   );
 
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-[80vh]">
+        <div className="text-center">
+          <Loader2 className="h-12 w-12 animate-spin text-primary mx-auto mb-4" />
+          <p className="text-xl">Loading admin dashboard...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="space-y-6">
-      <h1 className="text-3xl font-bold">Dashboard</h1>
-
-      {/* Key Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <StatCard 
-          title="Total Users" 
-          value={stats.totalUsers} 
-          icon={Users} 
-          color="text-blue-500" 
-        />
-        <StatCard 
-          title="Total Bookings" 
-          value={stats.totalBookings} 
-          icon={BookOpen} 
-          color="text-green-500" 
-        />
-        <StatCard 
-          title="Total Revenue" 
-          value={stats.totalRevenue} 
-          icon={CreditCard} 
-          color="text-purple-500" 
-        />
-      </div>
-
-      {/* Charts and Activity */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Monthly Performance Chart */}
-        <Card className="lg:col-span-2">
-          <CardHeader>
-            <CardTitle>Monthly Performance</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={monthlyData}>
-                <XAxis dataKey="month" />
-                <YAxis />
-                <Tooltip />
-                <Bar dataKey="users" fill="#8884d8" name="Users" />
-                <Bar dataKey="bookings" fill="#82ca9d" name="Bookings" />
-                <Bar dataKey="revenue" fill="#ffc658" name="Revenue" />
-              </BarChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
-
-        {/* Recent Activity */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Recent Activity</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {[1, 2, 3, 4].map((_, index) => (
-                <div 
-                  key={index} 
-                  className="flex items-center justify-between"
-                >
-                  <div className="flex items-center space-x-3">
-                    <Activity className="h-5 w-5 text-muted-foreground" />
-                    <div>
-                      <p className="text-sm font-medium">
-                        New Booking Created
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        {new Date().toLocaleString()}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+    <div className="p-6 max-w-7xl mx-auto">
+      <h1 className="text-3xl font-bold mb-6">Admin Dashboard</h1>
+      
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-8">
+        <TabsList className="grid grid-cols-5 w-full">
+          <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
+          <TabsTrigger value="users">Users</TabsTrigger>
+          <TabsTrigger value="bookings">Bookings</TabsTrigger>
+          <TabsTrigger value="payments">Payments</TabsTrigger>
+          <TabsTrigger value="companions">Companions</TabsTrigger>
+        </TabsList>
+        
+        <TabsContent value="dashboard">
+          {/* Stats Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+            <StatCard 
+              title="Total Users" 
+              value={stats.totalUsers} 
+              icon={Users} 
+              color="text-blue-500" 
+            />
+            <StatCard 
+              title="Total Bookings" 
+              value={stats.totalBookings} 
+              icon={BookOpen} 
+              color="text-green-500" 
+            />
+            <StatCard 
+              title="Total Revenue" 
+              value={stats.totalRevenue} 
+              icon={CreditCard} 
+              color="text-purple-500" 
+            />
+            <StatCard 
+              title="Pending Verifications" 
+              value={stats.pendingVerifications} 
+              icon={UserPlus} 
+              color="text-amber-500" 
+            />
+            <StatCard 
+              title="Companion Applications" 
+              value={stats.companionApplications} 
+              icon={UserPlus} 
+              color="text-red-500" 
+            />
+          </div>
+          
+          {/* Recent Activity */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Recent Activity</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-gray-500">No recent activity to display.</p>
+            </CardContent>
+          </Card>
+        </TabsContent>
+        
+        <TabsContent value="users">
+          <AdminUserManagement />
+        </TabsContent>
+        
+        <TabsContent value="bookings">
+          <AdminBookingManagement />
+        </TabsContent>
+        
+        <TabsContent value="payments">
+          <Card>
+            <CardHeader>
+              <CardTitle>Payment Management</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-gray-500">Payment management interface will be implemented here.</p>
+            </CardContent>
+          </Card>
+        </TabsContent>
+        
+        <TabsContent value="companions">
+          <AdminCompanionApplications />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
