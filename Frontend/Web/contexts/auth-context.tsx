@@ -26,6 +26,21 @@ interface AuthContextType {
   refreshUserProfile: () => Promise<void>;
 }
 
+const parseJwt = (token: string) => {
+  try {
+    const base64Url = token.split('.')[1];
+    if (!base64Url) throw new Error('Invalid token format');
+    
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const jsonPayload = atob(base64);
+    
+    return JSON.parse(jsonPayload);
+  } catch (e) {
+    console.error('Error parsing JWT:', e);
+    return { sub: null, email: null };
+  }
+};
+
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
@@ -97,6 +112,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   };
 
+  
+
   const register = async (data: RegisterData): Promise<AuthResponse> => {
     setLoading(true);
     try {
@@ -131,63 +148,69 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   };
 
-  const processSocialAuthToken = async (token: string): Promise<void> => {
+  // contexts/auth-context.tsx - Improved processSocialAuthToken method
+const processSocialAuthToken = async (token: string): Promise<void> => {
+  try {
+    setLoading(true);
+    
+    // Store token in localStorage
+    localStorage.setItem('token', token);
+    
+    // Set token in API client
+    apiClient.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+    
+    // Try to get the user profile from the API
     try {
-      setLoading(true);
+      const userData = await authService.getCurrentUser();
       
-      // Store token in localStorage
-      localStorage.setItem('token', token);
+      // Update state with profile data
+      setUser(userData);
+      setIsAuthenticated(true);
       
-      // Set token in API client
-      apiClient.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+      // Store in localStorage
+      localStorage.setItem('user', JSON.stringify(userData));
       
-      try {
-        // Fetch user profile
-        const userData = await authService.getCurrentUser();
-        
-        // Update state
-        setUser(userData);
-        setIsAuthenticated(true);
-        
-        // Update localStorage
-        localStorage.setItem('user', JSON.stringify(userData));
-        
-        console.log('User profile loaded after social login:', userData);
-        
-        toast.success('Successfully signed in!');
-      } catch (error) {
-        console.error('Failed to get user profile after social login:', error);
-        
-        // Even if getting profile fails, we still have a valid token
-        // so we'll set authenticated state
-        setIsAuthenticated(true);
-        
-        // Create a basic user object from the token
-        try {
-          // Extract email from JWT if possible
-          const tokenPayload = JSON.parse(atob(token.split('.')[1]));
-          const basicUser = {
-            id: tokenPayload.sub,
-            email: tokenPayload.email || 'user@example.com',
-            firstName: 'User',
-            lastName: '',
-            role: tokenPayload.role || 'tourist'
-          };
-          
-          setUser(basicUser);
-          localStorage.setItem('user', JSON.stringify(basicUser));
-        } catch (e) {
-          console.error('Failed to parse token:', e);
-        }
-      }
+      console.log('User profile loaded after social login');
     } catch (error) {
-      console.error('Failed to process social auth token:', error);
-      logout(); // Clean up if authentication fails
-      throw error;
-    } finally {
-      setLoading(false);
+      console.error('Failed to get user profile after social login:', error);
+      
+      // If we can't get the profile, attempt to extract basic info from the token
+      const tokenPayload = parseJwt(token);
+      
+      if (!tokenPayload || !tokenPayload.sub) {
+        throw new Error('Invalid authentication token');
+      }
+      
+      // Create basic user object from token data
+      const basicUser = {
+        id: tokenPayload.sub || tokenPayload.id,
+        email: tokenPayload.email || `user_${tokenPayload.sub.substring(0, 8)}@navigo.com`,
+        firstName: tokenPayload.firstName || 'Navigo',
+        lastName: tokenPayload.lastName || 'User',
+        role: tokenPayload.role || 'tourist'
+      };
+      
+      // Update state with basic data
+      setUser(basicUser);
+      setIsAuthenticated(true);
+      
+      // Store in localStorage
+      localStorage.setItem('user', JSON.stringify(basicUser));
+      
+      // Warn user about limited profile info
+      toast('Signed in with limited profile information. Some features may be restricted.');
     }
-  };
+  } catch (error) {
+    console.error('Failed to process social auth token:', error);
+    
+    // Clean up any partial auth data
+    logout();
+    
+    throw error;
+  } finally {
+    setLoading(false);
+  }
+};
 
   const logout = () => {
     // Clear auth data from localStorage

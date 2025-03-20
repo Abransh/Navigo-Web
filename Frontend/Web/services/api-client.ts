@@ -1,11 +1,18 @@
 // services/api-client.ts
 import axios from 'axios';
+import { env } from '@/lib/env';
 
-// Default to localhost:3001 if NEXT_PUBLIC_API_URL is not defined
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+// Get API URL from environment
+const API_URL = env.apiUrl;
 
 console.log('API URL:', API_URL); // For debugging during development
 
+// Check if the API URL already includes /api
+const hasApiPrefix = API_URL.endsWith('/api');
+// Base path to be used in all service requests
+export const basePath = hasApiPrefix ? '' : '/api';
+
+// Create the axios instance
 const apiClient = axios.create({
   baseURL: API_URL,
   headers: {

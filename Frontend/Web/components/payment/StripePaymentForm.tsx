@@ -12,19 +12,13 @@ import {
   Elements
 } from '@stripe/react-stripe-js';
 
-import { loadStripe } from '@stripe/stripe-js';
-import bookingService from '@/services/booking-service';
+import { getStripe, StripeKeyWarning } from './StripeConfig';
 import paymentService from '@/services/payment-service';
 import { Button } from '@/components/ui/button';
 import { Loader2 } from 'lucide-react';
 
-// Initialize Stripe with public key
-const stripePromise = loadStripe(
-  process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY || ''
-);
-
 // The wrapper component that manages Stripe Elements
-export default function PaymentForm({ 
+export default function StripePaymentForm({ 
   bookingId, 
   amount, 
   currency = 'inr',
@@ -38,21 +32,31 @@ export default function PaymentForm({
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [stripeError, setStripeError] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchPaymentIntent = async () => {
       try {
         setLoading(true);
+        
+        // Create payment intent from backend
         const { clientSecret } = await paymentService.createPaymentIntent(
           bookingId, 
           amount, 
           'CREDIT_CARD'
         );
+        
         setClientSecret(clientSecret);
       } catch (err: any) {
-        console.error('Error creating payment intent:', err);
-        setError(err.message || 'Failed to initialize payment. Please try again.');
-        toast.error('Failed to initialize payment');
+        // Check if this is a Stripe configuration error
+        if (err.message?.includes('Stripe public key is missing')) {
+          setStripeError(true);
+          setError('Payment processing is not configured. Please contact support.');
+        } else {
+          console.error('Error creating payment intent:', err);
+          setError(err.message || 'Failed to initialize payment. Please try again.');
+          toast.error('Failed to initialize payment');
+        }
       } finally {
         setLoading(false);
       }
@@ -70,6 +74,11 @@ export default function PaymentForm({
         <p>Preparing payment...</p>
       </div>
     );
+  }
+
+  // Show Stripe configuration error
+  if (stripeError) {
+    return <StripeKeyWarning />;
   }
 
   if (error) {
@@ -93,7 +102,7 @@ export default function PaymentForm({
 
   return (
     <Elements 
-      stripe={stripePromise} 
+      stripe={getStripe()} 
       options={{
         clientSecret,
         appearance: {

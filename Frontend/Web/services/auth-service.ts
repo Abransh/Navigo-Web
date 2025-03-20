@@ -1,5 +1,5 @@
 // services/auth-service.ts
-import apiClient from './api-client';
+import apiClient, { basePath } from './api-client';
 import { User } from '@/contexts/auth-context';
 
 export interface LoginCredentials {
@@ -34,7 +34,7 @@ export interface ResetPasswordRequest {
  */
 const login = async (credentials: LoginCredentials): Promise<AuthResponse> => {
   try {
-    const response = await apiClient.post<AuthResponse>('/auth/login', credentials);
+    const response = await apiClient.post<AuthResponse>(`${basePath}/auth/login`, credentials);
     return response.data;
   } catch (error) {
     console.error('Login API error:', error);
@@ -47,7 +47,7 @@ const login = async (credentials: LoginCredentials): Promise<AuthResponse> => {
  */
 const register = async (data: RegisterData): Promise<AuthResponse> => {
   try {
-    const response = await apiClient.post<AuthResponse>('/auth/register', data);
+    const response = await apiClient.post<AuthResponse>(`${basePath}/auth/register`, data);
     return response.data;
   } catch (error) {
     console.error('Registration API error:', error);
@@ -55,17 +55,44 @@ const register = async (data: RegisterData): Promise<AuthResponse> => {
   }
 };
 
-/**
- * Get the current user profile
- */
+// Get the current user profile with fallback for different API structures
+
 const getCurrentUser = async (): Promise<User> => {
-  try {
-    const response = await apiClient.get<User>('/api/auth/me');
-    return response.data;
-  } catch (error) {
-    console.error('Get current user API error:', error);
-    throw error;
-  }
+ // List of possible endpoint paths to try
+ const endpointPaths = [
+   '/auth/me',          // Without /api, without basePath
+   '/api/auth/me',      // With /api, without basePath
+   `${basePath}/auth/me` // With dynamic basePath
+ ];
+ 
+ let lastError: any = null;
+ 
+ // Try each endpoint until one works
+ for (const path of endpointPaths) {
+   try {
+     console.log(`Attempting to fetch user profile from: ${path}`);
+     const response = await apiClient.get<User>(path);
+     
+     // If successful, return the data
+     console.log('Successfully fetched user profile');
+     return response.data;
+   } catch (error: any) {
+     console.warn(`Failed to get user profile from ${path}:`, error.message);
+     lastError = error;
+     
+     // If this is not a 404 error, it's a more serious issue (like auth failed)
+     // So we should stop trying and throw the error
+     if (error.response?.status !== 404) {
+       throw error;
+     }
+     
+     // Otherwise continue to the next endpoint
+   }
+ }
+ 
+ // If we get here, all endpoints failed with 404
+ console.error('All user profile endpoints failed');
+ throw lastError;
 };
 
 /**
@@ -95,7 +122,7 @@ const getToken = (): string | null => {
  */
 const requestPasswordReset = async (email: string): Promise<void> => {
   try {
-    await apiClient.post('/auth/forgot-password', { email });
+    await apiClient.post(`${basePath}/auth/forgot-password`, { email });
   } catch (error) {
     console.error('Request password reset API error:', error);
     throw error;
@@ -107,7 +134,7 @@ const requestPasswordReset = async (email: string): Promise<void> => {
  */
 const verifyResetToken = async (token: string): Promise<boolean> => {
   try {
-    const response = await apiClient.get(`/auth/reset-password/verify/${token}`);
+    const response = await apiClient.get(`${basePath}/auth/reset-password/verify/${token}`);
     return response.data.valid;
   } catch (error) {
     console.error('Verify reset token API error:', error);
@@ -120,7 +147,7 @@ const verifyResetToken = async (token: string): Promise<boolean> => {
  */
 const resetPassword = async (token: string, password: string): Promise<void> => {
   try {
-    await apiClient.post('/auth/reset-password', { token, password });
+    await apiClient.post(`${basePath}/auth/reset-password`, { token, password });
   } catch (error) {
     console.error('Reset password API error:', error);
     throw error;
@@ -135,7 +162,7 @@ const initiateOAuthLogin = (provider: string, redirectUrl?: string): void => {
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
   
   // Construct the full OAuth URL
-  const oauthUrl = `${apiUrl}/api/auth/${provider}`;
+  const oauthUrl = `${apiUrl}${basePath}/auth/${provider}`;
   
   // Navigate to the OAuth provider login page
   window.location.href = oauthUrl;

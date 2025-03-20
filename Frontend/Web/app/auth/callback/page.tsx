@@ -191,7 +191,6 @@
 // }
 
 
-// app/auth/callback/page.tsx
 "use client";
 
 import { useEffect, useState } from 'react';
@@ -199,24 +198,19 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/contexts/auth-context';
 import { toast } from 'react-hot-toast';
 
-// Helper function to parse JWT token
+// Helper function to parse JWT token - improved with better error handling
 const parseJwt = (token: string) => {
   try {
-    // Split the token and get the payload part (second part)
     const base64Url = token.split('.')[1];
-    // Replace non-base64 characters and decode
+    if (!base64Url) throw new Error('Invalid token format');
+    
     const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-    // Decode and parse JSON
-    const jsonPayload = decodeURIComponent(
-      atob(base64)
-        .split('')
-        .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
-        .join('')
-    );
+    const jsonPayload = atob(base64);
+    
     return JSON.parse(jsonPayload);
   } catch (e) {
     console.error('Error parsing JWT:', e);
-    return {};
+    return { sub: null, email: null };
   }
 };
 
@@ -230,24 +224,27 @@ export default function AuthCallbackPage() {
   const { isAuthenticated, processSocialAuthToken } = useAuth();
 
   useEffect(() => {
+    const ERROR_MESSAGES: Record<string, string> = {
+      'authentication_failed': 'Authentication failed. Please try again.',
+      'token_missing': 'Authentication token was not provided.',
+      'server_error': 'Server error occurred during authentication.',
+      'access_denied': 'Access was denied or cancelled by the user.',
+      'invalid_request': 'Invalid authentication request.',
+      'user_not_found': 'User account not found.',
+      'invalid_credentials': 'Invalid login credentials.'
+    };
+
     async function handleCallback() {
-      // Check for error from the backend
+      // Handle error parameter from OAuth provider
       if (errorParam) {
-        const errorMessages: Record<string, string> = {
-          'authentication_failed': 'Authentication failed. Please try again.',
-          'token_missing': 'Authentication token was not provided.',
-          'server_error': 'Server error occurred during authentication.',
-          'access_denied': 'Access was denied or cancelled by the user.',
-          'invalid_request': 'Invalid authentication request.',
-        };
-        
+        const errorMessage = ERROR_MESSAGES[errorParam] || `Authentication failed: ${errorParam}`;
         console.error(`Authentication error: ${errorParam}`);
-        setError(errorMessages[errorParam] || `Authentication failed: ${errorParam}`);
+        setError(errorMessage);
         setIsProcessing(false);
         return;
       }
       
-      // Check if token exists
+      // Validate token
       if (!token) {
         console.error('No token received in callback');
         setError('Authentication failed. No authentication token was received.');
@@ -258,62 +255,38 @@ export default function AuthCallbackPage() {
       try {
         console.log('Processing authentication with token');
         
-        // Store token in localStorage
-        localStorage.setItem('token', token);
-        
-        // FALLBACK: Parse the token directly
-        const tokenPayload = parseJwt(token);
-        console.log('Parsed token payload:', tokenPayload);
-        
-        // Create a basic user object from the token
-        const basicUser = {
-          id: tokenPayload.sub || tokenPayload.id,
-          email: tokenPayload.email || 'user@example.com',
-          firstName: tokenPayload.firstName || 'User',
-          lastName: tokenPayload.lastName || '',
-          role: tokenPayload.role || 'tourist'
-        };
-        
-        // Store the basic user info
-        localStorage.setItem('user', JSON.stringify(basicUser));
-        
-        // Try to process through auth context
-        try {
-          await processSocialAuthToken(token);
-        } catch (err) {
-          console.warn('Could not fetch full profile, using basic info from token:', err);
-          // We'll continue anyway since we have basic user info
-        }
+        // Process the token through auth context
+        // This will handle storing the token and fetching the user profile
+        await processSocialAuthToken(token);
         
         // Success message
         toast.success('Successfully signed in!');
         
-        // Redirect - check if there's a redirectTo in localStorage
+        // Get redirect path (if any)
         const redirectTo = localStorage.getItem('redirectTo') || '/';
-        localStorage.removeItem('redirectTo'); // Clear the redirect after use
-        
-        console.log('Redirecting to:', redirectTo);
+        localStorage.removeItem('redirectTo'); // Clean up
         
         // Short delay to allow toast to show
         setTimeout(() => {
           router.push(redirectTo);
         }, 1000);
       } catch (err: any) {
-        console.error('Error processing authentication callback:', err);
-        setError(err.message || 'Failed to process authentication. Please try again.');
+        console.error('Error processing authentication:', err);
+        
+        // Clear any partial auth data
         localStorage.removeItem('token');
         localStorage.removeItem('user');
-      } finally {
+        
+        setError(err.message || 'Failed to complete authentication. Please try again.');
         setIsProcessing(false);
       }
     }
   
-    // Only process if not already authenticated
+    // Only process the callback if not already authenticated
     if (!isAuthenticated) {
       handleCallback();
     } else {
-      // Already authenticated, redirect to home
-      console.log('Already authenticated, redirecting to home');
+      // Already authenticated, redirect home
       router.push('/');
     }
   }, [token, router, isAuthenticated, errorParam, processSocialAuthToken]);
