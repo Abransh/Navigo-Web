@@ -46,7 +46,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 exports.__esModule = true;
 exports.AuthController = void 0;
-// Backend/src/auth/controllers/auth.controller.ts
+// src/auth/controllers/auth.controller.ts
 var common_1 = require("@nestjs/common");
 var swagger_1 = require("@nestjs/swagger");
 var jwt_auth_guard_1 = require("../guards/jwt-auth.guard");
@@ -132,8 +132,8 @@ var AuthController = /** @class */ (function () {
         });
     };
     /**
-  * Get Current User endpoint - Returns the authenticated user's profile
-  */
+     * Get Current User endpoint - Returns the authenticated user's profile
+     */
     AuthController.prototype.getCurrentUser = function (req) {
         return __awaiter(this, void 0, void 0, function () {
             var userId;

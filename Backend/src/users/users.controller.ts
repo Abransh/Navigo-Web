@@ -7,6 +7,7 @@ import {
   Body, 
   UseGuards, 
   Req,
+  Logger,
   UploadedFile,
   UseInterceptors,
   BadRequestException
@@ -31,17 +32,40 @@ import { ChangePasswordDto } from './dto/change-password.dto';
 @ApiTags('users')
 @Controller('users')
 export class UsersController {
+  private readonly logger = new Logger(UsersController.name);
+  
   constructor(private readonly usersService: UsersService) {}
 
-  @Get('profile')
+  @Get('me')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Get current user profile' })
-  @ApiResponse({ status: 200, description: 'Profile retrieved successfully' })
+  @ApiOperation({ summary: 'Get current user profile (alternative endpoint)' })
+  @ApiResponse({ status: 200, description: 'Returns user profile' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   async getProfile(@Req() req) {
-    return this.usersService.findById(req.user.userId);
+    this.logger.debug('getProfile called with user:', req.user);
+    
+    // The JWT strategy sets 'id' in the user object
+    const userId = req.user.id || req.user.sub;
+    
+    if (!userId) {
+      this.logger.error('User ID not found in request', req.user);
+      throw new Error('User ID not found in request');
+    }
+    
+    this.logger.debug(`Finding user with ID: ${userId}`);
+    return this.usersService.findById(userId);
   }
+
+  // @Get('profile')
+  // @UseGuards(JwtAuthGuard)
+  // @ApiBearerAuth()
+  // @ApiOperation({ summary: 'Get current user profile' })
+  // @ApiResponse({ status: 200, description: 'Profile retrieved successfully' })
+  // @ApiResponse({ status: 401, description: 'Unauthorized' })
+  // async getProfile(@Req() req) {
+  //   return this.usersService.findById(req.user.userId);
+  // }
 
   @Patch('profile')
   @UseGuards(JwtAuthGuard)

@@ -57,14 +57,33 @@ var swagger_1 = require("@nestjs/swagger");
 var UsersController = /** @class */ (function () {
     function UsersController(usersService) {
         this.usersService = usersService;
+        this.logger = new common_1.Logger(UsersController_1.name);
     }
+    UsersController_1 = UsersController;
     UsersController.prototype.getProfile = function (req) {
         return __awaiter(this, void 0, void 0, function () {
+            var userId;
             return __generator(this, function (_a) {
-                return [2 /*return*/, this.usersService.findById(req.user.userId)];
+                this.logger.debug('getProfile called with user:', req.user);
+                userId = req.user.id || req.user.sub;
+                if (!userId) {
+                    this.logger.error('User ID not found in request', req.user);
+                    throw new Error('User ID not found in request');
+                }
+                this.logger.debug("Finding user with ID: " + userId);
+                return [2 /*return*/, this.usersService.findById(userId)];
             });
         });
     };
+    // @Get('profile')
+    // @UseGuards(JwtAuthGuard)
+    // @ApiBearerAuth()
+    // @ApiOperation({ summary: 'Get current user profile' })
+    // @ApiResponse({ status: 200, description: 'Profile retrieved successfully' })
+    // @ApiResponse({ status: 401, description: 'Unauthorized' })
+    // async getProfile(@Req() req) {
+    //   return this.usersService.findById(req.user.userId);
+    // }
     UsersController.prototype.updateProfile = function (req, updateUserDto) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
@@ -97,12 +116,13 @@ var UsersController = /** @class */ (function () {
             });
         });
     };
+    var UsersController_1;
     __decorate([
-        common_1.Get('profile'),
+        common_1.Get('me'),
         common_1.UseGuards(jwt_auth_guard_1.JwtAuthGuard),
         swagger_1.ApiBearerAuth(),
-        swagger_1.ApiOperation({ summary: 'Get current user profile' }),
-        swagger_1.ApiResponse({ status: 200, description: 'Profile retrieved successfully' }),
+        swagger_1.ApiOperation({ summary: 'Get current user profile (alternative endpoint)' }),
+        swagger_1.ApiResponse({ status: 200, description: 'Returns user profile' }),
         swagger_1.ApiResponse({ status: 401, description: 'Unauthorized' }),
         __param(0, common_1.Req())
     ], UsersController.prototype, "getProfile");
@@ -169,7 +189,7 @@ var UsersController = /** @class */ (function () {
         swagger_1.ApiResponse({ status: 401, description: 'Unauthorized' }),
         __param(0, common_1.Req()), __param(1, common_1.Body())
     ], UsersController.prototype, "changePassword");
-    UsersController = __decorate([
+    UsersController = UsersController_1 = __decorate([
         swagger_1.ApiTags('users'),
         common_1.Controller('users')
     ], UsersController);
