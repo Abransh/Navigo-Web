@@ -55,44 +55,49 @@ const register = async (data: RegisterData): Promise<AuthResponse> => {
   }
 };
 
-// Get the current user profile with fallback for different API structures
-
+/**
+ * Get the current user profile 
+ * Tries multiple endpoints to handle different API structures
+ */
 const getCurrentUser = async (): Promise<User> => {
- // List of possible endpoint paths to try
- const endpointPaths = [
-   '/auth/me',          // Without /api, without basePath
-   '/api/auth/me',      // With /api, without basePath
-   `${basePath}/auth/me` // With dynamic basePath
- ];
- 
- let lastError: any = null;
- 
- // Try each endpoint until one works
- for (const path of endpointPaths) {
-   try {
-     console.log(`Attempting to fetch user profile from: ${path}`);
-     const response = await apiClient.get<User>(path);
-     
-     // If successful, return the data
-     console.log('Successfully fetched user profile');
-     return response.data;
-   } catch (error: any) {
-     console.warn(`Failed to get user profile from ${path}:`, error.message);
-     lastError = error;
-     
-     // If this is not a 404 error, it's a more serious issue (like auth failed)
-     // So we should stop trying and throw the error
-     if (error.response?.status !== 404) {
-       throw error;
-     }
-     
-     // Otherwise continue to the next endpoint
-   }
- }
- 
- // If we get here, all endpoints failed with 404
- console.error('All user profile endpoints failed');
- throw lastError;
+  // List of possible endpoint paths to try in order of preference
+  const endpointPaths = [
+    `${basePath}/auth/current-user`,
+    `${basePath}/auth/me`,
+    `${basePath}/users/me`, 
+    `/auth/current-user`,
+    `/auth/me`,
+    `/users/me`
+  ];
+  
+  let lastError: any = null;
+  
+  // Try each endpoint until one works
+  for (const path of endpointPaths) {
+    try {
+      console.log(`Attempting to fetch user profile from: ${path}`);
+      const response = await apiClient.get<User>(path);
+      
+      // If successful, return the data
+      console.log('Successfully fetched user profile from:', path);
+      return response.data;
+    } catch (error: any) {
+      console.warn(`Failed to get user profile from ${path}:`, error.message);
+      lastError = error;
+      
+      // If this is not a 404 error, it might be an auth failure (401/403)
+      // We can continue trying other endpoints in case the API structure varies
+      if (error.response?.status !== 404 && error.response?.status !== 401) {
+        throw error;
+      }
+      
+      // Continue to try the next endpoint
+    }
+  }
+  
+  // If we get here, all endpoints failed
+  console.error('All user profile endpoints failed');
+  throw lastError;
 };
 
 /**
@@ -163,6 +168,13 @@ const initiateOAuthLogin = (provider: string, redirectUrl?: string): void => {
   
   // Construct the full OAuth URL
   const oauthUrl = `${apiUrl}${basePath}/auth/${provider}`;
+  
+  // Store the redirect URL in localStorage if provided
+  if (redirectUrl) {
+    localStorage.setItem('redirectTo', redirectUrl);
+  }
+  
+  console.log(`Initiating OAuth login to: ${oauthUrl}`);
   
   // Navigate to the OAuth provider login page
   window.location.href = oauthUrl;

@@ -1,16 +1,17 @@
 // services/api-client.ts
 import axios from 'axios';
-import { env } from '@/lib/env';
 
 // Get API URL from environment
-const API_URL = env.apiUrl;
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
-console.log('API URL:', API_URL); // For debugging during development
+// Determine the base path to use for API requests
+// The NestJS backend appears to be using a global prefix 'api'
+export const basePath = '/api';
 
-// Check if the API URL already includes /api
-const hasApiPrefix = API_URL.endsWith('/api');
-// Base path to be used in all service requests
-export const basePath = hasApiPrefix ? '' : '/api';
+console.log('API Client Configuration:', { 
+  baseURL: API_URL,
+  basePath
+});
 
 // Create the axios instance
 const apiClient = axios.create({
@@ -18,6 +19,8 @@ const apiClient = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
+  // Set a reasonable timeout
+  timeout: 15000,
 });
 
 // Add request interceptor for authentication
@@ -53,10 +56,10 @@ apiClient.interceptors.response.use(
     return response;
   },
   async (error) => {
-    // Log detailed error information for debugging
+    // Handle different error scenarios
     if (error.response) {
       // The request was made and the server responded with a status code
-      // that falls out of the range of 2xx
+      // outside the 2xx range
       const errorInfo = {
         status: error.response.status,
         data: error.response.data,
@@ -65,42 +68,44 @@ apiClient.interceptors.response.use(
         method: error.config?.method?.toUpperCase()
       };
       
-      console.error(`❌ API Error Response (${errorInfo.status}):`, 
-        JSON.stringify(errorInfo, null, 2));
+      // More concise error logging
+      console.error(`API Error (${errorInfo.status}): ${errorInfo.url}`, 
+        error.response.data?.message || error.response.statusText);
       
-      // Handle 401 Unauthorized errors
+      // Handle 401 Unauthorized errors - but not for auth endpoints
       if (error.response.status === 401) {
-        console.log('Unauthorized access, logging out...');
-        
-        // Don't log out if trying to login/register
         const authPaths = ['/auth/login', '/auth/register', '/api/auth/login', '/api/auth/register'];
         const isAuthPath = authPaths.some(path => error.config?.url?.includes(path));
         
         if (!isAuthPath) {
+          console.log('Unauthorized access, clearing auth data');
           localStorage.removeItem('token');
           localStorage.removeItem('user');
           
-          // Redirect to login if unauthorized
+          // Only redirect to login in browser environment
           if (typeof window !== 'undefined') {
-            window.location.href = '/login';
+            // Don't redirect if already on login page
+            if (!window.location.pathname.includes('/login')) {
+              window.location.href = `/login?redirectTo=${encodeURIComponent(window.location.pathname)}`;
+            }
           }
         }
       }
-      
-      // Handle 404 Not Found errors
-      if (error.response.status === 404) {
-        console.warn(`Route not found: ${error.config?.method} ${error.config?.url}`);
-      }
     } else if (error.request) {
       // The request was made but no response was received
-      console.error('API Error - No Response:', {
+      console.error('API Network Error:', {
         url: error.config?.url,
         method: error.config?.method?.toUpperCase(),
         error: error.message
       });
+      
+      // Check if this might be a CORS or network connectivity issue
+      if (error.message.includes('Network Error')) {
+        console.warn('This might be a CORS issue or the API server is unreachable.');
+      }
     } else {
       // Something happened in setting up the request that triggered an Error
-      console.error('API Error Setup:', error.message);
+      console.error('API Request Setup Error:', error.message);
     }
     
     return Promise.reject(error);

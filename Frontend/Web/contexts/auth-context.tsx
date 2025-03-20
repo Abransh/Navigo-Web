@@ -26,6 +26,7 @@ interface AuthContextType {
   refreshUserProfile: () => Promise<void>;
 }
 
+// Helper function to parse JWT token
 const parseJwt = (token: string) => {
   try {
     const base64Url = token.split('.')[1];
@@ -37,7 +38,22 @@ const parseJwt = (token: string) => {
     return JSON.parse(jsonPayload);
   } catch (e) {
     console.error('Error parsing JWT:', e);
-    return { sub: null, email: null };
+    return { sub: null, email: null, exp: 0 };
+  }
+};
+
+// Check if a token has expired
+const isTokenExpired = (token: string): boolean => {
+  try {
+    const { exp } = parseJwt(token);
+    // Check if expiration time exists and convert to milliseconds
+    if (!exp) return true;
+    
+    // JWT exp is in seconds, convert to milliseconds and compare
+    return Date.now() >= exp * 1000;
+  } catch (e) {
+    console.error('Error checking token expiration:', e);
+    return true; // Assume expired on error
   }
 };
 
@@ -48,15 +64,28 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [loading, setLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  // Initialize auth state from localStorage
+  // Initialize auth state from localStorage on first load
   useEffect(() => {
-    // Check if user is logged in on initial load
-    const checkAuth = async () => {
-      const token = localStorage.getItem('token');
-      const userData = localStorage.getItem('user');
+    const initializeAuth = async () => {
+      setLoading(true);
       
-      if (token && userData) {
-        try {
+      try {
+        const token = localStorage.getItem('token');
+        const userData = localStorage.getItem('user');
+        
+        // Check if we have both token and user data
+        if (token && userData) {
+          // Check if token is expired
+          if (isTokenExpired(token)) {
+            console.log('Token has expired, clearing auth data');
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            setIsAuthenticated(false);
+            setUser(null);
+            setLoading(false);
+            return;
+          }
+          
           // Set the authorization header for all future requests
           apiClient.defaults.headers.common['Authorization'] = `Bearer ${token}`;
           
@@ -66,21 +95,30 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           setIsAuthenticated(true);
           
           // Optionally verify token with a backend call
-          await refreshUserProfile();
-        } catch (error) {
-          console.error('Failed to restore authentication state:', error);
-          // Clear invalid auth data
-          localStorage.removeItem('token');
-          localStorage.removeItem('user');
+          try {
+            await refreshUserProfile();
+          } catch (error) {
+            console.warn('Failed to refresh user profile, but continuing with stored data:', error);
+            // Don't invalidate auth if the profile refresh fails
+            // This allows the app to work offline or when the API is temporarily unavailable
+          }
+        } else {
           setIsAuthenticated(false);
           setUser(null);
         }
+      } catch (error) {
+        console.error('Failed to restore authentication state:', error);
+        // Clear invalid auth data
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        setIsAuthenticated(false);
+        setUser(null);
+      } finally {
+        setLoading(false);
       }
-      
-      setLoading(false);
     };
 
-    checkAuth();
+    initializeAuth();
   }, []);
 
   const login = async (email: string, password: string): Promise<AuthResponse> => {
@@ -102,7 +140,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       // Set token in apiClient for future requests
       apiClient.defaults.headers.common['Authorization'] = `Bearer ${response.access_token}`;
       
-      console.log('Login successful:', response);
+      console.log('Login successful');
       return response;
     } catch (error) {
       console.error('Login failed:', error);
@@ -111,8 +149,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       setLoading(false);
     }
   };
-
-  
 
   const register = async (data: RegisterData): Promise<AuthResponse> => {
     setLoading(true);
@@ -138,7 +174,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       // Set token in apiClient for future requests
       apiClient.defaults.headers.common['Authorization'] = `Bearer ${response.access_token}`;
       
-      console.log('Registration successful:', response);
+      console.log('Registration successful');
       return response;
     } catch (error) {
       console.error('Registration failed:', error);
@@ -148,69 +184,69 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   };
 
-  // contexts/auth-context.tsx - Improved processSocialAuthToken method
-const processSocialAuthToken = async (token: string): Promise<void> => {
-  try {
-    setLoading(true);
-    
-    // Store token in localStorage
-    localStorage.setItem('token', token);
-    
-    // Set token in API client
-    apiClient.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-    
-    // Try to get the user profile from the API
+  const processSocialAuthToken = async (token: string): Promise<void> => {
     try {
-      const userData = await authService.getCurrentUser();
+      setLoading(true);
       
-      // Update state with profile data
-      setUser(userData);
-      setIsAuthenticated(true);
+      // Store token in localStorage
+      localStorage.setItem('token', token);
       
-      // Store in localStorage
-      localStorage.setItem('user', JSON.stringify(userData));
+      // Set token in API client
+      apiClient.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       
-      console.log('User profile loaded after social login');
-    } catch (error) {
-      console.error('Failed to get user profile after social login:', error);
-      
-      // If we can't get the profile, attempt to extract basic info from the token
+      // Extract basic info from token for fallback
       const tokenPayload = parseJwt(token);
       
-      if (!tokenPayload || !tokenPayload.sub) {
-        throw new Error('Invalid authentication token');
+      try {
+        // Try to get the user profile from the API
+        const userData = await authService.getCurrentUser();
+        
+        // Update state with profile data
+        setUser(userData);
+        setIsAuthenticated(true);
+        
+        // Store in localStorage
+        localStorage.setItem('user', JSON.stringify(userData));
+        
+        console.log('User profile loaded after social login');
+      } catch (error) {
+        console.error('Failed to get user profile after social login:', error);
+        
+        // If API call fails, use token data as fallback
+        if (tokenPayload && (tokenPayload.sub || tokenPayload.id)) {
+          // Create basic user object from token data
+          const basicUser: User = {
+            id: tokenPayload.sub || tokenPayload.id,
+            email: tokenPayload.email || `user_${(tokenPayload.sub || '').substring(0, 8)}@example.com`,
+            firstName: tokenPayload.firstName || tokenPayload.given_name || 'User',
+            lastName: tokenPayload.lastName || tokenPayload.family_name || '',
+            role: tokenPayload.role || 'tourist'
+          };
+          
+          // Update state with basic data
+          setUser(basicUser);
+          setIsAuthenticated(true);
+          
+          // Store in localStorage
+          localStorage.setItem('user', JSON.stringify(basicUser));
+          
+          // Warn user about limited profile info
+          toast('Signed in with limited profile information. Some features may be restricted.');
+        } else {
+          throw new Error('Invalid authentication token');
+        }
       }
+    } catch (error) {
+      console.error('Failed to process social auth token:', error);
       
-      // Create basic user object from token data
-      const basicUser = {
-        id: tokenPayload.sub || tokenPayload.id,
-        email: tokenPayload.email || `user_${tokenPayload.sub.substring(0, 8)}@navigo.com`,
-        firstName: tokenPayload.firstName || 'Navigo',
-        lastName: tokenPayload.lastName || 'User',
-        role: tokenPayload.role || 'tourist'
-      };
+      // Clean up any partial auth data
+      logout();
       
-      // Update state with basic data
-      setUser(basicUser);
-      setIsAuthenticated(true);
-      
-      // Store in localStorage
-      localStorage.setItem('user', JSON.stringify(basicUser));
-      
-      // Warn user about limited profile info
-      toast('Signed in with limited profile information. Some features may be restricted.');
+      throw error;
+    } finally {
+      setLoading(false);
     }
-  } catch (error) {
-    console.error('Failed to process social auth token:', error);
-    
-    // Clean up any partial auth data
-    logout();
-    
-    throw error;
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   const logout = () => {
     // Clear auth data from localStorage
@@ -230,10 +266,22 @@ const processSocialAuthToken = async (token: string): Promise<void> => {
   const refreshUserProfile = async (): Promise<void> => {
     try {
       const userData = await authService.getCurrentUser();
-      setUser(userData);
-      localStorage.setItem('user', JSON.stringify(userData));
+      
+      if (userData) {
+        setUser(userData);
+        localStorage.setItem('user', JSON.stringify(userData));
+      }
     } catch (error) {
       console.error('Failed to refresh user profile:', error);
+      
+      // If this is an authentication error, log the user out
+      if (error.response?.status === 401) {
+        logout();
+        throw error; // Re-throw to be handled by the caller
+      }
+      
+      // For other errors, we can continue with the existing user data
+      // This makes the app more resilient to temporary API issues
     }
   };
 

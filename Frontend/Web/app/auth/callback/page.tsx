@@ -197,22 +197,8 @@ import { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/contexts/auth-context';
 import { toast } from 'react-hot-toast';
-
-// Helper function to parse JWT token - improved with better error handling
-const parseJwt = (token: string) => {
-  try {
-    const base64Url = token.split('.')[1];
-    if (!base64Url) throw new Error('Invalid token format');
-    
-    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-    const jsonPayload = atob(base64);
-    
-    return JSON.parse(jsonPayload);
-  } catch (e) {
-    console.error('Error parsing JWT:', e);
-    return { sub: null, email: null };
-  }
-};
+import { Loader2, AlertCircle, CheckCircle } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 export default function AuthCallbackPage() {
   const [isProcessing, setIsProcessing] = useState(true);
@@ -231,32 +217,32 @@ export default function AuthCallbackPage() {
       'access_denied': 'Access was denied or cancelled by the user.',
       'invalid_request': 'Invalid authentication request.',
       'user_not_found': 'User account not found.',
-      'invalid_credentials': 'Invalid login credentials.'
+      'invalid_credentials': 'Invalid login credentials.',
+      'invalid_token': 'The provided token is invalid or has expired.'
     };
 
     async function handleCallback() {
-      // Handle error parameter from OAuth provider
-      if (errorParam) {
-        const errorMessage = ERROR_MESSAGES[errorParam] || `Authentication failed: ${errorParam}`;
-        console.error(`Authentication error: ${errorParam}`);
-        setError(errorMessage);
-        setIsProcessing(false);
-        return;
-      }
-      
-      // Validate token
-      if (!token) {
-        console.error('No token received in callback');
-        setError('Authentication failed. No authentication token was received.');
-        setIsProcessing(false);
-        return;
-      }
-  
       try {
+        // Handle error parameter from OAuth provider
+        if (errorParam) {
+          const errorMessage = ERROR_MESSAGES[errorParam] || `Authentication failed: ${errorParam}`;
+          console.error(`Authentication error: ${errorParam}`);
+          setError(errorMessage);
+          setIsProcessing(false);
+          return;
+        }
+        
+        // Validate token
+        if (!token) {
+          console.error('No token received in callback');
+          setError('Authentication failed. No authentication token was received.');
+          setIsProcessing(false);
+          return;
+        }
+      
         console.log('Processing authentication with token');
         
         // Process the token through auth context
-        // This will handle storing the token and fetching the user profile
         await processSocialAuthToken(token);
         
         // Success message
@@ -286,7 +272,7 @@ export default function AuthCallbackPage() {
     if (!isAuthenticated) {
       handleCallback();
     } else {
-      // Already authenticated, redirect home
+      console.log('Already authenticated, redirecting to home');
       router.push('/');
     }
   }, [token, router, isAuthenticated, errorParam, processSocialAuthToken]);
@@ -301,32 +287,36 @@ export default function AuthCallbackPage() {
           
           {isProcessing ? (
             <div className="flex flex-col items-center">
-              <div className="w-16 h-16 border-4 border-[#F3A522] border-t-transparent rounded-full animate-spin"></div>
-              <p className="mt-4 text-gray-600">
+              <Loader2 className="h-16 w-16 text-[#F3A522] animate-spin mb-4" />
+              <p className="mt-2 text-gray-600">
                 Please wait while we complete your authentication...
               </p>
             </div>
           ) : error ? (
             <div className="text-center">
               <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-red-100 mb-4">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 text-red-600">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
-                </svg>
+                <AlertCircle className="h-8 w-8 text-red-600" />
               </div>
               <p className="text-red-600 mb-4">{error}</p>
-              <button
-                onClick={() => router.push('/login')}
-                className="px-4 py-2 bg-[#F3A522] text-white rounded-md hover:bg-[#e09415] transition-colors"
-              >
-                Back to Login
-              </button>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Button
+                  onClick={() => router.push('/login')}
+                  className="bg-[#F3A522] hover:bg-[#e09415]"
+                >
+                  Back to Login
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => window.location.reload()}
+                >
+                  Try Again
+                </Button>
+              </div>
             </div>
           ) : (
             <div className="text-center">
               <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-green-100 mb-4">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 text-green-600">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
+                <CheckCircle className="h-8 w-8 text-green-600" />
               </div>
               <p className="text-green-600 mb-4">Authentication successful! Redirecting you...</p>
             </div>
