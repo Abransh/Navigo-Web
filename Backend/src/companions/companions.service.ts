@@ -130,4 +130,87 @@ export class CompanionsService {
     
     return this.companionsRepository.save(companion);
   }
+
+  // Add these methods to the existing CompanionsService class in src/companions/companions.service.ts
+
+/**
+ * Get total count of companions
+ */
+async getTotalCompanionCount(): Promise<number> {
+  return this.companionsRepository.count();
+}
+
+/**
+ * Get count of companions pending verification
+ */
+async getPendingVerificationsCount(): Promise<number> {
+  return this.companionsRepository.count({
+    where: { isVerified: false }
+  });
+}
+
+/**
+ * Get count of pending companion applications
+ */
+async getPendingApplicationsCount(): Promise<number> {
+  // If there's a separate table for applications, use that repository
+  // For this example, we're treating unverified companions as pending applications
+  return this.getPendingVerificationsCount();
+}
+
+/**
+ * Get paginated list of pending companion applications
+ */
+async getPendingApplications(page = 1, limit = 10) {
+  const skip = (page - 1) * limit;
+  
+  const [applications, total] = await this.companionsRepository.findAndCount({
+    where: { isVerified: false },
+    relations: ['user'],
+    skip,
+    take: limit,
+    order: { createdAt: 'DESC' },
+  });
+  
+  return {
+    applications,
+    total,
+    page,
+    limit,
+    totalPages: Math.ceil(total / limit),
+  };
+}
+
+/**
+ * Process a companion application (approve or reject)
+ */
+async processApplication(applicationId: string, status: 'approved' | 'rejected'): Promise<any> {
+  const companion = await this.findOne(applicationId);
+  
+  if (!companion) {
+    throw new Error('Companion application not found');
+  }
+  
+  if (status === 'approved') {
+    companion.isVerified = true;
+    await this.companionsRepository.save(companion);
+    
+    // Could also send a notification to the user here
+    
+    return { status: 'success', message: 'Application approved', companion };
+  } else {
+    // For rejected applications, you can either:
+    // 1. Delete the companion record
+    //await this.companionsRepository.remove(companion);
+    
+    // 2. Or mark it as rejected (you'd need to add a 'status' field to the Companion entity)
+    // companion.status = 'rejected';
+    // await this.companionsRepository.save(companion);
+    
+    // For this example, we'll just delete it
+    await this.companionsRepository.remove(companion);
+    
+    return { status: 'success', message: 'Application rejected' };
+  }
+}
 }

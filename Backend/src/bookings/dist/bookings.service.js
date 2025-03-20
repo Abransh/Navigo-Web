@@ -385,6 +385,56 @@ var BookingsService = /** @class */ (function () {
             });
         });
     };
+    // Add these methods to the existing BookingsService class in src/bookings/bookings.service.ts
+    /**
+     * Get total count of bookings
+     */
+    BookingsService.prototype.getTotalBookingCount = function () {
+        return __awaiter(this, void 0, Promise, function () {
+            return __generator(this, function (_a) {
+                return [2 /*return*/, this.bookingsRepository.count()];
+            });
+        });
+    };
+    /**
+     * Get paginated bookings with optional filtering
+     */
+    BookingsService.prototype.getPaginatedBookings = function (page, limit, filter) {
+        if (page === void 0) { page = 1; }
+        if (limit === void 0) { limit = 10; }
+        if (filter === void 0) { filter = ''; }
+        return __awaiter(this, void 0, void 0, function () {
+            var skip, queryBuilder, _a, bookings, total;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        skip = (page - 1) * limit;
+                        queryBuilder = this.bookingsRepository
+                            .createQueryBuilder('booking')
+                            .leftJoinAndSelect('booking.tourist', 'tourist')
+                            .leftJoinAndSelect('booking.companion', 'companion')
+                            .leftJoinAndSelect('companion.user', 'companionUser');
+                        if (filter) {
+                            queryBuilder.where('booking.id LIKE :filter OR tourist.firstName LIKE :filter OR tourist.lastName LIKE :filter OR companionUser.firstName LIKE :filter OR companionUser.lastName LIKE :filter', { filter: "%" + filter + "%" });
+                        }
+                        return [4 /*yield*/, queryBuilder
+                                .skip(skip)
+                                .take(limit)
+                                .orderBy('booking.createdAt', 'DESC')
+                                .getManyAndCount()];
+                    case 1:
+                        _a = _b.sent(), bookings = _a[0], total = _a[1];
+                        return [2 /*return*/, {
+                                bookings: bookings,
+                                total: total,
+                                page: page,
+                                limit: limit,
+                                totalPages: Math.ceil(total / limit)
+                            }];
+                }
+            });
+        });
+    };
     BookingsService = __decorate([
         common_1.Injectable(),
         __param(0, typeorm_1.InjectRepository(booking_entity_1.Booking))

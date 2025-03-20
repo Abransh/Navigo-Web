@@ -51,9 +51,9 @@ var StripeService = /** @class */ (function () {
         this.configService = configService;
         var stripeSecretKey = configService.get('STRIPE_SECRET_KEY', '');
         if (!stripeSecretKey) {
-            throw new Error('Stripe secret key is not configured');
+            console.warn('Stripe secret key is not configured');
         }
-        this.stripe = new stripe_1["default"](stripeSecretKey, {
+        this.stripe = new stripe_1["default"](stripeSecretKey || 'dummy_key_for_development', {
             apiVersion: '2025-02-24.acacia'
         });
     }

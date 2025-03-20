@@ -362,4 +362,46 @@ async cancel(id: string, userId: string, reason?: string): Promise<Booking> {
   
   return cancelledBooking;
 }
+// Add these methods to the existing BookingsService class in src/bookings/bookings.service.ts
+
+/**
+ * Get total count of bookings
+ */
+async getTotalBookingCount(): Promise<number> {
+  return this.bookingsRepository.count();
+}
+
+/**
+ * Get paginated bookings with optional filtering
+ */
+async getPaginatedBookings(page = 1, limit = 10, filter = '') {
+  const skip = (page - 1) * limit;
+  
+  const queryBuilder = this.bookingsRepository
+    .createQueryBuilder('booking')
+    .leftJoinAndSelect('booking.tourist', 'tourist')
+    .leftJoinAndSelect('booking.companion', 'companion')
+    .leftJoinAndSelect('companion.user', 'companionUser');
+  
+  if (filter) {
+    queryBuilder.where(
+      'booking.id LIKE :filter OR tourist.firstName LIKE :filter OR tourist.lastName LIKE :filter OR companionUser.firstName LIKE :filter OR companionUser.lastName LIKE :filter',
+      { filter: `%${filter}%` }
+    );
+  }
+  
+  const [bookings, total] = await queryBuilder
+    .skip(skip)
+    .take(limit)
+    .orderBy('booking.createdAt', 'DESC')
+    .getManyAndCount();
+  
+  return {
+    bookings,
+    total,
+    page,
+    limit,
+    totalPages: Math.ceil(total / limit),
+  };
+}
 }

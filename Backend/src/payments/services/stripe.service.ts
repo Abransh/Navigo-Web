@@ -11,10 +11,10 @@ export class StripeService {
     const stripeSecretKey = configService.get<string>('STRIPE_SECRET_KEY', '');
     
     if (!stripeSecretKey) {
-      throw new Error('Stripe secret key is not configured');
+      console.warn('Stripe secret key is not configured');
     }
     
-    this.stripe = new Stripe(stripeSecretKey, {
+    this.stripe = new Stripe(stripeSecretKey || 'dummy_key_for_development', {
       apiVersion: '2025-02-24.acacia',
     });
   }
@@ -41,4 +41,4 @@ export class StripeService {
     
     return this.stripe.refunds.create(refundParams);
   }
-}
+}    

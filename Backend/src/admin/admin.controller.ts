@@ -24,7 +24,7 @@ import { Roles } from '../auth/decorators/roles.decorator';
 import { UsersService } from '../users/users.service';
 import { BookingsService } from '../bookings/bookings.service';
 import { CompanionsService } from '../companions/companions.service';
-import { PaymentsService } from '../payments/payments.service';
+import { PaymentsService } from '../payments/payments.services';
 
 // DTOs
 import { UpdateUserDto } from '../users/dto/update-user.dto';

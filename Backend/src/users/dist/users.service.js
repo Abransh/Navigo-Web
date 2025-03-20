@@ -241,6 +241,56 @@ var UsersService = /** @class */ (function () {
             });
         });
     };
+    // Add these methods to the existing UsersService class in src/users/users.service.ts
+    /**
+     * Get total count of users
+     */
+    UsersService.prototype.getTotalUserCount = function () {
+        return __awaiter(this, void 0, Promise, function () {
+            return __generator(this, function (_a) {
+                return [2 /*return*/, this.usersRepository.count()];
+            });
+        });
+    };
+    /**
+     * Get paginated users with optional filtering
+     */
+    UsersService.prototype.getPaginatedUsers = function (page, limit, filter) {
+        if (page === void 0) { page = 1; }
+        if (limit === void 0) { limit = 10; }
+        if (filter === void 0) { filter = ''; }
+        return __awaiter(this, void 0, void 0, function () {
+            var skip, queryBuilder, _a, users, total, usersWithoutPasswords;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        skip = (page - 1) * limit;
+                        queryBuilder = this.usersRepository.createQueryBuilder('user');
+                        if (filter) {
+                            queryBuilder.where('user.firstName LIKE :filter OR user.lastName LIKE :filter OR user.email LIKE :filter', { filter: "%" + filter + "%" });
+                        }
+                        return [4 /*yield*/, queryBuilder
+                                .skip(skip)
+                                .take(limit)
+                                .orderBy('user.createdAt', 'DESC')
+                                .getManyAndCount()];
+                    case 1:
+                        _a = _b.sent(), users = _a[0], total = _a[1];
+                        usersWithoutPasswords = users.map(function (user) {
+                            var password = user.password, userWithoutPassword = __rest(user, ["password"]);
+                            return userWithoutPassword;
+                        });
+                        return [2 /*return*/, {
+                                users: usersWithoutPasswords,
+                                total: total,
+                                page: page,
+                                limit: limit,
+                                totalPages: Math.ceil(total / limit)
+                            }];
+                }
+            });
+        });
+    };
     UsersService = __decorate([
         common_1.Injectable(),
         __param(0, typeorm_1.InjectRepository(user_entity_1.User))

@@ -183,6 +183,117 @@ var CompanionsService = /** @class */ (function () {
             });
         });
     };
+    // Add these methods to the existing CompanionsService class in src/companions/companions.service.ts
+    /**
+     * Get total count of companions
+     */
+    CompanionsService.prototype.getTotalCompanionCount = function () {
+        return __awaiter(this, void 0, Promise, function () {
+            return __generator(this, function (_a) {
+                return [2 /*return*/, this.companionsRepository.count()];
+            });
+        });
+    };
+    /**
+     * Get count of companions pending verification
+     */
+    CompanionsService.prototype.getPendingVerificationsCount = function () {
+        return __awaiter(this, void 0, Promise, function () {
+            return __generator(this, function (_a) {
+                return [2 /*return*/, this.companionsRepository.count({
+                        where: { isVerified: false }
+                    })];
+            });
+        });
+    };
+    /**
+     * Get count of pending companion applications
+     */
+    CompanionsService.prototype.getPendingApplicationsCount = function () {
+        return __awaiter(this, void 0, Promise, function () {
+            return __generator(this, function (_a) {
+                // If there's a separate table for applications, use that repository
+                // For this example, we're treating unverified companions as pending applications
+                return [2 /*return*/, this.getPendingVerificationsCount()];
+            });
+        });
+    };
+    /**
+     * Get paginated list of pending companion applications
+     */
+    CompanionsService.prototype.getPendingApplications = function (page, limit) {
+        if (page === void 0) { page = 1; }
+        if (limit === void 0) { limit = 10; }
+        return __awaiter(this, void 0, void 0, function () {
+            var skip, _a, applications, total;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        skip = (page - 1) * limit;
+                        return [4 /*yield*/, this.companionsRepository.findAndCount({
+                                where: { isVerified: false },
+                                relations: ['user'],
+                                skip: skip,
+                                take: limit,
+                                order: { createdAt: 'DESC' }
+                            })];
+                    case 1:
+                        _a = _b.sent(), applications = _a[0], total = _a[1];
+                        return [2 /*return*/, {
+                                applications: applications,
+                                total: total,
+                                page: page,
+                                limit: limit,
+                                totalPages: Math.ceil(total / limit)
+                            }];
+                }
+            });
+        });
+    };
+    /**
+     * Process a companion application (approve or reject)
+     */
+    CompanionsService.prototype.processApplication = function (applicationId, status) {
+        return __awaiter(this, void 0, Promise, function () {
+            var companion;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, this.findOne(applicationId)];
+                    case 1:
+                        companion = _a.sent();
+                        if (!companion) {
+                            throw new Error('Companion application not found');
+                        }
+                        if (!(status === 'approved')) return [3 /*break*/, 3];
+                        companion.isVerified = true;
+                        return [4 /*yield*/, this.companionsRepository.save(companion)];
+                    case 2:
+                        _a.sent();
+                        // Could also send a notification to the user here
+                        return [2 /*return*/, { status: 'success', message: 'Application approved', companion: companion }];
+                    case 3: 
+                    // For rejected applications, you can either:
+                    // 1. Delete the companion record
+                    //await this.companionsRepository.remove(companion);
+                    // 2. Or mark it as rejected (you'd need to add a 'status' field to the Companion entity)
+                    // companion.status = 'rejected';
+                    // await this.companionsRepository.save(companion);
+                    // For this example, we'll just delete it
+                    return [4 /*yield*/, this.companionsRepository.remove(companion)];
+                    case 4:
+                        // For rejected applications, you can either:
+                        // 1. Delete the companion record
+                        //await this.companionsRepository.remove(companion);
+                        // 2. Or mark it as rejected (you'd need to add a 'status' field to the Companion entity)
+                        // companion.status = 'rejected';
+                        // await this.companionsRepository.save(companion);
+                        // For this example, we'll just delete it
+                        _a.sent();
+                        return [2 /*return*/, { status: 'success', message: 'Application rejected' }];
+                }
+            });
+        });
+    };
     CompanionsService = __decorate([
         common_1.Injectable(),
         __param(0, typeorm_1.InjectRepository(companion_entity_1.Companion))

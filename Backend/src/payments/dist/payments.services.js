@@ -1,4 +1,17 @@
 "use strict";
+// // src/payments/payments.service.ts
+// import { Injectable, NotFoundException, BadRequestException, ForbiddenException } from '@nestjs/common';
+// import { InjectRepository } from '@nestjs/typeorm';
+// import { Repository } from 'typeorm';
+// import { Payment } from './entities/payment.entity';
+// import { CreatePaymentDto } from './dto/create-payment.dto';
+// import { PaymentWebhookDto } from './dto/payment-webhook.dto';
+// import { BookingsService } from '../bookings/bookings.service';
+// import { StripeService } from './services/stripe.service';
+// import { NotificationsService } from '../notifications/notifications.service';
+// import { PaymentStatus } from './enums/payment-status.enum';
+// import { UserRole } from '../users/enums/user-role.enum';
+// import { BookingStatus } from '../bookings/enums/booking-status.enum';
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -46,7 +59,149 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 exports.__esModule = true;
 exports.PaymentsService = void 0;
-// src/payments/payments.service.ts
+// @Injectable()
+// export class PaymentsService {
+//   constructor(
+//     @InjectRepository(Payment)
+//     private paymentRepository: Repository<Payment>,
+//     private bookingsService: BookingsService,
+//     private stripeService: StripeService,
+//     private notificationsService: NotificationsService,
+//   ) {}
+//   async createPayment(createPaymentDto: CreatePaymentDto, userId: string) {
+//     // Get the booking
+//     const booking = await this.bookingsService.findOne(createPaymentDto.bookingId);
+//     // Verify the user is the tourist who made the booking
+//     if (booking.tourist.id !== userId) {
+//       throw new ForbiddenException('You are not authorized to make a payment for this booking');
+//     }
+//     // Verify booking is in a state where payment is allowed
+//     if (booking.status === BookingStatus.CANCELLED || booking.status === BookingStatus.COMPLETED) {
+//       throw new BadRequestException(`Cannot make a payment for a ${booking.status.toLowerCase()} booking`);
+//     }
+//     // Verify payment amount is valid
+//     if (createPaymentDto.amount <= 0 || createPaymentDto.amount > booking.totalAmount) {
+//       throw new BadRequestException('Invalid payment amount');
+//     }
+//     // Create a payment intent with Stripe
+//     const paymentIntent = await this.stripeService.createPaymentIntent(
+//       createPaymentDto.amount,
+//       'usd'
+//     );
+//     // Create a payment record
+//     const payment = this.paymentRepository.create({
+//       booking,
+//       amount: createPaymentDto.amount,
+//       method: createPaymentDto.method,
+//       status: PaymentStatus.PENDING,
+//       transactionId: paymentIntent.id,
+//     });
+//     await this.paymentRepository.save(payment);
+//     // Return the client secret for the frontend to complete the payment
+//     return {
+//       clientSecret: paymentIntent.client_secret,
+//       paymentId: payment.id,
+//     };
+//   }
+//   async getPaymentsByBooking(bookingId: string, userId: string, role: string) {
+//     const booking = await this.bookingsService.findOne(bookingId);
+//     // Check authorization
+//     if (
+//       role !== UserRole.ADMIN &&
+//       booking.tourist.id !== userId &&
+//       booking.companion.user.id !== userId
+//     ) {
+//       throw new ForbiddenException('You are not authorized to view payments for this booking');
+//     }
+//     // Get payments for the booking
+//     return this.paymentRepository.find({
+//       where: { booking: { id: bookingId } },
+//       order: { createdAt: 'DESC' },
+//     });
+//   }
+//   async handleWebhook(webhookDto: PaymentWebhookDto) {
+//     // Process Stripe webhook events
+//     const { type, data } = webhookDto;
+//     // Handle payment intent succeeded event
+//     if (type === 'payment_intent.succeeded') {
+//       const paymentIntentId = data.object.id;
+//       // Find the payment with this transaction ID
+//       const payment = await this.paymentRepository.findOne({
+//         where: { transactionId: paymentIntentId },
+//         relations: ['booking', 'booking.tourist'],
+//       });
+//       if (payment) {
+//         // Update payment status
+//         payment.status = PaymentStatus.COMPLETED;
+//         await this.paymentRepository.save(payment);
+//         // Get the booking
+//         const booking = payment.booking;
+//         // If this is the first payment, confirm the booking
+//         if (booking.status === BookingStatus.PENDING) {
+//           await this.bookingsService.update(
+//             booking.id,
+//             { status: BookingStatus.CONFIRMED },
+//           );
+//         }
+//         // Send notification to tourist
+//         await this.notificationsService.sendPaymentReceipt(
+//           booking.tourist.id,
+//           booking.id,
+//           payment.amount
+//         );
+//         return { success: true, message: 'Payment processed successfully' };
+//       }
+//     }
+//     // Handle payment intent failed event
+//     if (type === 'payment_intent.payment_failed') {
+//       const paymentIntentId = data.object.id;
+//       // Find the payment with this transaction ID
+//       const payment = await this.paymentRepository.findOne({
+//         where: { transactionId: paymentIntentId },
+//       });
+//       if (payment) {
+//         // Update payment status
+//         payment.status = PaymentStatus.FAILED;
+//         await this.paymentRepository.save(payment);
+//         return { success: true, message: 'Payment failure recorded' };
+//       }
+//     }
+//     return { success: true, message: 'Webhook received' };
+//   }
+//   async refundPayment(paymentId: string, userId: string, amount?: number) {
+//     // Find the payment
+//     const payment = await this.paymentRepository.findOne({
+//       where: { id: paymentId },
+//       relations: ['booking', 'booking.tourist'],
+//     });
+//     if (!payment) {
+//       throw new NotFoundException('Payment not found');
+//     }
+//     // Verify the user is authorized (admin or the tourist who made the payment)
+//     if (payment.booking.tourist.id !== userId /* && role !== UserRole.ADMIN */) {
+//       throw new ForbiddenException('You are not authorized to refund this payment');
+//     }
+//     // Verify payment is completed
+//     if (payment.status !== PaymentStatus.COMPLETED) {
+//       throw new BadRequestException('Only completed payments can be refunded');
+//     }
+//     // Process refund via Stripe
+//     const refund = await this.stripeService.createRefund(
+//       payment.transactionId,
+//       amount
+//     );
+//     // Update payment status
+//     payment.status = PaymentStatus.REFUNDED;
+//     await this.paymentRepository.save(payment);
+//     // Return refund details
+//     return {
+//       paymentId: payment.id,
+//       refundId: refund.id,
+//       amount: amount || payment.amount,
+//     };
+//   }
+// }
+// src/payments/payments.services.ts
 var common_1 = require("@nestjs/common");
 var typeorm_1 = require("@nestjs/typeorm");
 var payment_entity_1 = require("./entities/payment.entity");
@@ -60,6 +215,68 @@ var PaymentsService = /** @class */ (function () {
         this.stripeService = stripeService;
         this.notificationsService = notificationsService;
     }
+    /**
+     * Get total revenue from all completed payments
+     */
+    PaymentsService.prototype.getTotalRevenue = function () {
+        return __awaiter(this, void 0, Promise, function () {
+            var result;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, this.paymentRepository
+                            .createQueryBuilder('payment')
+                            .select('SUM(payment.amount)', 'total')
+                            .where('payment.status = :status', { status: payment_status_enum_1.PaymentStatus.COMPLETED })
+                            .getRawOne()];
+                    case 1:
+                        result = _a.sent();
+                        return [2 /*return*/, result.total || 0];
+                }
+            });
+        });
+    };
+    /**
+     * Get paginated payments with optional filtering
+     */
+    PaymentsService.prototype.getPaginatedPayments = function (page, limit, filter) {
+        if (page === void 0) { page = 1; }
+        if (limit === void 0) { limit = 10; }
+        if (filter === void 0) { filter = ''; }
+        return __awaiter(this, void 0, void 0, function () {
+            var skip, queryBuilder, _a, payments, total;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        skip = (page - 1) * limit;
+                        queryBuilder = this.paymentRepository
+                            .createQueryBuilder('payment')
+                            .leftJoinAndSelect('payment.booking', 'booking')
+                            .leftJoinAndSelect('booking.tourist', 'tourist')
+                            .leftJoinAndSelect('booking.companion', 'companion');
+                        if (filter) {
+                            queryBuilder.where('payment.transactionId LIKE :filter OR tourist.firstName LIKE :filter OR tourist.lastName LIKE :filter', { filter: "%" + filter + "%" });
+                        }
+                        return [4 /*yield*/, queryBuilder
+                                .skip(skip)
+                                .take(limit)
+                                .orderBy('payment.createdAt', 'DESC')
+                                .getManyAndCount()];
+                    case 1:
+                        _a = _b.sent(), payments = _a[0], total = _a[1];
+                        return [2 /*return*/, {
+                                payments: payments,
+                                total: total,
+                                page: page,
+                                limit: limit,
+                                totalPages: Math.ceil(total / limit)
+                            }];
+                }
+            });
+        });
+    };
+    /**
+     * Create a payment intent for a booking
+     */
     PaymentsService.prototype.createPayment = function (createPaymentDto, userId) {
         return __awaiter(this, void 0, void 0, function () {
             var booking, paymentIntent, payment;
@@ -102,6 +319,9 @@ var PaymentsService = /** @class */ (function () {
             });
         });
     };
+    /**
+     * Get payments for a specific booking
+     */
     PaymentsService.prototype.getPaymentsByBooking = function (bookingId, userId, role) {
         return __awaiter(this, void 0, void 0, function () {
             var booking;
@@ -125,6 +345,9 @@ var PaymentsService = /** @class */ (function () {
             });
         });
     };
+    /**
+     * Handle webhook events from payment processor
+     */
     PaymentsService.prototype.handleWebhook = function (webhookDto) {
         return __awaiter(this, void 0, void 0, function () {
             var type, data, paymentIntentId, payment, booking, paymentIntentId, payment;
@@ -179,6 +402,9 @@ var PaymentsService = /** @class */ (function () {
             });
         });
     };
+    /**
+     * Refund a payment
+     */
     PaymentsService.prototype.refundPayment = function (paymentId, userId, amount) {
         return __awaiter(this, void 0, void 0, function () {
             var payment, refund;

@@ -134,5 +134,50 @@ export class UsersService {
     await this.usersRepository.update(id, { password: hashedPassword });
   }
 
+  // Add these methods to the existing UsersService class in src/users/users.service.ts
+
+/**
+ * Get total count of users
+ */
+async getTotalUserCount(): Promise<number> {
+  return this.usersRepository.count();
+}
+
+/**
+ * Get paginated users with optional filtering
+ */
+async getPaginatedUsers(page = 1, limit = 10, filter = '') {
+  const skip = (page - 1) * limit;
+  
+  const queryBuilder = this.usersRepository.createQueryBuilder('user');
+  
+  if (filter) {
+    queryBuilder.where(
+      'user.firstName LIKE :filter OR user.lastName LIKE :filter OR user.email LIKE :filter',
+      { filter: `%${filter}%` }
+    );
+  }
+  
+  const [users, total] = await queryBuilder
+    .skip(skip)
+    .take(limit)
+    .orderBy('user.createdAt', 'DESC')
+    .getManyAndCount();
+  
+  // Remove passwords from the response
+  const usersWithoutPasswords = users.map(user => {
+    const { password, ...userWithoutPassword } = user;
+    return userWithoutPassword;
+  });
+  
+  return {
+    users: usersWithoutPasswords,
+    total,
+    page,
+    limit,
+    totalPages: Math.ceil(total / limit),
+  };
+}
+
   
 }
