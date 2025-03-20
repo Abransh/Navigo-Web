@@ -1,4 +1,4 @@
-// Backend/src/users/users.controller.ts
+// src/users/users.controller.ts - Fix for duplicate getProfile method
 import { 
   Controller, 
   Get, 
@@ -39,14 +39,14 @@ export class UsersController {
   @Get('me')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Get current user profile (alternative endpoint)' })
+  @ApiOperation({ summary: 'Get current user profile' })
   @ApiResponse({ status: 200, description: 'Returns user profile' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   async getProfile(@Req() req) {
     this.logger.debug('getProfile called with user:', req.user);
     
     // The JWT strategy sets 'id' in the user object
-    const userId = req.user.id || req.user.sub;
+    const userId = req.user.id || req.user.sub || req.user.userId;
     
     if (!userId) {
       this.logger.error('User ID not found in request', req.user);
@@ -57,15 +57,7 @@ export class UsersController {
     return this.usersService.findById(userId);
   }
 
-  @Get('profile')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
-  @ApiOperation({ summary: 'Get current user profile' })
-  @ApiResponse({ status: 200, description: 'Profile retrieved successfully' })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
-  async getProfile(@Req() req) {
-    return this.usersService.findById(req.user.userId);
-  }
+  // Removed duplicate getProfile method
 
   @Patch('profile')
   @UseGuards(JwtAuthGuard)
@@ -75,7 +67,13 @@ export class UsersController {
   @ApiResponse({ status: 400, description: 'Bad request' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   async updateProfile(@Req() req, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(req.user.userId, updateUserDto);
+    const userId = req.user.id || req.user.sub || req.user.userId;
+    
+    if (!userId) {
+      throw new Error('User ID not found in request');
+    }
+    
+    return this.usersService.update(userId, updateUserDto);
   }
 
   @Post('profile/upload')
@@ -125,9 +123,15 @@ export class UsersController {
       throw new BadRequestException('File is required');
     }
 
+    const userId = req.user.id || req.user.sub || req.user.userId;
+    
+    if (!userId) {
+      throw new Error('User ID not found in request');
+    }
+
     // Save profile picture URL to user
     const fileUrl = `${process.env.API_URL || 'http://localhost:3001'}/uploads/profiles/${file.filename}`;
-    await this.usersService.update(req.user.userId, { profilePicture: fileUrl });
+    await this.usersService.update(userId, { profilePicture: fileUrl });
 
     return { url: fileUrl };
   }
@@ -140,8 +144,14 @@ export class UsersController {
   @ApiResponse({ status: 400, description: 'Bad request' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   async changePassword(@Req() req, @Body() changePasswordDto: ChangePasswordDto) {
+    const userId = req.user.id || req.user.sub || req.user.userId;
+    
+    if (!userId) {
+      throw new Error('User ID not found in request');
+    }
+    
     return this.usersService.changePassword(
-      req.user.userId,
+      userId,
       changePasswordDto.currentPassword,
       changePasswordDto.newPassword,
     );

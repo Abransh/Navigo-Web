@@ -14,7 +14,6 @@ var throttler_1 = require("@nestjs/throttler");
 var core_1 = require("@nestjs/core");
 var schedule_1 = require("@nestjs/schedule");
 var serve_static_1 = require("@nestjs/serve-static");
-var throttler_2 = require("@nestjs/throttler");
 var path_1 = require("path");
 // Controllers & Services
 var app_controller_1 = require("./app.controller");
@@ -46,7 +45,7 @@ var AppModule = /** @class */ (function () {
                     isGlobal: true,
                     envFilePath: [".env." + (process.env.NODE_ENV || 'development'), '.env']
                 }),
-                // Rate limiting
+                // Rate limiting - Fixed useFactory return type
                 throttler_1.ThrottlerModule.forRootAsync({
                     imports: [config_1.ConfigModule],
                     inject: [config_1.ConfigService],
@@ -90,7 +89,7 @@ var AppModule = /** @class */ (function () {
                 // Apply rate limiting globally
                 {
                     provide: core_1.APP_GUARD,
-                    useClass: throttler_2.ThrottlerGuard
+                    useClass: throttler_1.ThrottlerGuard
                 },
             ]
         })

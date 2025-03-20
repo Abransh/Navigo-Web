@@ -46,7 +46,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 exports.__esModule = true;
 exports.UsersController = void 0;
-// Backend/src/users/users.controller.ts
+// src/users/users.controller.ts - Fix for duplicate getProfile method
 var common_1 = require("@nestjs/common");
 var jwt_auth_guard_1 = require("../auth/guards/jwt-auth.guard");
 var platform_express_1 = require("@nestjs/platform-express");
@@ -65,7 +65,7 @@ var UsersController = /** @class */ (function () {
             var userId;
             return __generator(this, function (_a) {
                 this.logger.debug('getProfile called with user:', req.user);
-                userId = req.user.id || req.user.sub;
+                userId = req.user.id || req.user.sub || req.user.userId;
                 if (!userId) {
                     this.logger.error('User ID not found in request', req.user);
                     throw new Error('User ID not found in request');
@@ -75,31 +75,34 @@ var UsersController = /** @class */ (function () {
             });
         });
     };
-    UsersController.prototype.getProfile = function (req) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                return [2 /*return*/, this.usersService.findById(req.user.userId)];
-            });
-        });
-    };
+    // Removed duplicate getProfile method
     UsersController.prototype.updateProfile = function (req, updateUserDto) {
         return __awaiter(this, void 0, void 0, function () {
+            var userId;
             return __generator(this, function (_a) {
-                return [2 /*return*/, this.usersService.update(req.user.userId, updateUserDto)];
+                userId = req.user.id || req.user.sub || req.user.userId;
+                if (!userId) {
+                    throw new Error('User ID not found in request');
+                }
+                return [2 /*return*/, this.usersService.update(userId, updateUserDto)];
             });
         });
     };
     UsersController.prototype.uploadProfilePicture = function (req, file) {
         return __awaiter(this, void 0, void 0, function () {
-            var fileUrl;
+            var userId, fileUrl;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         if (!file) {
                             throw new common_1.BadRequestException('File is required');
                         }
+                        userId = req.user.id || req.user.sub || req.user.userId;
+                        if (!userId) {
+                            throw new Error('User ID not found in request');
+                        }
                         fileUrl = (process.env.API_URL || 'http://localhost:3001') + "/uploads/profiles/" + file.filename;
-                        return [4 /*yield*/, this.usersService.update(req.user.userId, { profilePicture: fileUrl })];
+                        return [4 /*yield*/, this.usersService.update(userId, { profilePicture: fileUrl })];
                     case 1:
                         _a.sent();
                         return [2 /*return*/, { url: fileUrl }];
@@ -109,8 +112,13 @@ var UsersController = /** @class */ (function () {
     };
     UsersController.prototype.changePassword = function (req, changePasswordDto) {
         return __awaiter(this, void 0, void 0, function () {
+            var userId;
             return __generator(this, function (_a) {
-                return [2 /*return*/, this.usersService.changePassword(req.user.userId, changePasswordDto.currentPassword, changePasswordDto.newPassword)];
+                userId = req.user.id || req.user.sub || req.user.userId;
+                if (!userId) {
+                    throw new Error('User ID not found in request');
+                }
+                return [2 /*return*/, this.usersService.changePassword(userId, changePasswordDto.currentPassword, changePasswordDto.newPassword)];
             });
         });
     };
@@ -119,17 +127,8 @@ var UsersController = /** @class */ (function () {
         common_1.Get('me'),
         common_1.UseGuards(jwt_auth_guard_1.JwtAuthGuard),
         swagger_1.ApiBearerAuth(),
-        swagger_1.ApiOperation({ summary: 'Get current user profile (alternative endpoint)' }),
-        swagger_1.ApiResponse({ status: 200, description: 'Returns user profile' }),
-        swagger_1.ApiResponse({ status: 401, description: 'Unauthorized' }),
-        __param(0, common_1.Req())
-    ], UsersController.prototype, "getProfile");
-    __decorate([
-        common_1.Get('profile'),
-        common_1.UseGuards(jwt_auth_guard_1.JwtAuthGuard),
-        swagger_1.ApiBearerAuth(),
         swagger_1.ApiOperation({ summary: 'Get current user profile' }),
-        swagger_1.ApiResponse({ status: 200, description: 'Profile retrieved successfully' }),
+        swagger_1.ApiResponse({ status: 200, description: 'Returns user profile' }),
         swagger_1.ApiResponse({ status: 401, description: 'Unauthorized' }),
         __param(0, common_1.Req())
     ], UsersController.prototype, "getProfile");

@@ -1,11 +1,10 @@
 // src/app.module.ts
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { ThrottlerModule } from '@nestjs/throttler';
+import { ThrottlerModule, ThrottlerGuard, ThrottlerModuleOptions } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ServeStaticModule } from '@nestjs/serve-static';
-import { ThrottlerGuard } from '@nestjs/throttler';
 import { join } from 'path';
 
 // Controllers & Services
@@ -29,7 +28,6 @@ import { DestinationsModule } from './destinations/destinations.module';
 
 // Task and Schedule Modules
 import { TasksModule } from './tasks/tasks.module';
-import { ScheduleService } from './schedule/schedule.service';
 import { ScheduleModule as AppScheduleModule } from './schedule/schedule.module';
 
 @Module({
@@ -40,11 +38,11 @@ import { ScheduleModule as AppScheduleModule } from './schedule/schedule.module'
       envFilePath: [`.env.${process.env.NODE_ENV || 'development'}`, '.env'],
     }),
     
-    // Rate limiting
+    // Rate limiting - Fixed useFactory return type
     ThrottlerModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
+      useFactory: (configService: ConfigService): ThrottlerModuleOptions => ({
         throttlers: [
           {
             ttl: configService.get<number>('THROTTLE_TTL', 60),
