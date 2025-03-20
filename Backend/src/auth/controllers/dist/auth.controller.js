@@ -64,12 +64,31 @@ var AuthController = /** @class */ (function () {
         this.logger = new common_1.Logger(AuthController_1.name);
     }
     AuthController_1 = AuthController;
+    // Add a simple debug endpoint to test if the controller is registered
+    AuthController.prototype.debug = function () {
+        this.logger.log('Auth debug endpoint accessed');
+        return {
+            status: 'ok',
+            message: 'Auth controller is working',
+            timestamp: new Date().toISOString()
+        };
+    };
+    // Add a user profile endpoint without guards for testing
+    AuthController.prototype.testProfile = function () {
+        this.logger.log('Test profile endpoint accessed');
+        return {
+            status: 'ok',
+            message: 'Profile endpoint is accessible',
+            timestamp: new Date().toISOString()
+        };
+    };
     /**
      * Login endpoint - Authenticates user with email/password
      */
     AuthController.prototype.login = function (loginDto) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
+                this.logger.log("Login attempt for email: " + loginDto.email);
                 return [2 /*return*/, this.authService.login(loginDto)];
             });
         });
@@ -80,6 +99,7 @@ var AuthController = /** @class */ (function () {
     AuthController.prototype.register = function (registerDto) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
+                this.logger.log("Registration attempt for email: " + registerDto.email);
                 return [2 /*return*/, this.authService.register(registerDto)];
             });
         });
@@ -135,11 +155,28 @@ var AuthController = /** @class */ (function () {
      * Get Current User endpoint - Returns the authenticated user's profile
      */
     AuthController.prototype.getCurrentUser = function (req) {
+        var _a, _b;
         return __awaiter(this, void 0, void 0, function () {
             var userId;
-            return __generator(this, function (_a) {
+            return __generator(this, function (_c) {
                 this.logger.debug('getCurrentUser called with user:', req.user);
-                userId = req.user.id || req.user.sub;
+                userId = ((_a = req.user) === null || _a === void 0 ? void 0 : _a.id) || ((_b = req.user) === null || _b === void 0 ? void 0 : _b.sub);
+                this.logger.debug("Finding user with ID: " + userId);
+                if (!userId) {
+                    this.logger.error('User ID not found in request. Request user object:', req.user);
+                    throw new Error('User ID not found in request');
+                }
+                return [2 /*return*/, this.usersService.findById(userId)];
+            });
+        });
+    };
+    AuthController.prototype.getCurrentUserAlt = function (req) {
+        var _a, _b;
+        return __awaiter(this, void 0, void 0, function () {
+            var userId;
+            return __generator(this, function (_c) {
+                this.logger.debug('getCurrentUserAlt called with user:', req.user);
+                userId = ((_a = req.user) === null || _a === void 0 ? void 0 : _a.id) || ((_b = req.user) === null || _b === void 0 ? void 0 : _b.sub);
                 if (!userId) {
                     this.logger.error('User ID not found in request', req.user);
                     throw new Error('User ID not found in request');
@@ -150,6 +187,12 @@ var AuthController = /** @class */ (function () {
         });
     };
     var AuthController_1;
+    __decorate([
+        common_1.Get('debug')
+    ], AuthController.prototype, "debug");
+    __decorate([
+        common_1.Get('profile')
+    ], AuthController.prototype, "testProfile");
     __decorate([
         common_1.Post('login'),
         common_1.HttpCode(common_1.HttpStatus.OK),
@@ -200,6 +243,15 @@ var AuthController = /** @class */ (function () {
         swagger_1.ApiResponse({ status: 401, description: 'Unauthorized' }),
         __param(0, common_1.Req())
     ], AuthController.prototype, "getCurrentUser");
+    __decorate([
+        common_1.Get('current-user'),
+        common_1.UseGuards(jwt_auth_guard_1.JwtAuthGuard),
+        swagger_1.ApiBearerAuth(),
+        swagger_1.ApiOperation({ summary: 'Alternative endpoint to get current user profile' }),
+        swagger_1.ApiResponse({ status: 200, description: 'Returns user profile' }),
+        swagger_1.ApiResponse({ status: 401, description: 'Unauthorized' }),
+        __param(0, common_1.Req())
+    ], AuthController.prototype, "getCurrentUserAlt");
     AuthController = AuthController_1 = __decorate([
         swagger_1.ApiTags('auth'),
         common_1.Controller('auth')

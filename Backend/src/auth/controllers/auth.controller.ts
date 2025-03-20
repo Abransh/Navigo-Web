@@ -43,6 +43,29 @@ export class AuthController {
     private readonly authService: AuthService,
     private readonly usersService: UsersService,
   ) {}
+
+  // Add a simple debug endpoint to test if the controller is registered
+  @Get('debug')
+  debug() {
+    this.logger.log('Auth debug endpoint accessed');
+    return {
+      status: 'ok',
+      message: 'Auth controller is working',
+      timestamp: new Date().toISOString()
+    };
+  }
+
+  // Add a user profile endpoint without guards for testing
+  @Get('profile')
+  testProfile() {
+    this.logger.log('Test profile endpoint accessed');
+    return {
+      status: 'ok',
+      message: 'Profile endpoint is accessible',
+      timestamp: new Date().toISOString()
+    };
+  }
+
   /**
    * Login endpoint - Authenticates user with email/password
    */
@@ -53,6 +76,7 @@ export class AuthController {
   @ApiResponse({ status: 401, description: 'Invalid credentials' })
   @ApiBody({ type: LoginDto })
   async login(@Body() loginDto: LoginDto) {
+    this.logger.log(`Login attempt for email: ${loginDto.email}`);
     return this.authService.login(loginDto);
   }
   
@@ -65,6 +89,7 @@ export class AuthController {
   @ApiResponse({ status: 400, description: 'Bad request - validation failed or email already exists' })
   @ApiBody({ type: RegisterDto })
   async register(@Body() registerDto: RegisterDto) {
+    this.logger.log(`Registration attempt for email: ${registerDto.email}`);
     return this.authService.register(registerDto);
   }
   
@@ -122,7 +147,29 @@ export class AuthController {
     this.logger.debug('getCurrentUser called with user:', req.user);
     
     // The JWT strategy sets 'id' in the user object (not 'userId')
-    const userId = req.user.id || req.user.sub;
+    const userId = req.user?.id || req.user?.sub;
+    
+    this.logger.debug(`Finding user with ID: ${userId}`);
+    
+    if (!userId) {
+      this.logger.error('User ID not found in request. Request user object:', req.user);
+      throw new Error('User ID not found in request');
+    }
+    
+    return this.usersService.findById(userId);
+  }
+
+  @Get('current-user')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Alternative endpoint to get current user profile' })
+  @ApiResponse({ status: 200, description: 'Returns user profile' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  async getCurrentUserAlt(@Req() req) {
+    this.logger.debug('getCurrentUserAlt called with user:', req.user);
+    
+    // The JWT strategy sets 'id' in the user object (not 'userId')
+    const userId = req.user?.id || req.user?.sub;
     
     if (!userId) {
       this.logger.error('User ID not found in request', req.user);

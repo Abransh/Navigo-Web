@@ -60,7 +60,7 @@ const register = async (data: RegisterData): Promise<AuthResponse> => {
  */
 const getCurrentUser = async (): Promise<User> => {
   try {
-    const response = await apiClient.get<User>('/auth/me');
+    const response = await apiClient.get<User>('/api/auth/me');
     return response.data;
   } catch (error) {
     console.error('Get current user API error:', error);
@@ -135,7 +135,7 @@ const initiateOAuthLogin = (provider: string, redirectUrl?: string): void => {
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
   
   // Construct the full OAuth URL
-  const oauthUrl = `${apiUrl}/auth/${provider}`;
+  const oauthUrl = `${apiUrl}/api/auth/${provider}`;
   
   // Navigate to the OAuth provider login page
   window.location.href = oauthUrl;
