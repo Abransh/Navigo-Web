@@ -44,7 +44,7 @@ const corsOrigins = corsOriginsStr.split(',').map(origin => origin.trim());
 
   // Apply global prefix but DO NOT exclude the auth routes
   // This way, all routes will have the /api prefix
-  app.setGlobalPrefix(apiPrefix);
+  app.setGlobalPrefix('api');
 
   // Set up global validation pipe
   app.useGlobalPipes(
