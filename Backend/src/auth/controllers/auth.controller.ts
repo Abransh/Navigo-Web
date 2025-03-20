@@ -1,34 +1,35 @@
 // Backend/src/auth/controllers/auth.controller.ts
 import { 
-    Controller, 
-    Post, 
-    Body, 
-    UseGuards, 
-    Req, 
-    Get,
-    Param,
-    HttpCode,
-    HttpStatus,
-  } from '@nestjs/common';
+  Controller, 
+  Post, 
+  Body, 
+  UseGuards, 
+  Req, 
+  Get,
+  Param,
+  HttpCode,
+  HttpStatus,
+  Logger,
+} from '@nestjs/common';
   
 
-  import { 
-    ApiTags, 
-    ApiOperation, 
-    ApiResponse, 
-    ApiBearerAuth,
-    ApiBody 
-  } from '@nestjs/swagger';
+import { 
+  ApiTags, 
+  ApiOperation, 
+  ApiResponse, 
+  ApiBearerAuth,
+  ApiBody 
+} from '@nestjs/swagger';
 
   
-  import { AuthService } from '../services/auth.services';
-  import { UsersService } from '../../users/users.service';
-  import { JwtAuthGuard } from '../guards/jwt-auth.guard';
-  
-  // DTOs
-  import { LoginDto } from '../dto/login.dto';
-  import { RegisterDto } from '../dto/register.dto';
-  import { PasswordResetRequestDto, ResetPasswordDto } from '../dto/password-reset.dto';
+import { AuthService } from '../services/auth.services';
+import { UsersService } from '../../users/users.service';
+import { JwtAuthGuard } from '../guards/jwt-auth.guard';
+
+// DTOs
+import { LoginDto } from '../dto/login.dto';
+import { RegisterDto } from '../dto/register.dto';
+import { PasswordResetRequestDto, ResetPasswordDto } from '../dto/password-reset.dto';
   
   /**
    * Auth Controller - Handles all authentication-related endpoints
@@ -36,11 +37,12 @@ import {
   @ApiTags('auth')
   @Controller('auth')
   export class AuthController {
+    private readonly logger = new Logger(AuthController.name);
+    
     constructor(
       private readonly authService: AuthService,
       private readonly usersService: UsersService,
     ) {}
-  
     /**
      * Login endpoint - Authenticates user with email/password
      */
@@ -107,17 +109,28 @@ import {
       return { message: 'Password reset successful' };
     }
   
-    /**
-     * Get Current User endpoint - Returns the authenticated user's profile
-     */
-    @Get('me')
-    @UseGuards(JwtAuthGuard)
-    @ApiBearerAuth()
-    @ApiOperation({ summary: 'Get current user profile' })
-    @ApiResponse({ status: 200, description: 'Returns user profile' })
-    @ApiResponse({ status: 401, description: 'Unauthorized' })
-    async getCurrentUser(@Req() req) {
-      const userId = req.user.userId;
-      return this.usersService.findById(userId);
+     /**
+   * Get Current User endpoint - Returns the authenticated user's profile
+   */
+  @Get('me')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get current user profile' })
+  @ApiResponse({ status: 200, description: 'Returns user profile' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  async getCurrentUser(@Req() req) {
+    this.logger.debug('getCurrentUser called with user:', req.user);
+    
+    // The JWT strategy sets 'id' in the user object (not 'userId')
+    const userId = req.user.id || req.user.sub;
+    
+    if (!userId) {
+      this.logger.error('User ID not found in request', req.user);
+      throw new Error('User ID not found in request');
     }
+    
+    this.logger.debug(`Finding user with ID: ${userId}`);
+    return this.usersService.findById(userId);
   }
+}
+  

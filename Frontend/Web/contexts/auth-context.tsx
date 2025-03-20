@@ -141,34 +141,51 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       // Set token in API client
       apiClient.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       
-      // Fetch user profile
-      await refreshUserProfile();
-      
-      toast.success('Successfully signed in!');
+      try {
+        // Fetch user profile
+        const userData = await authService.getCurrentUser();
+        
+        // Update state
+        setUser(userData);
+        setIsAuthenticated(true);
+        
+        // Update localStorage
+        localStorage.setItem('user', JSON.stringify(userData));
+        
+        console.log('User profile loaded after social login:', userData);
+        
+        toast.success('Successfully signed in!');
+      } catch (error) {
+        console.error('Failed to get user profile after social login:', error);
+        
+        // Even if getting profile fails, we still have a valid token
+        // so we'll set authenticated state
+        setIsAuthenticated(true);
+        
+        // Create a basic user object from the token
+        try {
+          // Extract email from JWT if possible
+          const tokenPayload = JSON.parse(atob(token.split('.')[1]));
+          const basicUser = {
+            id: tokenPayload.sub,
+            email: tokenPayload.email || 'user@example.com',
+            firstName: 'User',
+            lastName: '',
+            role: tokenPayload.role || 'tourist'
+          };
+          
+          setUser(basicUser);
+          localStorage.setItem('user', JSON.stringify(basicUser));
+        } catch (e) {
+          console.error('Failed to parse token:', e);
+        }
+      }
     } catch (error) {
       console.error('Failed to process social auth token:', error);
+      logout(); // Clean up if authentication fails
       throw error;
     } finally {
       setLoading(false);
-    }
-  };
-
-  const refreshUserProfile = async (): Promise<void> => {
-    try {
-      // Get current user data from the API
-      const userData = await authService.getCurrentUser();
-      
-      // Update state
-      setUser(userData);
-      setIsAuthenticated(true);
-      
-      // Update localStorage
-      localStorage.setItem('user', JSON.stringify(userData));
-      
-      console.log('User profile refreshed');
-    } catch (error) {
-      console.error('Failed to refresh user profile:', error);
-      throw error;
     }
   };
 
@@ -185,6 +202,16 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setIsAuthenticated(false);
     
     console.log('Logged out successfully');
+  };
+
+  const refreshUserProfile = async (): Promise<void> => {
+    try {
+      const userData = await authService.getCurrentUser();
+      setUser(userData);
+      localStorage.setItem('user', JSON.stringify(userData));
+    } catch (error) {
+      console.error('Failed to refresh user profile:', error);
+    }
   };
 
   return (

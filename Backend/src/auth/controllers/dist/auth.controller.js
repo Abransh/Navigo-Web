@@ -61,7 +61,9 @@ var AuthController = /** @class */ (function () {
     function AuthController(authService, usersService) {
         this.authService = authService;
         this.usersService = usersService;
+        this.logger = new common_1.Logger(AuthController_1.name);
     }
+    AuthController_1 = AuthController;
     /**
      * Login endpoint - Authenticates user with email/password
      */
@@ -130,17 +132,24 @@ var AuthController = /** @class */ (function () {
         });
     };
     /**
-     * Get Current User endpoint - Returns the authenticated user's profile
-     */
+  * Get Current User endpoint - Returns the authenticated user's profile
+  */
     AuthController.prototype.getCurrentUser = function (req) {
         return __awaiter(this, void 0, void 0, function () {
             var userId;
             return __generator(this, function (_a) {
-                userId = req.user.userId;
+                this.logger.debug('getCurrentUser called with user:', req.user);
+                userId = req.user.id || req.user.sub;
+                if (!userId) {
+                    this.logger.error('User ID not found in request', req.user);
+                    throw new Error('User ID not found in request');
+                }
+                this.logger.debug("Finding user with ID: " + userId);
                 return [2 /*return*/, this.usersService.findById(userId)];
             });
         });
     };
+    var AuthController_1;
     __decorate([
         common_1.Post('login'),
         common_1.HttpCode(common_1.HttpStatus.OK),
@@ -191,7 +200,7 @@ var AuthController = /** @class */ (function () {
         swagger_1.ApiResponse({ status: 401, description: 'Unauthorized' }),
         __param(0, common_1.Req())
     ], AuthController.prototype, "getCurrentUser");
-    AuthController = __decorate([
+    AuthController = AuthController_1 = __decorate([
         swagger_1.ApiTags('auth'),
         common_1.Controller('auth')
     ], AuthController);
