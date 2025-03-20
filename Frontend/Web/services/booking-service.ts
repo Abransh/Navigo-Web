@@ -9,6 +9,17 @@ export enum BookingStatus {
   CANCELLED = 'cancelled',
 }
 
+export enum PaymentMethod {
+  CREDIT_CARD = 'CREDIT_CARD',
+  DEBIT_CARD = 'DEBIT_CARD',
+  UPI = 'UPI',
+  WALLET = 'WALLET',
+  BANK_TRANSFER = 'BANK_TRANSFER',
+  APPLE_PAY = 'APPLE_PAY',
+  GOOGLE_PAY = 'GOOGLE_PAY',
+  CASH = 'CASH',
+}
+
 export interface Companion {
   id: string;
   userId: string;
@@ -36,6 +47,7 @@ export interface Booking {
   totalAmount: number;
   createdAt: string;
   updatedAt: string;
+  paymentOption?: 'pay-now' | 'pay-later';
 }
 
 export interface CreateBookingData {
@@ -44,6 +56,7 @@ export interface CreateBookingData {
   endDate: string; // ISO string
   location?: string;
   notes?: string;
+  paymentOption?: 'pay-now' | 'pay-later';
 }
 
 export interface BookingReviewData {
@@ -115,6 +128,41 @@ const calculatePrice = async (companionId: string, startDate: string, endDate: s
   return response.data;
 };
 
+/**
+ * Get available time slots for a companion on a specific date
+ */
+const getAvailableTimeSlots = async (companionId: string, date: string): Promise<string[]> => {
+  const response = await apiClient.get<string[]>(`/bookings/available-slots`, {
+    params: { companionId, date }
+  });
+  return response.data;
+};
+
+/**
+ * Get companion availability calendar (days with available slots)
+ */
+const getCompanionAvailability = async (companionId: string, month: number, year: number): Promise<string[]> => {
+  const response = await apiClient.get<string[]>(`/bookings/availability`, {
+    params: { companionId, month, year }
+  });
+  return response.data;
+};
+
+/**
+ * Get upcoming bookings
+ */
+const getUpcomingBookings = async (): Promise<Booking[]> => {
+  const response = await apiClient.get<Booking[]>(`/bookings/upcoming`);
+  return response.data;
+};
+
+/**
+ * Complete a booking (mark as completed)
+ */
+const completeBooking = async (id: string): Promise<Booking> => {
+  return updateBooking(id, { status: BookingStatus.COMPLETED });
+};
+
 export default {
   createBooking,
   getUserBookings,
@@ -123,4 +171,8 @@ export default {
   cancelBooking,
   createReview,
   calculatePrice,
+  getAvailableTimeSlots,
+  getCompanionAvailability,
+  getUpcomingBookings,
+  completeBooking,
 };

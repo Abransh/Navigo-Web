@@ -19,6 +19,9 @@ export interface RefundResponse {
   amount: number;
 }
 
+/**
+ * Create a payment intent for a booking
+ */
 const createPaymentIntent = async (
   bookingId: string, 
   amount: number, 
@@ -37,6 +40,9 @@ const createPaymentIntent = async (
   }
 };
 
+/**
+ * Get all payments for a booking
+ */
 const getPaymentsByBooking = async (bookingId: string): Promise<any[]> => {
   try {
     const response = await apiClient.get<any[]>(`/payments/${bookingId}`);
@@ -47,6 +53,9 @@ const getPaymentsByBooking = async (bookingId: string): Promise<any[]> => {
   }
 };
 
+/**
+ * Refund a payment
+ */
 const refundPayment = async (paymentId: string, amount?: number): Promise<RefundResponse> => {
   try {
     const response = await apiClient.post<RefundResponse>(`/payments/${paymentId}/refund`, {
@@ -59,8 +68,39 @@ const refundPayment = async (paymentId: string, amount?: number): Promise<Refund
   }
 };
 
+/**
+ * Verify payment status
+ */
+const verifyPaymentStatus = async (paymentId: string): Promise<{ status: string }> => {
+  try {
+    const response = await apiClient.get<{ status: string }>(`/payments/${paymentId}/status`);
+    return response.data;
+  } catch (error) {
+    console.error('Failed to verify payment status:', error);
+    throw error;
+  }
+};
+
+/**
+ * Mark a booking as paid after tour (for pay-later option)
+ */
+const markBookingAsPaid = async (bookingId: string, amount: number): Promise<any> => {
+  try {
+    const response = await apiClient.post(`/payments/mark-paid`, {
+      bookingId,
+      amount,
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Failed to mark booking as paid:', error);
+    throw error;
+  }
+};
+
 export default {
   createPaymentIntent,
   getPaymentsByBooking,
   refundPayment,
+  verifyPaymentStatus,
+  markBookingAsPaid,
 };
