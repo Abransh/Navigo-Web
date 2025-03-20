@@ -121,6 +121,9 @@ export class UsersService {
     }
 
     // Verify current password
+    if (!user.password) {
+      throw new BadRequestException('User password is not set');
+    }
     const isPasswordValid = await bcrypt.compare(currentPassword, user.password);
     
     if (!isPasswordValid) {

@@ -98,7 +98,7 @@ var AuthService = /** @class */ (function () {
                     case 0: return [4 /*yield*/, this.usersService.findByEmail(email)];
                     case 1:
                         user = _b.sent();
-                        _a = user;
+                        _a = user && user.password;
                         if (!_a) return [3 /*break*/, 3];
                         return [4 /*yield*/, bcrypt_1["default"].compare(password, user.password)];
                     case 2:

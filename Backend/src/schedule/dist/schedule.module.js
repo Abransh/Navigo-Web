@@ -6,27 +6,29 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 exports.__esModule = true;
-exports.ScheduleModule = void 0;
+exports.AppSchedulerModule = void 0;
 // src/schedule/schedule.module.ts
 var common_1 = require("@nestjs/common");
 var schedule_service_1 = require("./schedule.service");
 var bookings_module_1 = require("../bookings/bookings.module");
 var email_module_1 = require("../email/email.module");
 var notifications_module_1 = require("../notifications/notifications.module");
-var ScheduleModule = /** @class */ (function () {
-    function ScheduleModule() {
+var AppSchedulerModule = /** @class */ (function () {
+    function AppSchedulerModule() {
     }
-    ScheduleModule = __decorate([
+    AppSchedulerModule = __decorate([
         common_1.Module({
             imports: [
                 bookings_module_1.BookingsModule,
                 email_module_1.EmailModule,
                 notifications_module_1.NotificationsModule,
             ],
-            providers: [schedule_service_1.ScheduleService],
+            providers: [
+                schedule_service_1.ScheduleService,
+            ],
             exports: [schedule_service_1.ScheduleService]
         })
-    ], ScheduleModule);
-    return ScheduleModule;
-}());
-exports.ScheduleModule = ScheduleModule;
+    ], AppSchedulerModule);
+    return AppSchedulerModule;
+}()); // Renamed from ScheduleModule
+exports.AppSchedulerModule = AppSchedulerModule;

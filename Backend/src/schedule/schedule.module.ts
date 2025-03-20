@@ -11,7 +11,9 @@ import { NotificationsModule } from '../notifications/notifications.module';
     EmailModule,
     NotificationsModule,
   ],
-  providers: [ScheduleService],
+  providers: [
+    ScheduleService,
+  ],
   exports: [ScheduleService],
 })
-export class ScheduleModule {}
+export class AppSchedulerModule {} // Renamed from ScheduleModule

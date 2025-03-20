@@ -222,6 +222,10 @@ var UsersService = /** @class */ (function () {
                         if (!user) {
                             throw new common_1.NotFoundException("User with ID " + id + " not found");
                         }
+                        // Verify current password
+                        if (!user.password) {
+                            throw new common_1.BadRequestException('User password is not set');
+                        }
                         return [4 /*yield*/, bcrypt.compare(currentPassword, user.password)];
                     case 2:
                         isPasswordValid = _a.sent();

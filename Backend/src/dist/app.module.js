@@ -9,12 +9,13 @@ exports.__esModule = true;
 exports.AppModule = void 0;
 // src/app.module.ts
 var common_1 = require("@nestjs/common");
+var core_module_1 = require("./core/core.module");
 var config_1 = require("@nestjs/config");
 var throttler_1 = require("@nestjs/throttler");
-var core_1 = require("@nestjs/core");
 var schedule_1 = require("@nestjs/schedule");
 var serve_static_1 = require("@nestjs/serve-static");
 var path_1 = require("path");
+var core_1 = require("@nestjs/core");
 // Controllers & Services
 var app_controller_1 = require("./app.controller");
 var app_service_1 = require("./app.service");
@@ -40,12 +41,16 @@ var AppModule = /** @class */ (function () {
     AppModule = __decorate([
         common_1.Module({
             imports: [
+                // Core module with globally available Reflector
+                core_module_1.CoreModule,
                 // Config first for initialization
                 config_1.ConfigModule.forRoot({
                     isGlobal: true,
                     envFilePath: [".env." + (process.env.NODE_ENV || 'development'), '.env']
                 }),
-                // Rate limiting - Fixed useFactory return type
+                // Scheduler module - ensure it's loaded after CoreModule
+                schedule_1.ScheduleModule.forRoot(),
+                // Rate limiting
                 throttler_1.ThrottlerModule.forRootAsync({
                     imports: [config_1.ConfigModule],
                     inject: [config_1.ConfigService],
@@ -58,8 +63,6 @@ var AppModule = /** @class */ (function () {
                         ]
                     }); }
                 }),
-                // Scheduled tasks - registered once at app level
-                schedule_1.ScheduleModule.forRoot(),
                 // Static file serving (for uploaded content)
                 serve_static_1.ServeStaticModule.forRoot({
                     rootPath: path_1.join(__dirname, '..', 'uploads'),
@@ -80,8 +83,8 @@ var AppModule = /** @class */ (function () {
                 destinations_module_1.DestinationsModule,
                 // Tasks module
                 tasks_module_1.TasksModule,
-                // Schedule module (our custom implementation)
-                schedule_module_1.ScheduleModule,
+                // Our custom scheduler module
+                schedule_module_1.AppSchedulerModule,
             ],
             controllers: [app_controller_1.AppController],
             providers: [

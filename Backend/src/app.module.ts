@@ -1,11 +1,12 @@
 // src/app.module.ts
 import { Module } from '@nestjs/common';
+import { CoreModule } from './core/core.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ThrottlerModule, ThrottlerGuard, ThrottlerModuleOptions } from '@nestjs/throttler';
-import { APP_GUARD } from '@nestjs/core';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import { APP_GUARD } from '@nestjs/core';
 
 // Controllers & Services
 import { AppController } from './app.controller';
@@ -28,17 +29,23 @@ import { DestinationsModule } from './destinations/destinations.module';
 
 // Task and Schedule Modules
 import { TasksModule } from './tasks/tasks.module';
-import { ScheduleModule as AppScheduleModule } from './schedule/schedule.module';
+import { AppSchedulerModule } from './schedule/schedule.module';
 
 @Module({
   imports: [
+    // Core module with globally available Reflector
+    CoreModule,
+    
     // Config first for initialization
     ConfigModule.forRoot({
       isGlobal: true, // Make ConfigModule global
       envFilePath: [`.env.${process.env.NODE_ENV || 'development'}`, '.env'],
     }),
     
-    // Rate limiting - Fixed useFactory return type
+    // Scheduler module - ensure it's loaded after CoreModule
+    ScheduleModule.forRoot(),
+    
+    // Rate limiting
     ThrottlerModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -51,9 +58,6 @@ import { ScheduleModule as AppScheduleModule } from './schedule/schedule.module'
         ],
       }),
     }),
-    
-    // Scheduled tasks - registered once at app level
-    ScheduleModule.forRoot(),
     
     // Static file serving (for uploaded content)
     ServeStaticModule.forRoot({
@@ -79,8 +83,8 @@ import { ScheduleModule as AppScheduleModule } from './schedule/schedule.module'
     // Tasks module
     TasksModule,
     
-    // Schedule module (our custom implementation)
-    AppScheduleModule,
+    // Our custom scheduler module
+    AppSchedulerModule,
   ],
   controllers: [AppController],
   providers: [

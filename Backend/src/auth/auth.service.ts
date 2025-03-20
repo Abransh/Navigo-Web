@@ -36,21 +36,23 @@ export class AuthService {
     private configService: ConfigService,
   ) {}
 
-  async validateUser(email: string, password: string): Promise<any> {
-    try {
-      const user = await this.usersService.findByEmail(email);
-      if (user && await bcrypt.compare(password, user.password)) {
-        const { password, ...result } = user;
-        return result;
-      }
-      return null;
-    } catch (error) {
-      if (error instanceof NotFoundException) {
-        return null; // User not found, return null for auth flow
-      }
-      throw error; // Rethrow unexpected errors
+  // src/auth/auth.service.ts
+async validateUser(email: string, password: string): Promise<any> {
+  try {
+    const user = await this.usersService.findByEmail(email);
+    // Add null check for password
+    if (user && user.password && await bcrypt.compare(password, user.password)) {
+      const { password, ...result } = user;
+      return result;
     }
+    return null;
+  } catch (error) {
+    if (error instanceof NotFoundException) {
+      return null; // User not found, return null for auth flow
+    }
+    throw error; // Rethrow unexpected errors
   }
+}
 
   async login(loginDto: LoginDto) {
     const user = await this.validateUser(loginDto.email, loginDto.password);

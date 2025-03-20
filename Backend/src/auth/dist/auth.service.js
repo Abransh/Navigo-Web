@@ -78,6 +78,7 @@ var AuthService = /** @class */ (function () {
         this.passwordResetRepository = passwordResetRepository;
         this.configService = configService;
     }
+    // src/auth/auth.service.ts
     AuthService.prototype.validateUser = function (email, password) {
         return __awaiter(this, void 0, Promise, function () {
             var user, _a, password_1, result, error_1;
@@ -88,13 +89,14 @@ var AuthService = /** @class */ (function () {
                         return [4 /*yield*/, this.usersService.findByEmail(email)];
                     case 1:
                         user = _b.sent();
-                        _a = user;
+                        _a = user && user.password;
                         if (!_a) return [3 /*break*/, 3];
                         return [4 /*yield*/, bcrypt.compare(password, user.password)];
                     case 2:
                         _a = (_b.sent());
                         _b.label = 3;
                     case 3:
+                        // Add null check for password
                         if (_a) {
                             password_1 = user.password, result = __rest(user, ["password"]);
                             return [2 /*return*/, result];
