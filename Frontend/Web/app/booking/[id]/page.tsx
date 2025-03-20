@@ -10,7 +10,7 @@ import { Calendar } from '@/components/ui/calendar';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
+import { Textarea } from '@/components/ui/textarea'; // Update this path to the correct one if necessary
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { format, addHours, setHours, setMinutes, isBefore, addDays } from 'date-fns';
@@ -44,6 +44,7 @@ const parseTimeString = (timeString: string, baseDate: Date): Date => {
 };
 
 export default function BookingPage({ params }: { params: { id: string } }) {
+
   const companionId = params.id;
   const { isAuthenticated, loading, user } = useAuth();
   const router = useRouter();
@@ -53,6 +54,51 @@ export default function BookingPage({ params }: { params: { id: string } }) {
   const [totalSteps] = useState(3);
   const [loadingPrice, setLoadingPrice] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+
+  const validateBooking = () => {
+    if (!date) {
+      toast.error('Please select a date');
+      return false;
+    }
+
+    if (!timeSlot) {
+      toast.error('Please select a time slot');
+      return false;
+    }
+
+    if (!location.trim()) {
+      toast.error('Please specify a meeting location');
+      return false;
+    }
+
+    if (!paymentOption) {
+      toast.error('Please select a payment option');
+      return false;
+    }
+
+    return true;
+  };
+
+  const findAvailableCompanions = async () => {
+    try {
+      // In a real implementation, you'd call an actual API
+      const availableCompanions = await companionService.findMatchingCompanion({
+        date: date?.toISOString(),
+        timeSlot,
+        duration: duration === 'custom' ? Number(customDuration) : Number(duration),
+        location
+      });
+
+      return availableCompanions;
+    } catch (error) {
+      console.error('Failed to find available companions:', error);
+      toast.error('Could not find available companions');
+      return [];
+    }
+  };
+
+  
+
   
   // Form data
   const [date, setDate] = useState<Date | undefined>(addDays(new Date(), 1));
@@ -557,13 +603,13 @@ export default function BookingPage({ params }: { params: { id: string } }) {
                       <Label htmlFor="notes" className="mb-2 block">
                         Any specific interests, preferences, or requirements?
                       </Label>
-                      <Textarea 
+                      {/* <Textarea 
                         id="notes"
                         placeholder="E.g., I'm interested in local cuisine, want to avoid crowded places, need wheelchair access, etc."
                         value={notes}
                         onChange={(e) => setNotes(e.target.value)}
                         className="w-full min-h-[150px]"
-                      />
+                      /> */}
                     </div>
                   </div>
                   
