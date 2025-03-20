@@ -25,13 +25,7 @@ async function bootstrap() {
   app.use(compression()); // Response compression
 
   // Configure CORS
-  
-  
-
-  // Set global prefix
-
   const frontendUrl = configService.get('FRONTEND_URL', 'http://localhost:3000');
-
   const corsOriginsStr = configService.get('CORS_ORIGINS', frontendUrl);
   const corsOrigins = corsOriginsStr.split(',').map(origin => origin.trim());
   
@@ -45,19 +39,21 @@ async function bootstrap() {
     optionsSuccessStatus: 204,
   });
 
+  // IMPORTANT: We're changing how the API prefix is handled for auth routes
   const apiPrefix = configService.get<string>('API_PREFIX', 'api');
-  app.setGlobalPrefix(apiPrefix, {
-    exclude: ['/auth/google', '/auth/facebook', '/auth/apple', '/auth/google/callback', '/auth/facebook/callback', '/auth/apple/callback'],
-  });
+
+  // Apply global prefix but DO NOT exclude the auth routes
+  // This way, all routes will have the /api prefix
+  app.setGlobalPrefix(apiPrefix);
 
   // Set up global validation pipe
   app.useGlobalPipes(
     new ValidationPipe({
-      whitelist: true, // Strip properties that don't have any decorators
-      forbidNonWhitelisted: true, // Throw errors if non-whitelisted properties are present
-      transform: true, // Transform payloads to be objects typed according to their DTO classes
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
       transformOptions: {
-        enableImplicitConversion: true, // Automatically transform primitive types
+        enableImplicitConversion: true,
       },
     }),
   );

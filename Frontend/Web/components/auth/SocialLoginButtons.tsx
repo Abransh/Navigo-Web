@@ -24,35 +24,34 @@ export default function SocialLoginButtons({ mode }: SocialLoginButtonsProps) {
     }
   }, [redirectTo]);
 
-  // In the handleSocialLogin function in SocialLoginButtons.tsx
-const handleSocialLogin = (provider: string) => {
-  try {
-    setIsLoading(true);
-    setLoadingProvider(provider);
-    
-    // Save redirectTo to localStorage for the callback
-    if (redirectTo) {
-      localStorage.setItem('redirectTo', redirectTo);
+  const handleSocialLogin = (provider: string) => {
+    try {
+      setIsLoading(true);
+      setLoadingProvider(provider);
+      
+      // Save redirectTo to localStorage for the callback
+      if (redirectTo) {
+        localStorage.setItem('redirectTo', redirectTo);
+      }
+      
+      // Get the API URL from environment variable
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+      
+      // UPDATED: Construct the correct OAuth URL WITH /api prefix
+      // This URL should match the controller routes in the backend
+      const authUrl = `${apiUrl}/api/auth/${provider}`;
+      
+      console.log(`Initiating ${provider} authentication. Redirecting to: ${authUrl}`);
+      
+      // Redirect to the OAuth provider
+      window.location.href = authUrl;
+    } catch (error) {
+      console.error(`Error initiating ${provider} login:`, error);
+      toast.error(`Failed to connect to ${provider}. Please try again.`);
+      setIsLoading(false);
+      setLoadingProvider(null);
     }
-    
-    // Get the API URL from environment variable
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
-    
-    // Construct the correct OAuth URL without /api prefix
-    // This URL should match the controller routes in the backend
-    const authUrl = `${apiUrl}/auth/${provider}`;
-    
-    console.log(`Initiating ${provider} authentication. Redirecting to: ${authUrl}`);
-    
-    // Redirect to the OAuth provider
-    window.location.href = authUrl;
-  } catch (error) {
-    console.error(`Error initiating ${provider} login:`, error);
-    toast.error(`Failed to connect to ${provider}. Please try again.`);
-    setIsLoading(false);
-    setLoadingProvider(null);
-  }
-};
+  };
 
   return (
     <div className="space-y-3 mb-6">

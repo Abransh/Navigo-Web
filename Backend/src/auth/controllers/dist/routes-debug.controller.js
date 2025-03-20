@@ -1,6 +1,4 @@
 "use strict";
-// src/auth/controllers/routes-debug.controller.ts
-// Add this file to your Backend/src/auth/controllers folder
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -9,10 +7,12 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 exports.__esModule = true;
 exports.RoutesDebugController = void 0;
+// src/auth/controllers/routes-debug.controller.ts
 var common_1 = require("@nestjs/common");
 var swagger_1 = require("@nestjs/swagger");
 var RoutesDebugController = /** @class */ (function () {
-    function RoutesDebugController() {
+    function RoutesDebugController(configService) {
+        this.configService = configService;
     }
     RoutesDebugController.prototype.checkAuthRoutes = function () {
         return {
@@ -24,7 +24,12 @@ var RoutesDebugController = /** @class */ (function () {
                 '/api/auth/apple',
                 '/api/auth/login',
                 '/api/auth/register'
-            ]
+            ],
+            config: {
+                googleCallbackUrl: this.configService.get('GOOGLE_CALLBACK_URL'),
+                apiPrefix: this.configService.get('API_PREFIX'),
+                frontendUrl: this.configService.get('FRONTEND_URL')
+            }
         };
     };
     __decorate([

@@ -1,5 +1,5 @@
 // Backend/src/auth/controllers/social-auth.controller.ts
-import { Controller, Get, UseGuards, Req, Res } from '@nestjs/common';
+import { Controller, Get, UseGuards, Req, Res, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
@@ -13,6 +13,8 @@ import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 @ApiTags('auth')
 @Controller('auth')
 export class SocialAuthController {
+  private readonly logger = new Logger(SocialAuthController.name);
+  
   constructor(private configService: ConfigService) {}
 
   /**
@@ -21,11 +23,12 @@ export class SocialAuthController {
    * This endpoint initiates the Google OAuth flow by redirecting to Google's login page.
    * The user is prompted to select their Google account and grant permissions.
    */
-  @Get('google')
+   @Get('google')
   @UseGuards(AuthGuard('google'))
   @ApiOperation({ summary: 'Initiate Google OAuth login' })
   @ApiResponse({ status: 302, description: 'Redirect to Google OAuth page' })
   googleAuth() {
+    this.logger.log('Initiating Google OAuth flow');
     // This route initiates Google OAuth flow
     // The actual logic is handled by the GoogleStrategy
   }
@@ -44,15 +47,20 @@ export class SocialAuthController {
     description: 'Redirect to frontend with auth token', 
   })
   googleAuthCallback(@Req() req, @Res() res) {
+    this.logger.log('Received Google OAuth callback');
+    
     // Extract the access token from the authenticated user
     const token = req.user.access_token;
     
     // Get the frontend URL from environment variables
     const frontendUrl = this.configService.get('FRONTEND_URL', 'http://localhost:3000');
     
+    this.logger.log(`Redirecting to frontend: ${frontendUrl}/auth/callback?token=${token}`);
+    
     // Redirect to the frontend with the token as a URL parameter
     return res.redirect(`${frontendUrl}/auth/callback?token=${token}`);
   }
+
 
   /**
    * Facebook Authentication

@@ -23,7 +23,9 @@ var swagger_1 = require("@nestjs/swagger");
 var SocialAuthController = /** @class */ (function () {
     function SocialAuthController(configService) {
         this.configService = configService;
+        this.logger = new common_1.Logger(SocialAuthController_1.name);
     }
+    SocialAuthController_1 = SocialAuthController;
     /**
      * Google Authentication
      *
@@ -31,6 +33,7 @@ var SocialAuthController = /** @class */ (function () {
      * The user is prompted to select their Google account and grant permissions.
      */
     SocialAuthController.prototype.googleAuth = function () {
+        this.logger.log('Initiating Google OAuth flow');
         // This route initiates Google OAuth flow
         // The actual logic is handled by the GoogleStrategy
     };
@@ -41,10 +44,12 @@ var SocialAuthController = /** @class */ (function () {
      * It receives the authorization code, exchanges it for tokens, and redirects to the frontend.
      */
     SocialAuthController.prototype.googleAuthCallback = function (req, res) {
+        this.logger.log('Received Google OAuth callback');
         // Extract the access token from the authenticated user
         var token = req.user.access_token;
         // Get the frontend URL from environment variables
         var frontendUrl = this.configService.get('FRONTEND_URL', 'http://localhost:3000');
+        this.logger.log("Redirecting to frontend: " + frontendUrl + "/auth/callback?token=" + token);
         // Redirect to the frontend with the token as a URL parameter
         return res.redirect(frontendUrl + "/auth/callback?token=" + token);
     };
@@ -92,6 +97,7 @@ var SocialAuthController = /** @class */ (function () {
         // Redirect to the frontend with the token as a URL parameter
         return res.redirect(frontendUrl + "/auth/callback?token=" + token);
     };
+    var SocialAuthController_1;
     __decorate([
         common_1.Get('google'),
         common_1.UseGuards(passport_1.AuthGuard('google')),
@@ -134,7 +140,7 @@ var SocialAuthController = /** @class */ (function () {
         swagger_1.ApiResponse({ status: 302, description: 'Redirect to frontend with auth token' }),
         __param(0, common_1.Req()), __param(1, common_1.Res())
     ], SocialAuthController.prototype, "appleAuthCallback");
-    SocialAuthController = __decorate([
+    SocialAuthController = SocialAuthController_1 = __decorate([
         swagger_1.ApiTags('auth'),
         common_1.Controller('auth')
     ], SocialAuthController);

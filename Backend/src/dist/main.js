@@ -75,9 +75,9 @@ function bootstrap() {
                         optionsSuccessStatus: 204
                     });
                     apiPrefix = configService.get('API_PREFIX', 'api');
-                    app.setGlobalPrefix(apiPrefix, {
-                        exclude: ['/auth/google', '/auth/facebook', '/auth/apple', '/auth/google/callback', '/auth/facebook/callback', '/auth/apple/callback']
-                    });
+                    // Apply global prefix but DO NOT exclude the auth routes
+                    // This way, all routes will have the /api prefix
+                    app.setGlobalPrefix(apiPrefix);
                     // Set up global validation pipe
                     app.useGlobalPipes(new common_1.ValidationPipe({
                         whitelist: true,

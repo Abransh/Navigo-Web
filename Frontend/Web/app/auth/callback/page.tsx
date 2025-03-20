@@ -13,7 +13,7 @@ export default function AuthCallbackPage() {
   const router = useRouter();
   const token = searchParams.get('token');
   const errorParam = searchParams.get('error');
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, processSocialAuthToken } = useAuth();
 
   useEffect(() => {
     async function handleCallback() {
@@ -52,7 +52,7 @@ export default function AuthCallbackPage() {
         
         // Get user info from the server
         const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
-        const response = await fetch(`${apiUrl}/auth/me`, {
+        const response = await fetch(`${apiUrl}/api/auth/me`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -70,15 +70,8 @@ export default function AuthCallbackPage() {
         // Store user data
         localStorage.setItem('user', JSON.stringify(userData));
         
-        // Process token with auth context if available
-        if (typeof processSocialAuthToken === 'function') {
-          try {
-            await processSocialAuthToken(token);
-          } catch (err) {
-            console.warn('Error in processSocialAuthToken:', err);
-            // Continue with normal flow even if this fails
-          }
-        }
+        // Process token with auth context
+        await processSocialAuthToken(token);
         
         // Success message
         toast.success('Successfully signed in!');

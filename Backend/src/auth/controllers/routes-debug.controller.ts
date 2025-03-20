@@ -1,12 +1,13 @@
 // src/auth/controllers/routes-debug.controller.ts
-// Add this file to your Backend/src/auth/controllers folder
-
 import { Controller, Get } from '@nestjs/common';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
+import { ConfigService } from '@nestjs/config';
 
 @ApiTags('debug')
 @Controller('debug')
 export class RoutesDebugController {
+  constructor(private configService: ConfigService) {}
+
   @Get('auth-routes')
   @ApiOperation({ summary: 'Check if auth routes are available' })
   checkAuthRoutes() {
@@ -19,7 +20,12 @@ export class RoutesDebugController {
         '/api/auth/apple',
         '/api/auth/login',
         '/api/auth/register'
-      ]
+      ],
+      config: {
+        googleCallbackUrl: this.configService.get('GOOGLE_CALLBACK_URL'),
+        apiPrefix: this.configService.get('API_PREFIX'),
+        frontendUrl: this.configService.get('FRONTEND_URL')
+      }
     };
   }
 }
