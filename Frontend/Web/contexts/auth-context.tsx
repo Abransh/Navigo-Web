@@ -30,8 +30,16 @@ interface AuthContextType {
 // Helper function to parse JWT token
 const parseJwt = (token: string) => {
   try {
+    // First check if token is a string and has proper format
+    if (!token || typeof token !== 'string' || !token.includes('.')) {
+      return { sub: null, email: null, exp: 0 };
+    }
+    
     const base64Url = token.split('.')[1];
-    if (!base64Url) throw new Error('Invalid token format');
+    if (!base64Url) {
+      console.warn('Invalid token format - missing payload section');
+      return { sub: null, email: null, exp: 0 };
+    }
     
     const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
     const jsonPayload = atob(base64);

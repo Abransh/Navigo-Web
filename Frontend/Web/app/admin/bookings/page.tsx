@@ -87,8 +87,10 @@ export default function AdminBookingsPage() {
 
   // Fetch when filters change
   const applyFilters = () => {
-    setPage(1); // Reset to first page
-    fetchBookings();
+    const statusFilterValue = statusFilter === 'all' ? '' : statusFilter;
+    const filter = [searchFilter, statusFilterValue].filter(Boolean).join(' ');
+    
+    fetchBookings(filter);
   };
 
   const viewBookingDetails = (booking) => {
@@ -210,7 +212,7 @@ export default function AdminBookingsPage() {
                   <SelectValue placeholder="All statuses" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All statuses</SelectItem>
+                  <SelectItem value="all">All statuses</SelectItem>
                   <SelectItem value="pending">Pending</SelectItem>
                   <SelectItem value="confirmed">Confirmed</SelectItem>
                   <SelectItem value="in_progress">In Progress</SelectItem>
@@ -222,10 +224,10 @@ export default function AdminBookingsPage() {
           </div>
         </CardContent>
         <CardFooter className="flex justify-between border-t pt-6">
-          <Button variant="outline" onClick={() => {
+        <Button variant="outline" onClick={() => {
             setSearchFilter('');
-            setStatusFilter('');
-          }}>
+            setStatusFilter('all');
+            }}>
             Reset Filters
           </Button>
           <Button onClick={applyFilters}>

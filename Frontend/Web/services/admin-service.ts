@@ -2,6 +2,7 @@
 import apiClient from './api-client';
 import { ADMIN_PATHS } from './admin-paths';
 import { toast } from 'react-hot-toast';
+import axios from 'axios';
 import { 
   mockDashboardStats, 
   mockUsers, 
