@@ -1,5 +1,6 @@
 // services/admin-service.ts
-import apiClient, { basePath } from './api-client';
+import apiClient from './api-client';
+import { ADMIN_PATHS } from './admin-paths';
 import { 
   mockDashboardStats, 
   mockUsers, 
@@ -7,6 +8,15 @@ import {
   mockPayments, 
   mockCompanionApplications 
 } from '../mocks/admin-mock-data';
+
+// Flag to force using mock data (for testing)
+// Set this to true to always use mock data regardless of environment
+const FORCE_MOCK = false;
+
+// Helper function to determine if we should use mock data
+const useMockData = () => {
+  return FORCE_MOCK || process.env.NODE_ENV === 'development';
+};
 
 export interface AdminStats {
   totalUsers: number;
@@ -24,60 +34,26 @@ export interface UserManagement {
   role: string;
   createdAt: string;
   isActive: boolean;
-  isVerified?: boolean;
-}
-
-export interface BookingManagement {
-  id: string;
-  tourist: {
-    id: string;
-    firstName: string;
-    lastName: string;
-  };
-  companion: {
-    id: string;
-    firstName: string;
-    lastName: string;
-  };
-  startDate: string;
-  endDate: string;
-  status: string;
-  totalAmount: number;
-}
-
-export interface CompanionApplication {
-  id: string;
-  user: {
-    id: string;
-    firstName: string;
-    lastName: string;
-    email: string;
-  };
-  languages: string[];
-  specialties: string[];
-  hourlyRate: number;
-  bio: string;
-  status: string;
 }
 
 const adminService = {
   // Fetch dashboard statistics
   getDashboardStats: async (): Promise<AdminStats> => {
     try {
-      // In development, we can use mock data or real API based on environment
-      if (process.env.NODE_ENV === 'development' && process.env.NEXT_PUBLIC_USE_MOCKS === 'true') {
-        console.log('Using mock dashboard stats');
+      // Use mock data in development or if forced
+      if (useMockData()) {
+        console.log('Using mock data for admin stats');
+        // Simulate API delay
         await new Promise(resolve => setTimeout(resolve, 800));
         return mockDashboardStats;
       }
       
-      const response = await apiClient.get(`${basePath}/admin/stats`);
-      console.log('Dashboard stats response:', response.data);
+      // Use real API in production
+      const response = await apiClient.get(ADMIN_PATHS.STATS);
       return response.data;
     } catch (error) {
       console.error('Failed to fetch admin stats:', error);
-      // Fallback to mock data
-      return mockDashboardStats;
+      return mockDashboardStats; // Fallback to mock data on error
     }
   },
 
@@ -88,9 +64,9 @@ const adminService = {
     page: number 
   }> => {
     try {
-      // In development, we can use mock data or real API based on environment
-      if (process.env.NODE_ENV === 'development' && process.env.NEXT_PUBLIC_USE_MOCKS === 'true') {
-        console.log('Using mock users data');
+      // Use mock data in development or if forced
+      if (useMockData()) {
+        console.log('Using mock data for users');
         await new Promise(resolve => setTimeout(resolve, 800));
         
         let filteredUsers = [...mockUsers];
@@ -114,39 +90,16 @@ const adminService = {
         };
       }
       
-      const response = await apiClient.get(`${basePath}/admin/users`, {
+      // Use real API in production
+      const response = await apiClient.get(ADMIN_PATHS.USERS, {
         params: { page, limit, filter }
       });
-      
-      console.log('Users response:', response.data);
-      
-      // Transform data if needed to match expected format
-      const transformedData = {
-        users: response.data.users.map((user: UserManagement) => ({
-          ...user,
-          // Make sure all expected fields are present
-          isActive: user.isActive !== undefined ? user.isActive : true,
-        })),
-        total: response.data.total,
-        page: response.data.page
-      };
-      
-      return transformedData;
+      return response.data;
     } catch (error) {
       console.error('Failed to fetch users:', error);
       
       // Return mock data on error
       let filteredUsers = [...mockUsers];
-      if (filter) {
-        const lowercaseFilter = filter.toLowerCase();
-        filteredUsers = mockUsers.filter(user => 
-          user.firstName.toLowerCase().includes(lowercaseFilter) ||
-          user.lastName.toLowerCase().includes(lowercaseFilter) ||
-          user.email.toLowerCase().includes(lowercaseFilter) ||
-          user.role.toLowerCase().includes(lowercaseFilter)
-        );
-      }
-      
       const start = (page - 1) * limit;
       const end = start + limit;
       
@@ -162,16 +115,22 @@ const adminService = {
   updateUserStatus: async (userId: string, status: 'active' | 'suspended'): Promise<any> => {
     const isActive = status === 'active';
     try {
-      if (process.env.NODE_ENV === 'development' && process.env.NEXT_PUBLIC_USE_MOCKS === 'true') {
-        console.log(`Mock: Setting user ${userId} to ${status}`);
+      if (useMockData()) {
+        console.log(`Mock: Updating user ${userId} status to ${status}`);
         await new Promise(resolve => setTimeout(resolve, 600));
+        // Update mock data for consistency in the session
+        const userIndex = mockUsers.findIndex(u => u.id === userId);
+        if (userIndex >= 0) {
+          mockUsers[userIndex].isActive = isActive;
+        }
         return { success: true };
       }
       
-      const response = await apiClient.patch(`${basePath}/admin/users/${userId}/status`, { 
-        isActive 
-      });
-      
+      // Use real API in production
+      const response = await apiClient.patch(
+        ADMIN_PATHS.USER_STATUS(userId), 
+        { isActive }
+      );
       return response.data;
     } catch (error) {
       console.error('Failed to update user status:', error);
@@ -180,25 +139,21 @@ const adminService = {
   },
 
   // Bookings management
-  getBookings: async (page = 1, limit = 10, filter = ''): Promise<{
-    bookings: BookingManagement[],
-    total: number,
-    page: number
-  }> => {
+  getBookings: async (page = 1, limit = 10, filter = ''): Promise<any> => {
     try {
-      if (process.env.NODE_ENV === 'development' && process.env.NEXT_PUBLIC_USE_MOCKS === 'true') {
-        console.log('Using mock bookings data');
+      if (useMockData()) {
+        console.log('Using mock data for bookings');
         await new Promise(resolve => setTimeout(resolve, 800));
         
         let filteredBookings = [...mockBookings];
         if (filter) {
           const lowercaseFilter = filter.toLowerCase();
           filteredBookings = mockBookings.filter(booking => 
-            booking.tourist.firstName.toLowerCase().includes(lowercaseFilter) ||
-            booking.tourist.lastName.toLowerCase().includes(lowercaseFilter) ||
-            booking.companion.firstName.toLowerCase().includes(lowercaseFilter) ||
-            booking.companion.lastName.toLowerCase().includes(lowercaseFilter) ||
-            booking.status.toLowerCase().includes(lowercaseFilter)
+            booking.tourist.firstName?.toLowerCase().includes(lowercaseFilter) ||
+            booking.tourist.lastName?.toLowerCase().includes(lowercaseFilter) ||
+            booking.companion.firstName?.toLowerCase().includes(lowercaseFilter) ||
+            booking.companion.lastName?.toLowerCase().includes(lowercaseFilter) ||
+            booking.status?.toLowerCase().includes(lowercaseFilter)
           );
         }
         
@@ -212,25 +167,11 @@ const adminService = {
         };
       }
       
-      const response = await apiClient.get(`${basePath}/admin/bookings`, {
+      // Use real API in production
+      const response = await apiClient.get(ADMIN_PATHS.BOOKINGS, {
         params: { page, limit, filter }
       });
-      
-      console.log('Bookings response:', response.data);
-      
-      // Transform data if needed to match expected format
-      const transformedData = {
-        bookings: response.data.bookings.map(booking => ({
-          ...booking,
-          // Add any transformations needed to match frontend model
-          tourist: booking.tourist || { firstName: 'Unknown', lastName: 'User' },
-          companion: booking.companion || { firstName: 'Unknown', lastName: 'User' }
-        })),
-        total: response.data.total,
-        page: response.data.page
-      };
-      
-      return transformedData;
+      return response.data;
     } catch (error) {
       console.error('Failed to fetch bookings:', error);
       
@@ -248,18 +189,18 @@ const adminService = {
   // Payment management
   getPayments: async (page = 1, limit = 10, filter = ''): Promise<any> => {
     try {
-      if (process.env.NODE_ENV === 'development' && process.env.NEXT_PUBLIC_USE_MOCKS === 'true') {
-        console.log('Using mock payments data');
+      if (useMockData()) {
+        console.log('Using mock data for payments');
         await new Promise(resolve => setTimeout(resolve, 800));
         
         let filteredPayments = [...mockPayments];
         if (filter) {
           const lowercaseFilter = filter.toLowerCase();
           filteredPayments = mockPayments.filter(payment => 
-            payment.booking.tourist.firstName.toLowerCase().includes(lowercaseFilter) ||
-            payment.booking.tourist.lastName.toLowerCase().includes(lowercaseFilter) ||
-            payment.status.toLowerCase().includes(lowercaseFilter) ||
-            payment.method.toLowerCase().includes(lowercaseFilter)
+            payment.booking?.tourist?.firstName?.toLowerCase().includes(lowercaseFilter) ||
+            payment.booking?.tourist?.lastName?.toLowerCase().includes(lowercaseFilter) ||
+            payment.status?.toLowerCase().includes(lowercaseFilter) ||
+            payment.method?.toLowerCase().includes(lowercaseFilter)
           );
         }
         
@@ -273,13 +214,10 @@ const adminService = {
         };
       }
       
-      const response = await apiClient.get(`${basePath}/admin/payments`, {
+      // Use real API in production
+      const response = await apiClient.get(ADMIN_PATHS.PAYMENTS, {
         params: { page, limit, filter }
       });
-      
-      console.log('Payments response:', response.data);
-      
-      // Transform data if needed
       return response.data;
     } catch (error) {
       console.error('Failed to fetch payments:', error);
@@ -296,14 +234,10 @@ const adminService = {
   },
 
   // Companion applications
-  getCompanionApplications: async (page = 1, limit = 10): Promise<{
-    applications: CompanionApplication[],
-    total: number,
-    page: number
-  }> => {
+  getCompanionApplications: async (page = 1, limit = 10): Promise<any> => {
     try {
-      if (process.env.NODE_ENV === 'development' && process.env.NEXT_PUBLIC_USE_MOCKS === 'true') {
-        console.log('Using mock companion applications data');
+      if (useMockData()) {
+        console.log('Using mock data for companion applications');
         await new Promise(resolve => setTimeout(resolve, 800));
         
         const start = (page - 1) * limit;
@@ -316,26 +250,11 @@ const adminService = {
         };
       }
       
-      const response = await apiClient.get(`${basePath}/admin/companion-applications`, {
+      // Use real API in production
+      const response = await apiClient.get(ADMIN_PATHS.COMPANION_APPLICATIONS, {
         params: { page, limit }
       });
-      
-      console.log('Companion applications response:', response.data);
-      
-      // Transform data if needed
-      const transformedData = {
-        applications: response.data.applications.map(app => ({
-          ...app,
-          // Add any transformations needed
-          status: app.status || 'pending',
-          languages: app.languages || [],
-          specialties: app.specialties || []
-        })),
-        total: response.data.total,
-        page: response.data.page
-      };
-      
-      return transformedData;
+      return response.data;
     } catch (error) {
       console.error('Failed to fetch companion applications:', error);
       
@@ -352,16 +271,24 @@ const adminService = {
 
   processCompanionApplication: async (applicationId: string, status: 'approved' | 'rejected'): Promise<any> => {
     try {
-      if (process.env.NODE_ENV === 'development' && process.env.NEXT_PUBLIC_USE_MOCKS === 'true') {
-        console.log(`Mock: Processing companion application ${applicationId} as ${status}`);
+      if (useMockData()) {
+        console.log(`Mock: Processing application ${applicationId} with status ${status}`);
         await new Promise(resolve => setTimeout(resolve, 600));
-        return { success: true, status };
+        
+        // Update mock data to reflect the change 
+        const appIndex = mockCompanionApplications.findIndex(a => a.id === applicationId);
+        if (appIndex >= 0) {
+          mockCompanionApplications[appIndex].status = status;
+        }
+        
+        return { success: true };
       }
       
-      const response = await apiClient.patch(`${basePath}/admin/companion-applications/${applicationId}`, { 
-        status 
-      });
-      
+      // Use real API in production
+      const response = await apiClient.patch(
+        ADMIN_PATHS.PROCESS_APPLICATION(applicationId), 
+        { status }
+      );
       return response.data;
     } catch (error) {
       console.error('Failed to process companion application:', error);
