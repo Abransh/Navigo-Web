@@ -27,7 +27,6 @@ interface AuthContextType {
   refreshUserProfile: () => Promise<void>;
 }
 
-const FORCE_MOCK_AUTH = true;
 
 // Helper function to parse JWT token
 const parseJwt = (token: string) => {
@@ -56,6 +55,9 @@ const parseJwt = (token: string) => {
 // Check if a token has expired
 const isTokenExpired = (token: string): boolean => {
   try {
+    if (token === 'mock-jwt-token-for-admin-development') {
+      return false;
+    }
     const { exp } = parseJwt(token);
     // Check if expiration time exists and convert to milliseconds
     if (!exp) return true;
@@ -136,10 +138,11 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   // Modify login function
 const login = async (email: string, password: string): Promise<AuthResponse> => {
+  console.log('Login function called with:', email, password);
   setLoading(true);
   try {
     // DEVELOPMENT ONLY: Mock admin login
-    if (FORCE_MOCK_AUTH && email === 'admin@navigo.com' && password === 'admin123') {
+    if (FORCE_MOCK_AUTH && email === 'admin@navigo.com' && password === 'Admin123!') {
       const mockUser = {
         id: 'admin-mock-id',
         email: 'admin@navigo.com',
@@ -332,7 +335,7 @@ const login = async (email: string, password: string): Promise<AuthResponse> => 
       // If this is an authentication error, log the user out
       if (axios.isAxiosError(error) && error.response?.status === 401) {
       console.log('Authentication error - logging out');
-      logout();
+      //logout();
       
       // For other errors, we can continue with the existing user data
       // This makes the app more resilient to temporary API issues

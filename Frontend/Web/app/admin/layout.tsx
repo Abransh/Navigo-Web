@@ -66,7 +66,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       if (!user) {
         toast.error('Please log in to access the admin area');
         router.push('/login?redirectTo=/admin');
-      } else if (user.role !== 'admin') {
+      } else if (user.role.toLowerCase() !== 'admin') {
         toast.error('You do not have admin permissions');
         router.push('/');
       }

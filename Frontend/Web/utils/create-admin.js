@@ -12,19 +12,19 @@ async function createAdminUser() {
       firstName: 'Admin',
       lastName: 'User',
       email: 'admin@navigo.com',
-      password: 'admin123',  // Remember to use a strong password in production
+      password: 'Admin123!',  // Remember to use a strong password in production
       role: 'admin'
     });
 
     console.log('Admin user created successfully:', response.data);
     console.log('\nYou can now log in with:');
     console.log('Email: admin@navigo.com');
-    console.log('Password: admin123');
+    console.log('Password: Admin123!');
   } catch (error) {
     if (error.response?.data?.message?.includes('already exists')) {
       console.log('Admin user already exists. You can log in with:');
       console.log('Email: admin@navigo.com');
-      console.log('Password: admin123');
+      console.log('Password: Admin123!');
     } else {
       console.error('Error creating admin user:', error.response?.data || error.message);
     }

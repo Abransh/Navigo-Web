@@ -27,7 +27,11 @@ export async function testAuthCredentials(email: string, password: string) {
     } catch (parseError) {
       const text = await response.text();
       console.log('Raw response text:', text);
-      throw new Error(`Failed to parse response: ${parseError.message}`);
+      if (parseError instanceof Error) {
+        throw new Error(`Failed to parse response: ${parseError.message}`);
+      } else {
+        throw new Error('Failed to parse response: Unknown error');
+      }
     }
     
     // If response is not ok, throw error with details
