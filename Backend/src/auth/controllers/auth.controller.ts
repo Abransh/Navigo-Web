@@ -181,35 +181,35 @@ export class AuthController {
     this.logger.debug(`Finding user with ID: ${userId}`);
     return this.usersService.findById(userId);
   }
-  @Get('test-login')
-  @ApiOperation({ summary: 'Test login endpoint' })
-  async testLogin() {
-    // Create a test admin user for debugging
-    try {
-      const hashedPassword = await bcrypt.hash('Admin123!', 10);
-      
-      // First check if user exists
-      let user;
-      try {
-        user = await this.usersService.findByEmail('admin@navigo.com');
-      } catch (error) {
-        // Create the user if not found
-        user = await this.usersService.create({
-          firstName: 'Admin',
-          lastName: 'Test',
-          email: 'admin@navigo.com',
-          password: hashedPassword,
-          role: 'admin' as UserRole
-        });
-      }
-      
-      return { 
-        message: 'Test admin user created/verified', 
-        loginWith: { email: 'admin@navigo.com', password: 'Admin123!' } 
-      };
-    } catch (error) {
-      return { error: error.message };
-    }
-  }
 
+@Get('test-login')
+@ApiOperation({ summary: 'Test login endpoint' })
+async testLogin() {
+  // Create a test admin user for debugging
+  try {
+    const hashedPassword = await bcrypt.hash('Admin123!', 10);
+    
+    // First check if user exists
+    let user;
+    try {
+      user = await this.usersService.findByEmail('admin@navigo.com');
+    } catch (error) {
+      // Create the user if not found
+      user = await this.usersService.create({
+        firstName: 'Admin',
+        lastName: 'Test',
+        email: 'admin@navigo.com',
+        password: hashedPassword,
+        role: 'admin' as UserRole
+      });
+    }
+    
+    return { 
+      message: 'Test admin user created/verified', 
+      loginWith: { email: 'admin@navigo.com', password: 'Admin123!' } 
+    };
+  } catch (error) {
+    return { error: error.message };
+  }
+}
 }
