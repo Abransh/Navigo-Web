@@ -68,9 +68,9 @@ export class AdminController {
       totalUsers,
       totalCompanions,
       totalBookings,
-      totalRevenue,
-      pendingVerifications,
-      companionApplications
+      totalRevenue: 0,
+      pendingVerifications: 0,
+      companionApplications: 0
     };
   }
 

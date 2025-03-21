@@ -16,6 +16,7 @@ var schedule_1 = require("@nestjs/schedule");
 var serve_static_1 = require("@nestjs/serve-static");
 var path_1 = require("path");
 var core_1 = require("@nestjs/core");
+var admin_module_1 = require("./admin/admin.module");
 // Controllers & Services
 var app_controller_1 = require("./app.controller");
 var app_service_1 = require("./app.service");
@@ -50,6 +51,7 @@ var AppModule = /** @class */ (function () {
                 }),
                 // Scheduler module - ensure it's loaded after CoreModule
                 schedule_1.ScheduleModule.forRoot(),
+                admin_module_1.AdminModule,
                 // Rate limiting
                 throttler_1.ThrottlerModule.forRootAsync({
                     imports: [config_1.ConfigModule],

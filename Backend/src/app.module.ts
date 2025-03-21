@@ -7,6 +7,7 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { APP_GUARD } from '@nestjs/core';
+import { AdminModule } from './admin/admin.module';
 
 // Controllers & Services
 import { AppController } from './app.controller';
@@ -44,6 +45,8 @@ import { AppSchedulerModule } from './schedule/schedule.module';
     
     // Scheduler module - ensure it's loaded after CoreModule
     ScheduleModule.forRoot(),
+
+    AdminModule,
     
     // Rate limiting
     ThrottlerModule.forRootAsync({

@@ -75,6 +75,31 @@ export default function AdminDashboard() {
     );
   }
 
+  // Add this component to your admin dashboard page
+const ApiDebug = () => {
+  const [apiUrl, setApiUrl] = useState('');
+  
+  useEffect(() => {
+    setApiUrl(process.env.NEXT_PUBLIC_API_URL || 'Not set');
+  }, []);
+  
+  return (
+    <div className="p-4 bg-amber-50 text-amber-900 rounded-lg mb-4 text-sm">
+      <h3 className="font-bold mb-2">Debug Info</h3>
+      <p>API URL: {apiUrl}</p>
+      <p>API Prefix: {basePath}</p>
+      <p>Auth Token: {localStorage.getItem('token') ? '✅ Present' : '❌ Missing'}</p>
+      <p>Admin Stats URL: {ADMIN_PATHS.STATS}</p>
+      <button 
+        className="bg-amber-600 text-white px-2 py-1 rounded mt-2"
+        onClick={() => window.open('/debug', '_blank')}
+      >
+        Open Debug Page
+      </button>
+    </div>
+  );
+};
+
   return (
     <div className="p-6 max-w-7xl mx-auto">
       <h1 className="text-3xl font-bold mb-6">Admin Dashboard</h1>

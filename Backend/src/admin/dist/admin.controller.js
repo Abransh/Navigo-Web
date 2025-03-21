@@ -81,9 +81,9 @@ var AdminController = /** @class */ (function () {
                                 totalUsers: totalUsers,
                                 totalCompanions: totalCompanions,
                                 totalBookings: totalBookings,
-                                totalRevenue: totalRevenue,
-                                pendingVerifications: pendingVerifications,
-                                companionApplications: companionApplications
+                                totalRevenue: 0,
+                                pendingVerifications: 0,
+                                companionApplications: 0
                             }];
                 }
             });
