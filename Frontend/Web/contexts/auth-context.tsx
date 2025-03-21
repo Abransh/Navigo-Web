@@ -27,6 +27,8 @@ interface AuthContextType {
   refreshUserProfile: () => Promise<void>;
 }
 
+const FORCE_MOCK_AUTH = true;
+
 // Helper function to parse JWT token
 const parseJwt = (token: string) => {
   try {
@@ -184,6 +186,9 @@ const login = async (email: string, password: string): Promise<AuthResponse> => 
       apiClient.defaults.headers.common['Authorization'] = `Bearer ${response.access_token}`;
       
       console.log('Login successful');
+      const token = response.access_token;
+      console.log('Token payload:', parseJwt(token));
+        console.log('User from API:', response.user);
       return response;
     } catch (error) {
       console.error('Login failed:', error);
@@ -192,6 +197,8 @@ const login = async (email: string, password: string): Promise<AuthResponse> => 
       setLoading(false);
     }
   };
+
+
 
   const register = async (data: RegisterData): Promise<AuthResponse> => {
     setLoading(true);
