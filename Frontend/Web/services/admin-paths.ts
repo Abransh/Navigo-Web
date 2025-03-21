@@ -18,7 +18,7 @@ export const ADMIN_PATHS = {
   PAYMENTS: `${basePath}/admin/payments`,
   
   // Companion applications
-  COMPANION_APPLICATIONS: `${basePath}/admin/companion-applications`,
+   COMPANION_APPLICATIONS: `${basePath}/admin/companion-applications`,
   PROCESS_APPLICATION: (applicationId: string) => 
     `${basePath}/admin/companion-applications/${applicationId}`,
 };

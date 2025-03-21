@@ -125,32 +125,38 @@ const adminService = {
   /**
    * Fetch dashboard statistics
    */
-  getDashboardStats: async (): Promise<AdminStats> => {
-    try {
-      console.log('Fetching admin dashboard stats from API');
-      
-      // Use real API by default
-      const response = await apiClient.get<AdminStats>(ADMIN_PATHS.STATS);
-      
-      console.log('Successfully fetched admin stats from API');
-      return response.data;
-    } catch (error: any) {
-      // Log the error
-      console.error('Failed to fetch admin stats:', error);
-      
-      // Show error toast with specific message
-      if (error.response?.status === 401) {
-        toast.error('Authentication required. Please log in again.');
-      } else if (error.response?.status === 403) {
-        toast.error('You do not have permission to access admin statistics.');
-      } else {
-        toast.error('Failed to load dashboard statistics. Using backup data.');
-      }
-      
-      // Fallback to mock data on error
-      return mockDashboardStats;
+  // In admin-service.ts, modify error handling in getDashboardStats and other methods
+getDashboardStats: async (): Promise<AdminStats> => {
+  try {
+    console.log('Fetching admin dashboard stats from API');
+    
+    const response = await apiClient.get<AdminStats>(ADMIN_PATHS.STATS);
+    
+    console.log('Successfully fetched admin stats from API');
+    return response.data;
+  } catch (error: any) {
+    // More detailed error logging
+    console.error('Failed to fetch admin stats:', error);
+    console.error('Request URL:', ADMIN_PATHS.STATS);
+    
+    if (axios.isAxiosError(error)) {
+      console.error('Response status:', error.response?.status);
+      console.error('Response data:', error.response?.data);
     }
-  },
+    
+    // Show error toast with specific message
+    if (error.response?.status === 401) {
+      toast.error('Authentication required. Please log in again.');
+    } else if (error.response?.status === 403) {
+      toast.error('You do not have permission to access admin statistics.');
+    } else {
+      toast.error('Failed to load dashboard statistics. Using backup data.');
+    }
+    
+    // Fallback to mock data on error
+    return mockDashboardStats;
+  }
+},
 
   /**
    * Get users with pagination and filtering

@@ -309,15 +309,20 @@ const login = async (email: string, password: string): Promise<AuthResponse> => 
     } catch (error) {
       console.error('Failed to refresh user profile:', error);
       
+      if (axios.isAxiosError(error)) {
+        console.log('Response status:', error.response?.status);
+        console.log('Response data:', error.response?.data);
+      }
+
       // If this is an authentication error, log the user out
       if (axios.isAxiosError(error) && error.response?.status === 401) {
-        logout();
-        throw error; // Re-throw to be handled by the caller
-      }
+      console.log('Authentication error - logging out');
+      logout();
       
       // For other errors, we can continue with the existing user data
       // This makes the app more resilient to temporary API issues
     }
+  }
   };
 
   return (
