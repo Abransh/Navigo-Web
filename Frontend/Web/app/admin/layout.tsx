@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { createAdminUser } from '@/lib/auth-debug'; // Import the admin creation function
 
 // Navigation items for the admin sidebar
 const NAV_ITEMS = [
@@ -194,6 +195,37 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
         {/* Main Content */}
         <main className="p-6">
+          {/* Debug Panel - Only shown in development */}
+          {process.env.NODE_ENV === 'development' && (
+            <div className="p-4 bg-amber-50 border-amber-200 border rounded-md text-amber-800 text-sm mb-4">
+              <h3 className="font-bold">Admin Debug Info</h3>
+              <div className="mt-2">
+                <p>User: {user?.firstName} {user?.lastName}</p>
+                <p>Role: {user?.role}</p>
+                <p>Token Present: {typeof window !== 'undefined' && localStorage.getItem('token') ? '✓' : '✗'}</p>
+                <button 
+                  className="mt-2 px-2 py-1 bg-amber-500 text-white rounded-md text-xs"
+                  onClick={async () => {
+                    try {
+                      const result = await createAdminUser();
+                      if (result.success) {
+                        toast.success('Admin user created/logged in!');
+                        window.location.reload();
+                      } else {
+                        toast.error(result.error);
+                      }
+                    } catch (error) {
+                      toast.error('Admin creation failed');
+                      console.error(error);
+                    }
+                  }}
+                >
+                  Create/Login Admin User
+                </button>
+              </div>
+            </div>
+          )}
+          
           {children}
         </main>
       </div>
