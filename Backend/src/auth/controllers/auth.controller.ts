@@ -11,6 +11,7 @@ import {
   HttpStatus,
   Logger,
 } from '@nestjs/common';
+import * as bcrypt from 'bcrypt';
   
 import { 
   ApiTags, 
@@ -25,6 +26,7 @@ import {
 import { AuthService } from '../auth.service';
 import { UsersService } from '../../users/users.service';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
+import { UserRole } from '../../users/enums/user-role.enum';
 
 // DTOs
 import { LoginDto } from '../dto/login.dto';
@@ -197,7 +199,7 @@ export class AuthController {
           lastName: 'Test',
           email: 'admin@navigo.com',
           password: hashedPassword,
-          role: 'admin'
+          role: 'admin' as UserRole
         });
       }
       

@@ -48,6 +48,7 @@ exports.__esModule = true;
 exports.AuthController = void 0;
 // src/auth/controllers/auth.controller.ts
 var common_1 = require("@nestjs/common");
+var bcrypt = require("bcrypt");
 var swagger_1 = require("@nestjs/swagger");
 var jwt_auth_guard_1 = require("../guards/jwt-auth.guard");
 // DTOs
