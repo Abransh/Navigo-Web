@@ -21,9 +21,10 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(payload: any) {
-    // Standardize to always return userId, not id or sub
+    // Ensure we're returning consistent user ID property names
     return { 
       userId: payload.sub, 
+      id: payload.sub, // Add this for compatibility
       email: payload.email, 
       role: payload.role 
     };

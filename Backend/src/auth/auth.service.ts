@@ -66,6 +66,11 @@ async validateUser(email: string, password: string): Promise<any> {
     sub: user.id,  // Keep the JWT standard of using 'sub' for the subject
     role: user.role 
 };
+
+return {
+  access_token: this.jwtService.sign(payload),
+  user
+};
   }
 
   async register(registerDto: RegisterDto) {
@@ -116,6 +121,7 @@ async validateUser(email: string, password: string): Promise<any> {
       throw new InternalServerErrorException('Failed to register user');
     }
   }
+
 
   async validateSocialLogin(socialUser: SocialUser) {
     try {
@@ -292,5 +298,8 @@ async validateUser(email: string, password: string): Promise<any> {
       console.error('Failed to send password reset confirmation email:', error);
       // Don't fail the password reset if email sending fails
     }
+
   }
+
+  
 }

@@ -11,11 +11,11 @@ import {
 
 // Flag to force using mock data (for testing)
 // Set this to true to always use mock data regardless of environment
-const FORCE_MOCK = true;
+const FORCE_MOCK = false;
 
 // Helper function to determine if we should use mock data
 const useMockData = () => {
-  return FORCE_MOCK || process.env.NODE_ENV === 'development';
+  return FORCE_MOCK //||  process.env.NODE_ENV === 'development';
 };
 
 export interface AdminStats {
@@ -151,8 +151,8 @@ const adminService = {
           filteredBookings = mockBookings.filter(booking => 
             booking.tourist.firstName?.toLowerCase().includes(lowercaseFilter) ||
             booking.tourist.lastName?.toLowerCase().includes(lowercaseFilter) ||
-            booking.companion.firstName?.toLowerCase().includes(lowercaseFilter) ||
-            booking.companion.lastName?.toLowerCase().includes(lowercaseFilter) ||
+            booking.companion.user.firstName?.toLowerCase().includes(lowercaseFilter) ||
+            booking.companion.user.lastName?.toLowerCase().includes(lowercaseFilter) ||
             booking.status?.toLowerCase().includes(lowercaseFilter)
           );
         }

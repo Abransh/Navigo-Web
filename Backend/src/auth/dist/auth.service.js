@@ -129,7 +129,10 @@ var AuthService = /** @class */ (function () {
                             sub: user.id,
                             role: user.role
                         };
-                        return [2 /*return*/];
+                        return [2 /*return*/, {
+                                access_token: this.jwtService.sign(payload),
+                                user: user
+                            }];
                 }
             });
         });

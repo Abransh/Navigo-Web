@@ -186,6 +186,49 @@ var AuthController = /** @class */ (function () {
             });
         });
     };
+    AuthController.prototype.testLogin = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            var hashedPassword, user, error_1, error_2;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 7, , 8]);
+                        return [4 /*yield*/, bcrypt.hash('Admin123!', 10)];
+                    case 1:
+                        hashedPassword = _a.sent();
+                        user = void 0;
+                        _a.label = 2;
+                    case 2:
+                        _a.trys.push([2, 4, , 6]);
+                        return [4 /*yield*/, this.usersService.findByEmail('admin@navigo.com')];
+                    case 3:
+                        user = _a.sent();
+                        return [3 /*break*/, 6];
+                    case 4:
+                        error_1 = _a.sent();
+                        return [4 /*yield*/, this.usersService.create({
+                                firstName: 'Admin',
+                                lastName: 'Test',
+                                email: 'admin@navigo.com',
+                                password: hashedPassword,
+                                role: 'admin'
+                            })];
+                    case 5:
+                        // Create the user if not found
+                        user = _a.sent();
+                        return [3 /*break*/, 6];
+                    case 6: return [2 /*return*/, {
+                            message: 'Test admin user created/verified',
+                            loginWith: { email: 'admin@navigo.com', password: 'Admin123!' }
+                        }];
+                    case 7:
+                        error_2 = _a.sent();
+                        return [2 /*return*/, { error: error_2.message }];
+                    case 8: return [2 /*return*/];
+                }
+            });
+        });
+    };
     var AuthController_1;
     __decorate([
         common_1.Get('debug')
@@ -252,6 +295,10 @@ var AuthController = /** @class */ (function () {
         swagger_1.ApiResponse({ status: 401, description: 'Unauthorized' }),
         __param(0, common_1.Req())
     ], AuthController.prototype, "getCurrentUserAlt");
+    __decorate([
+        common_1.Get('test-login'),
+        swagger_1.ApiOperation({ summary: 'Test login endpoint' })
+    ], AuthController.prototype, "testLogin");
     AuthController = AuthController_1 = __decorate([
         swagger_1.ApiTags('auth'),
         common_1.Controller('auth')

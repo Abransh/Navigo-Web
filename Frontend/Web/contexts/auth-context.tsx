@@ -122,9 +122,43 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     initializeAuth();
   }, []);
 
-  const login = async (email: string, password: string): Promise<AuthResponse> => {
-    setLoading(true);
-    try {
+  const FORCE_MOCK_AUTH = process.env.NODE_ENV === 'development';
+
+  // Modify login function
+const login = async (email: string, password: string): Promise<AuthResponse> => {
+  setLoading(true);
+  try {
+    // DEVELOPMENT ONLY: Mock admin login
+    if (FORCE_MOCK_AUTH && email === 'admin@navigo.com' && password === 'admin123') {
+      const mockUser = {
+        id: 'admin-mock-id',
+        email: 'admin@navigo.com',
+        firstName: 'Admin',
+        lastName: 'User',
+        role: 'admin',
+      };
+      
+      const mockToken = 'mock-jwt-token-for-admin-development';
+      
+      // Update auth state
+      setUser(mockUser);
+      setIsAuthenticated(true);
+      
+      // Store in localStorage
+      localStorage.setItem('user', JSON.stringify(mockUser));
+      localStorage.setItem('token', mockToken);
+      
+      // Set header for API client
+      apiClient.defaults.headers.common['Authorization'] = `Bearer ${mockToken}`;
+      
+      console.log('Mock admin login successful (DEVELOPMENT ONLY)');
+      
+      return {
+        user: mockUser,
+        access_token: mockToken
+      };
+      }
+  
       const credentials: LoginCredentials = { email, password };
       const response = await authService.login(credentials);
       
@@ -300,7 +334,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       {children}
     </AuthContext.Provider>
   );
-};
+}; // Add this closing brace here
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
