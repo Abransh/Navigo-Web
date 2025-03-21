@@ -2,6 +2,7 @@
 "use client"; 
 
 import React, { createContext, useState, useContext, useEffect, ReactNode } from 'react';
+import axios from 'axios';
 import authService, { LoginCredentials, RegisterData, AuthResponse } from '@/services/auth-service';
 import apiClient from '@/services/api-client';
 import { toast } from 'react-hot-toast';
@@ -275,7 +276,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       console.error('Failed to refresh user profile:', error);
       
       // If this is an authentication error, log the user out
-      if (error.response?.status === 401) {
+      if (axios.isAxiosError(error) && error.response?.status === 401) {
         logout();
         throw error; // Re-throw to be handled by the caller
       }

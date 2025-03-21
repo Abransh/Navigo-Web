@@ -7,7 +7,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ThrottlerModule, ThrottlerModuleOptions } from '@nestjs/throttler';
 
 // Controllers
-import { AuthController } from './auth.controller';
+import { AuthController } from './controllers/auth.controller'; // Update this path
 import { SocialAuthController } from './controllers/social-auth.controller';
 import { RoutesDebugController } from './controllers/routes-debug.controller';
 

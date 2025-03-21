@@ -11,7 +11,7 @@ import {
 
 // Flag to force using mock data (for testing)
 // Set this to true to always use mock data regardless of environment
-const FORCE_MOCK = false;
+const FORCE_MOCK = true;
 
 // Helper function to determine if we should use mock data
 const useMockData = () => {

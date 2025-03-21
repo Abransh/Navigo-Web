@@ -15,7 +15,7 @@ var config_1 = require("@nestjs/config");
 var typeorm_1 = require("@nestjs/typeorm");
 var throttler_1 = require("@nestjs/throttler");
 // Controllers
-var auth_controller_1 = require("./auth.controller");
+var auth_controller_1 = require("./controllers/auth.controller"); // Update this path
 var social_auth_controller_1 = require("./controllers/social-auth.controller");
 var routes_debug_controller_1 = require("./controllers/routes-debug.controller");
 // Services
