@@ -139,6 +139,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   // Modify login function
 const login = async (email: string, password: string): Promise<AuthResponse> => {
   console.log('Login function called with:', email, password);
+
   setLoading(true);
   try {
     // DEVELOPMENT ONLY: Mock admin login
