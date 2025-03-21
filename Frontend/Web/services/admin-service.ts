@@ -6,7 +6,7 @@ import {
   mockBookings, 
   mockPayments, 
   mockCompanionApplications 
-} from '@/mocks/admin-mock-data';
+} from '../mocks/admin-mock-data';
 
 export interface AdminStats {
   totalUsers: number;
