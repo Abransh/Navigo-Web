@@ -86,10 +86,13 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         const token = localStorage.getItem('token');
         const userData = localStorage.getItem('user');
         
+        // Add this check for force admin mode
+        const forceAdmin = localStorage.getItem('forceAdmin') === 'true';
+        
         // Check if we have both token and user data
         if (token && userData) {
-          // Check if token is expired
-          if (isTokenExpired(token)) {
+          // Skip token expiration check if we're in force admin mode
+          if (!forceAdmin && isTokenExpired(token)) {
             console.log('Token has expired, clearing auth data');
             localStorage.removeItem('token');
             localStorage.removeItem('user');
@@ -104,16 +107,22 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           
           // Parse and set user data
           const parsedUser = JSON.parse(userData);
+          
+          // Ensure admin role is set if we're in force admin mode
+          if (forceAdmin && parsedUser.role?.toLowerCase() !== 'admin') {
+            parsedUser.role = 'admin';
+          }
+          
           setUser(parsedUser);
           setIsAuthenticated(true);
           
-          // Optionally verify token with a backend call
-          try {
-            await refreshUserProfile();
-          } catch (error) {
-            console.warn('Failed to refresh user profile, but continuing with stored data:', error);
-            // Don't invalidate auth if the profile refresh fails
-            // This allows the app to work offline or when the API is temporarily unavailable
+          // Skip profile refresh if we're in force admin mode
+          if (!forceAdmin) {
+            try {
+              await refreshUserProfile();
+            } catch (error) {
+              console.warn('Failed to refresh user profile, but continuing with stored data:', error);
+            }
           }
         } else {
           setIsAuthenticated(false);
@@ -319,29 +328,26 @@ const login = async (email: string, password: string): Promise<AuthResponse> => 
 
   const refreshUserProfile = async (): Promise<void> => {
     try {
+      // Check if current user already has admin role
+      const currentUser = user;
+      const isCurrentlyAdmin = currentUser?.role?.toLowerCase() === 'admin';
+      
       const userData = await authService.getCurrentUser();
       
       if (userData) {
+        // IMPORTANT: Preserve admin role if it was set before
+        if (isCurrentlyAdmin && userData.role?.toLowerCase() !== 'admin') {
+          console.log("Preserving admin role from previous state");
+          userData.role = 'admin';
+        }
+        
         setUser(userData);
         localStorage.setItem('user', JSON.stringify(userData));
       }
     } catch (error) {
       console.error('Failed to refresh user profile:', error);
-      
-      if (axios.isAxiosError(error)) {
-        console.log('Response status:', error.response?.status);
-        console.log('Response data:', error.response?.data);
-      }
-
-      // If this is an authentication error, log the user out
-      if (axios.isAxiosError(error) && error.response?.status === 401) {
-      console.log('Authentication error - logging out');
-      //logout();
-      
-      // For other errors, we can continue with the existing user data
-      // This makes the app more resilient to temporary API issues
+      // Don't log out or change state on error - this preserves current user
     }
-  }
   };
 
   return (

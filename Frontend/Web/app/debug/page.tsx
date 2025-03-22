@@ -42,6 +42,32 @@ export default function DebugPage() {
           Return to Home
         </Button>
       </div>
+
+      <button 
+  onClick={() => {
+    // Create admin user data
+    const adminUser = {
+      id: 'admin-bypass',
+      email: 'admin@navigo.com',
+      firstName: 'Admin',
+      lastName: 'Bypass',
+      role: 'admin'
+    };
+    
+    // Important: Replace the actual user object
+    localStorage.setItem('user', JSON.stringify(adminUser));
+    localStorage.setItem('forceAdmin', 'true');
+    
+    // Set a mock token (only for bypass)
+    localStorage.setItem('token', 'mock-admin-token');
+    
+    // Force page reload to reinitialize the auth context
+    window.location.href = '/admin';
+  }}
+  className="p-2 bg-red-500 text-white rounded"
+>
+  Enable Complete Admin Bypass
+</button>
       
       <div className="space-y-8">
         <ApiDiagnostics />

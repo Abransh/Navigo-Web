@@ -35,6 +35,8 @@ export interface ResetPasswordRequest {
 const login = async (credentials: LoginCredentials): Promise<AuthResponse> => {
   try {
     const response = await apiClient.post<AuthResponse>(`${basePath}/auth/login`, credentials);
+  
+console.log("Login response:", response.data);
     return response.data;
   } catch (error) {
     console.error('Login API error:', error);
